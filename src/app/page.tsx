@@ -1,19 +1,19 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { fetchRatingsForContent } from '@/services/ratings.server'
 import { TABLE_NAMES, ROUTES, ITEMS_PER_PAGE } from '@/lib/constants'
 import { Hero } from '@/components/public/Hero'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { MovieGrid } from '@/components/public/movies/MovieGrid'
 import { BookGrid } from '@/components/public/books/BookGrid'
 import { MusicSection } from '@/components/public/music/MusicSection'
-import type { Movie, Book, Song, MusicCategory } from '@/types/app.types'
+import type { Movie, Book, Song } from '@/types/app.types'
 
 const PREVIEW_LIMIT = 6
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient()
 
-  // Fetch en paralelo para las 3 secciones
-  const [moviesRes, booksRes, songsRes] = await Promise.all([
+  const [moviesRes, booksRes, songsRes, movieRatings, bookRatings, songRatings] = await Promise.all([
     supabase
       .from(TABLE_NAMES.MOVIES)
       .select('*')
@@ -32,6 +32,9 @@ export default async function HomePage() {
       .eq('is_published', true)
       .order('sort_order', { ascending: true })
       .limit(ITEMS_PER_PAGE),
+    fetchRatingsForContent('pelicula'),
+    fetchRatingsForContent('libro'),
+    fetchRatingsForContent('cancion'),
   ])
 
   const movies: Movie[] = (moviesRes.data ?? []).map((row) => ({
@@ -52,7 +55,7 @@ export default async function HomePage() {
 
   const songs: Song[] = (songsRes.data ?? []).map((row) => ({
     id: row.id, title: row.title, artist: row.artist,
-    category: row.category as MusicCategory, youtubeId: row.youtube_id,
+    categoryId: row.category_id, youtubeId: row.youtube_id,
     spotifyUrl: row.spotify_url, externalUrl: row.external_url,
     thumbnailUrl: row.thumbnail_url, durationSec: row.duration_sec,
     isPublished: row.is_published, sortOrder: row.sort_order,
@@ -71,7 +74,7 @@ export default async function HomePage() {
           viewAllHref={ROUTES.MOVIES}
           viewAllLabel="Ver todas"
         />
-        <MovieGrid movies={movies} />
+        <MovieGrid movies={movies} ratingsMap={movieRatings} slider />
       </section>
 
       {/* Divisor */}
@@ -87,7 +90,7 @@ export default async function HomePage() {
           viewAllHref={ROUTES.BOOKS}
           viewAllLabel="Ver todos"
         />
-        <BookGrid books={books} />
+        <BookGrid books={books} ratingsMap={bookRatings} slider />
       </section>
 
       {/* Divisor */}
@@ -103,7 +106,7 @@ export default async function HomePage() {
           viewAllHref={ROUTES.MUSIC}
           viewAllLabel="Ver todo"
         />
-        <MusicSection songs={songs} />
+        <MusicSection songs={songs} categories={[]} ratingsMap={songRatings} />
       </section>
     </>
   )

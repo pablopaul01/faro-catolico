@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Star } from 'lucide-react'
 import { submitRating } from '@/services/ratings.service'
 import type { RatingStats } from '@/types/app.types'
@@ -18,6 +19,7 @@ export function StarRating({
   avgRating   = 0,
   ratingCount = 0,
 }: StarRatingProps) {
+  const router     = useRouter()
   const storageKey = `rated_${contentType}_${contentId}`
   const [myVote,    setMyVote]    = useState<number | null>(null)
   const [localAvg,  setLocalAvg]  = useState(avgRating)
@@ -40,8 +42,9 @@ export function StarRating({
       const newCount = localCount + 1
       setLocalCount(newCount)
       setLocalAvg((localAvg * localCount + star) / newCount)
-    } catch {
-      // silenciar error de red
+      router.refresh()
+    } catch (err) {
+      console.error('Error al guardar rating:', err)
     } finally {
       setLoading(false)
     }

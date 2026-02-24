@@ -7,14 +7,15 @@ import { useState } from 'react'
 import { songSchema, type SongSchema } from '@/lib/validations'
 import { createSong, updateSong } from '@/services/music.service'
 import { useMusicStore } from '@/stores/useMusicStore'
-import { ROUTES, MUSIC_CATEGORIES, MUSIC_CATEGORY_LABELS } from '@/lib/constants'
-import type { Song } from '@/types/app.types'
+import { ROUTES } from '@/lib/constants'
+import type { Song, MusicCategory } from '@/types/app.types'
 
 interface SongFormProps {
-  song?: Song
+  song?:       Song
+  categories?: MusicCategory[]
 }
 
-export const SongForm = ({ song }: SongFormProps) => {
+export const SongForm = ({ song, categories = [] }: SongFormProps) => {
   const router = useRouter()
   const addSong = useMusicStore((s) => s.addSong)
   const updateSongInStore = useMusicStore((s) => s.updateSong)
@@ -30,7 +31,7 @@ export const SongForm = ({ song }: SongFormProps) => {
       ? {
           title:        song.title,
           artist:       song.artist,
-          category:     song.category,
+          categoryId:   song.categoryId   ?? '',
           youtubeId:    song.youtubeId    ?? '',
           spotifyUrl:   song.spotifyUrl   ?? '',
           externalUrl:  song.externalUrl  ?? '',
@@ -39,7 +40,7 @@ export const SongForm = ({ song }: SongFormProps) => {
           isPublished:  song.isPublished,
           sortOrder:    song.sortOrder,
         }
-      : { category: MUSIC_CATEGORIES[0], isPublished: false, sortOrder: 0 },
+      : { categoryId: '', isPublished: false, sortOrder: 0 },
   })
 
   const onSubmit = async (data: SongSchema) => {
@@ -47,6 +48,7 @@ export const SongForm = ({ song }: SongFormProps) => {
     try {
       const payload = {
         ...data,
+        categoryId:   data.categoryId   || null,
         youtubeId:    data.youtubeId    || null,
         spotifyUrl:   data.spotifyUrl   || null,
         externalUrl:  data.externalUrl  || null,
@@ -78,12 +80,13 @@ export const SongForm = ({ song }: SongFormProps) => {
         </FormField>
       </div>
 
-      {/* Categoría */}
-      <FormField label="Momento *" error={errors.category?.message}>
-        <select {...register('category')} className={inputClass}>
-          {MUSIC_CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {MUSIC_CATEGORY_LABELS[cat]}
+      {/* Categoría dinámica */}
+      <FormField label="Categoría" error={errors.categoryId?.message}>
+        <select {...register('categoryId')} className={inputClass}>
+          <option value="">Sin categoría</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
             </option>
           ))}
         </select>

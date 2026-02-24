@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import { ROUTES, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
 
 export const Hero = () => (
-  <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden">
+  <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 pt-10 overflow-hidden">
     {/* Fondo decorativo — gradiente radial dorado */}
     <div
       aria-hidden

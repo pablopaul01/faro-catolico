@@ -14,7 +14,7 @@ export const SectionHeader = ({
   viewAllHref,
   viewAllLabel = 'Ver todo',
 }: SectionHeaderProps) => (
-  <div className="flex items-end justify-between mb-8">
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8">
     <div>
       <h2 className="font-display text-3xl sm:text-4xl text-light mb-2">{title}</h2>
       {subtitle && <p className="text-light/50 text-sm">{subtitle}</p>}
@@ -22,7 +22,7 @@ export const SectionHeader = ({
     {viewAllHref && (
       <Link
         href={viewAllHref}
-        className="flex items-center gap-1.5 text-sm text-accent hover:text-accent/80 transition-colors group"
+        className="flex items-center gap-1.5 text-sm text-accent hover:text-accent/80 transition-colors group self-start sm:self-auto sm:shrink-0"
       >
         {viewAllLabel}
         <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />

@@ -14,20 +14,24 @@ export const metadata: Metadata = {
 export default async function MusicaPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [{ data }, ratingsMap] = await Promise.all([
+  const [{ data: songsData }, { data: catsData }, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.SONGS)
       .select('*')
       .eq('is_published', true)
       .order('sort_order', { ascending: true }),
+    supabase
+      .from(TABLE_NAMES.MUSIC_CATEGORIES)
+      .select('*')
+      .order('sort_order', { ascending: true }),
     fetchRatingsForContent('cancion'),
   ])
 
-  const songs: Song[] = (data ?? []).map((row) => ({
+  const songs: Song[] = (songsData ?? []).map((row) => ({
     id:           row.id,
     title:        row.title,
     artist:       row.artist,
-    category:     row.category as MusicCategory,
+    categoryId:   row.category_id,
     youtubeId:    row.youtube_id,
     spotifyUrl:   row.spotify_url,
     externalUrl:  row.external_url,
@@ -39,13 +43,20 @@ export default async function MusicaPage() {
     updatedAt:    row.updated_at,
   }))
 
+  const categories: MusicCategory[] = (catsData ?? []).map((row) => ({
+    id:        row.id,
+    name:      row.name,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+  }))
+
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
       <SectionHeader
         title="Música"
         subtitle="Canciones para cada momento del día y del corazón"
       />
-      <MusicSection songs={songs} ratingsMap={ratingsMap} />
+      <MusicSection songs={songs} categories={categories} ratingsMap={ratingsMap} />
     </main>
   )
 }

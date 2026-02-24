@@ -1,13 +1,13 @@
-import { MUSIC_CATEGORIES } from '@/lib/constants'
+// ─────────────────────────────────────────────
+// Categorías dinámicas (películas, libros y música)
+// ─────────────────────────────────────────────
+export interface MusicCategory {
+  id:        string
+  name:      string
+  sortOrder: number
+  createdAt: string
+}
 
-// ─────────────────────────────────────────────
-// Tipos de categoría de música
-// ─────────────────────────────────────────────
-export type MusicCategory = (typeof MUSIC_CATEGORIES)[number]
-
-// ─────────────────────────────────────────────
-// Categorías dinámicas (películas y libros)
-// ─────────────────────────────────────────────
 export interface MovieCategory {
   id:        string
   name:      string
@@ -62,7 +62,7 @@ export interface Song {
   id:           string
   title:        string
   artist:       string
-  category:     MusicCategory
+  categoryId:   string | null
   youtubeId:    string | null
   spotifyUrl:   string | null
   externalUrl:  string | null

@@ -113,4 +113,13 @@
   .aspect-video {
     aspect-ratio: 16 / 9;
   }
+
+  /* Ocultar scrollbar en sliders horizontales */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

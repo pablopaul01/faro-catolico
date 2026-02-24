@@ -11,14 +11,18 @@ import {
 import {
   createBookCategory, updateBookCategory,
 } from '@/services/bookCategories.service'
-import { useMovieCategoriesStore } from '@/stores/useMovieCategoriesStore'
-import { useBookCategoriesStore }  from '@/stores/useBookCategoriesStore'
+import {
+  createMusicCategory, updateMusicCategory,
+} from '@/services/musicCategories.service'
+import { useMovieCategoriesStore }  from '@/stores/useMovieCategoriesStore'
+import { useBookCategoriesStore }   from '@/stores/useBookCategoriesStore'
+import { useMusicCategoriesStore }  from '@/stores/useMusicCategoriesStore'
 import { ROUTES } from '@/lib/constants'
-import type { MovieCategory, BookCategory } from '@/types/app.types'
+import type { MovieCategory, BookCategory, MusicCategory } from '@/types/app.types'
 
 interface CategoryFormProps {
-  entityType: 'peliculas' | 'libros'
-  category?:  MovieCategory | BookCategory
+  entityType: 'peliculas' | 'libros' | 'musica'
+  category?:  MovieCategory | BookCategory | MusicCategory
 }
 
 export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
@@ -29,10 +33,13 @@ export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
   const updateMovieCatStore = useMovieCategoriesStore((s) => s.updateCategory)
   const addBookCategory     = useBookCategoriesStore((s) => s.addCategory)
   const updateBookCatStore  = useBookCategoriesStore((s) => s.updateCategory)
+  const addMusicCategory    = useMusicCategoriesStore((s) => s.addCategory)
+  const updateMusicCatStore = useMusicCategoriesStore((s) => s.updateCategory)
 
-  const backHref = entityType === 'peliculas'
-    ? ROUTES.ADMIN_MOVIE_CATEGORIES
-    : ROUTES.ADMIN_BOOK_CATEGORIES
+  const backHref =
+    entityType === 'peliculas' ? ROUTES.ADMIN_MOVIE_CATEGORIES :
+    entityType === 'libros'    ? ROUTES.ADMIN_BOOK_CATEGORIES  :
+                                 ROUTES.ADMIN_MUSIC_CATEGORIES
 
   const {
     register,
@@ -56,13 +63,21 @@ export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
           const created = await createMovieCategory(data)
           addMovieCategory(created)
         }
-      } else {
+      } else if (entityType === 'libros') {
         if (category) {
           const updated = await updateBookCategory(category.id, data)
           updateBookCatStore(category.id, updated)
         } else {
           const created = await createBookCategory(data)
           addBookCategory(created)
+        }
+      } else {
+        if (category) {
+          const updated = await updateMusicCategory(category.id, data)
+          updateMusicCatStore(category.id, updated)
+        } else {
+          const created = await createMusicCategory(data)
+          addMusicCategory(created)
         }
       }
       router.push(backHref)

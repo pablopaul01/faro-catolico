@@ -11,7 +11,7 @@ const navItems = [
   { href: ROUTES.ADMIN,        label: 'Dashboard',  icon: LayoutDashboard, sub: null },
   { href: ROUTES.ADMIN_MOVIES, label: 'Películas',  icon: Film,            sub: { href: ROUTES.ADMIN_MOVIE_CATEGORIES, label: 'Categorías' } },
   { href: ROUTES.ADMIN_BOOKS,  label: 'Libros',     icon: BookOpen,        sub: { href: ROUTES.ADMIN_BOOK_CATEGORIES,  label: 'Categorías' } },
-  { href: ROUTES.ADMIN_MUSIC,        label: 'Música',       icon: Music,       sub: null },
+  { href: ROUTES.ADMIN_MUSIC,        label: 'Música',       icon: Music,       sub: { href: ROUTES.ADMIN_MUSIC_CATEGORIES, label: 'Categorías' } },
   { href: ROUTES.ADMIN_SUGGESTIONS,  label: 'Sugerencias',  icon: Lightbulb,   sub: null },
 ] as const
 

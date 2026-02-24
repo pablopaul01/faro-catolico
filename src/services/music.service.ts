@@ -1,21 +1,21 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { TABLE_NAMES } from '@/lib/constants'
-import type { Song, SongFormPayload, MusicCategory } from '@/types/app.types'
+import type { Song, SongFormPayload } from '@/types/app.types'
 
 const adaptSong = (row: Record<string, unknown>): Song => ({
-  id:           row.id           as string,
-  title:        row.title        as string,
-  artist:       row.artist       as string,
-  category:     row.category     as MusicCategory,
-  youtubeId:    row.youtube_id   as string | null,
-  spotifyUrl:   row.spotify_url  as string | null,
-  externalUrl:  row.external_url as string | null,
+  id:           row.id            as string,
+  title:        row.title         as string,
+  artist:       row.artist        as string,
+  categoryId:   row.category_id   as string | null,
+  youtubeId:    row.youtube_id    as string | null,
+  spotifyUrl:   row.spotify_url   as string | null,
+  externalUrl:  row.external_url  as string | null,
   thumbnailUrl: row.thumbnail_url as string | null,
-  durationSec:  row.duration_sec as number | null,
-  isPublished:  row.is_published as boolean,
-  sortOrder:    row.sort_order   as number,
-  createdAt:    row.created_at   as string,
-  updatedAt:    row.updated_at   as string,
+  durationSec:  row.duration_sec  as number | null,
+  isPublished:  row.is_published  as boolean,
+  sortOrder:    row.sort_order    as number,
+  createdAt:    row.created_at    as string,
+  updatedAt:    row.updated_at    as string,
 })
 
 export const fetchAllSongs = async (): Promise<Song[]> => {
@@ -36,7 +36,7 @@ export const createSong = async (payload: SongFormPayload): Promise<Song> => {
     .insert({
       title:         payload.title,
       artist:        payload.artist,
-      category:      payload.category,
+      category_id:   payload.categoryId ?? null,
       youtube_id:    payload.youtubeId    || null,
       spotify_url:   payload.spotifyUrl   || null,
       external_url:  payload.externalUrl  || null,
@@ -61,7 +61,7 @@ export const updateSong = async (
   const updates: Record<string, unknown> = {}
   if (payload.title        !== undefined) updates.title         = payload.title
   if (payload.artist       !== undefined) updates.artist        = payload.artist
-  if (payload.category     !== undefined) updates.category      = payload.category
+  if (payload.categoryId   !== undefined) updates.category_id   = payload.categoryId ?? null
   if (payload.youtubeId    !== undefined) updates.youtube_id    = payload.youtubeId    || null
   if (payload.spotifyUrl   !== undefined) updates.spotify_url   = payload.spotifyUrl   || null
   if (payload.externalUrl  !== undefined) updates.external_url  = payload.externalUrl  || null

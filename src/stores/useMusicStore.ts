@@ -2,46 +2,41 @@
 
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { Song, MusicCategory } from '@/types/app.types'
-import { MUSIC_CATEGORIES } from '@/lib/constants'
+import type { Song } from '@/types/app.types'
 
 interface MusicState {
-  songs:           Song[]
-  activeCategory:  MusicCategory
-  isLoading:       boolean
-  error:           string | null
-  setSongs:        (songs: Song[]) => void
-  addSong:         (song: Song) => void
-  updateSong:      (id: string, updates: Partial<Song>) => void
-  removeSong:      (id: string) => void
-  setCategory:     (category: MusicCategory) => void
-  setLoading:      (isLoading: boolean) => void
-  setError:        (error: string | null) => void
+  songs:      Song[]
+  isLoading:  boolean
+  error:      string | null
+  setSongs:   (songs: Song[]) => void
+  addSong:    (song: Song) => void
+  updateSong: (id: string, updates: Partial<Song>) => void
+  removeSong: (id: string) => void
+  setLoading: (isLoading: boolean) => void
+  setError:   (error: string | null) => void
 }
 
 export const useMusicStore = create<MusicState>()(
   devtools(
     (set) => ({
-      songs:          [],
-      activeCategory: MUSIC_CATEGORIES[0],
-      isLoading:      false,
-      error:          null,
+      songs:     [],
+      isLoading: false,
+      error:     null,
 
-      setSongs:    (songs)    => set({ songs }),
-      addSong:     (song)     => set((state) => ({ songs: [song, ...state.songs] })),
-      updateSong:  (id, updates) =>
-        set((state) => ({
-          songs: state.songs.map((s) => (s.id === id ? { ...s, ...updates } : s)),
+      setSongs:   (songs)       => set({ songs }),
+      addSong:    (song)        => set((s) => ({ songs: [song, ...s.songs] })),
+      updateSong: (id, updates) =>
+        set((s) => ({
+          songs: s.songs.map((song) => (song.id === id ? { ...song, ...updates } : song)),
         })),
-      removeSong:  (id)       => set((state) => ({ songs: state.songs.filter((s) => s.id !== id) })),
-      setCategory: (category) => set({ activeCategory: category }),
-      setLoading:  (isLoading) => set({ isLoading }),
-      setError:    (error)    => set({ error }),
+      removeSong: (id) => set((s) => ({ songs: s.songs.filter((song) => song.id !== id) })),
+      setLoading: (isLoading)   => set({ isLoading }),
+      setError:   (error)       => set({ error }),
     }),
     { name: 'music-store' }
   )
 )
 
-/** Selector: canciones filtradas por categoría (para evitar re-renders innecesarios) */
-export const selectSongsByCategory = (songs: Song[], category: MusicCategory) =>
-  songs.filter((s) => s.category === category)
+/** Selector: canciones filtradas por categoryId */
+export const selectSongsByCategory = (songs: Song[], categoryId: string) =>
+  songs.filter((s) => s.categoryId === categoryId)

@@ -12,11 +12,10 @@ export default async function EditSongPage({ params }: Props) {
   const { id } = await params
   const supabase = await createSupabaseServerClient()
 
-  const { data, error } = await supabase
-    .from(TABLE_NAMES.SONGS)
-    .select('*')
-    .eq('id', id)
-    .single()
+  const [{ data, error }, { data: catsData }] = await Promise.all([
+    supabase.from(TABLE_NAMES.SONGS).select('*').eq('id', id).single(),
+    supabase.from(TABLE_NAMES.MUSIC_CATEGORIES).select('*').order('sort_order', { ascending: true }),
+  ])
 
   if (error || !data) notFound()
 
@@ -24,7 +23,7 @@ export default async function EditSongPage({ params }: Props) {
     id:           data.id,
     title:        data.title,
     artist:       data.artist,
-    category:     data.category as MusicCategory,
+    categoryId:   data.category_id,
     youtubeId:    data.youtube_id,
     spotifyUrl:   data.spotify_url,
     externalUrl:  data.external_url,
@@ -36,11 +35,18 @@ export default async function EditSongPage({ params }: Props) {
     updatedAt:    data.updated_at,
   }
 
+  const categories: MusicCategory[] = (catsData ?? []).map((row) => ({
+    id:        row.id,
+    name:      row.name,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+  }))
+
   return (
     <div className="animate-fade-in">
       <h1 className="font-display text-2xl text-light mb-2">Editar canción</h1>
       <p className="text-light/50 text-sm mb-8">{song.title} — {song.artist}</p>
-      <SongForm song={song} />
+      <SongForm song={song} categories={categories} />
     </div>
   )
 }

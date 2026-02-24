@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { MUSIC_CATEGORIES } from '@/lib/constants'
 
 // ─────────────────────────────────────────────
 // Schema para categorías (películas y libros)
@@ -53,7 +52,7 @@ export type BookSchema = z.infer<typeof bookSchema>
 export const songSchema = z.object({
   title:        z.string().min(1, 'El título es obligatorio').max(200),
   artist:       z.string().min(1, 'El artista es obligatorio').max(200),
-  category:     z.enum(MUSIC_CATEGORIES, { message: 'Categoría inválida' }),
+  categoryId:   z.string().uuid().nullable().optional(),
   youtubeId:    z.string().max(20).nullable().optional(),
   spotifyUrl:   z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   externalUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),

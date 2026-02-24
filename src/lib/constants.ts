@@ -13,6 +13,7 @@ export const ROUTES = {
   ADMIN_MUSIC:             '/admin/musica',
   ADMIN_MOVIE_CATEGORIES:  '/admin/peliculas/categorias',
   ADMIN_BOOK_CATEGORIES:   '/admin/libros/categorias',
+  ADMIN_MUSIC_CATEGORIES:  '/admin/musica/categorias',
   SUGGESTIONS:             '/sugerencias',
   ADMIN_SUGGESTIONS:       '/admin/sugerencias',
   AUTH_CALLBACK:           '/auth/callback',
@@ -27,28 +28,10 @@ export const TABLE_NAMES = {
   SONGS:            'songs',
   MOVIE_CATEGORIES: 'movie_categories',
   BOOK_CATEGORIES:  'book_categories',
+  MUSIC_CATEGORIES: 'music_categories',
   RATINGS:          'ratings',
   SUGGESTIONS:      'suggestions',
 } as const
-
-// ─────────────────────────────────────────────
-// Categorías de música
-// ─────────────────────────────────────────────
-export const MUSIC_CATEGORIES = ['oracion', 'estudio', 'reunion', 'fiesta'] as const
-
-export const MUSIC_CATEGORY_LABELS: Record<string, string> = {
-  oracion: 'Oración',
-  estudio: 'Estudio',
-  reunion: 'Reunión',
-  fiesta:  'Fiesta',
-}
-
-export const MUSIC_CATEGORY_DESCRIPTIONS: Record<string, string> = {
-  oracion: 'Para momentos de contemplación y oración',
-  estudio: 'Para concentrarse y estudiar con calma',
-  reunion: 'Para compartir en comunidad',
-  fiesta:  'Para celebrar con alegría',
-}
 
 // ─────────────────────────────────────────────
 // Metadatos del sitio
