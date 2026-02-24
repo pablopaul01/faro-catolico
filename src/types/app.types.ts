@@ -102,3 +102,42 @@ export interface Suggestion {
   status:    'pendiente' | 'revisado'
   createdAt: string
 }
+
+// ─────────────────────────────────────────────
+// Mensajes de contacto
+// ─────────────────────────────────────────────
+export interface ContactMessage {
+  id:        string
+  name:      string | null
+  email:     string | null
+  subject:   string | null
+  message:   string
+  status:    'no_leido' | 'leido'
+  createdAt: string
+}
+
+// ─────────────────────────────────────────────
+// Propuestas de contenido (submissions)
+// ─────────────────────────────────────────────
+export interface Submission {
+  id:             string
+  type:           'pelicula' | 'libro' | 'cancion'
+  title:          string
+  description:    string | null
+  year:           number | null
+  youtubeId:      string | null
+  externalUrl:    string | null
+  thumbnailUrl:   string | null
+  author:         string | null
+  coverUrl:       string | null
+  purchaseUrl:    string | null
+  pdfUrl:         string | null
+  artist:         string | null
+  spotifyUrl:     string | null
+  durationSec:    number | null
+  submitterName:  string | null
+  submitterEmail: string | null
+  notes:          string | null
+  status:         'pendiente' | 'aprobado' | 'rechazado'
+  createdAt:      string
+}

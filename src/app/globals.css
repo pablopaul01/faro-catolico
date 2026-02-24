@@ -70,6 +70,11 @@
     font-family: var(--font-family-display);
   }
 
+  /* Cursor pointer en elementos interactivos */
+  a, button, [role="button"], label[for], select, summary {
+    cursor: pointer;
+  }
+
   /* Scrollbar personalizado */
   ::-webkit-scrollbar {
     width: 6px;

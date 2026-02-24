@@ -30,7 +30,7 @@ export const fetchAllMovies = async (): Promise<Movie[]> => {
   const { data, error } = await supabase
     .from(TABLE_NAMES.MOVIES)
     .select('*')
-    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
   return data?.map(adaptMovie) ?? []

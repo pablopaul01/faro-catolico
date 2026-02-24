@@ -18,19 +18,19 @@ export default async function HomePage() {
       .from(TABLE_NAMES.MOVIES)
       .select('*')
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(PREVIEW_LIMIT),
     supabase
       .from(TABLE_NAMES.BOOKS)
       .select('*')
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(PREVIEW_LIMIT),
     supabase
       .from(TABLE_NAMES.SONGS)
       .select('*')
       .eq('is_published', true)
-      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(ITEMS_PER_PAGE),
     fetchRatingsForContent('pelicula'),
     fetchRatingsForContent('libro'),
@@ -67,7 +67,7 @@ export default async function HomePage() {
       <Hero />
 
       {/* Sección películas */}
-      <section id="peliculas" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+      <section id="peliculas" className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <SectionHeader
           title="Películas"
           subtitle="Vidas de santos y films aptos para toda la familia"
@@ -99,7 +99,7 @@ export default async function HomePage() {
       </div>
 
       {/* Sección música */}
-      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pt-10">
         <SectionHeader
           title="Música"
           subtitle="Canciones para cada momento del corazón"

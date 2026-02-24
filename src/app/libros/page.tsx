@@ -19,7 +19,7 @@ export default async function LibrosPage() {
       .from(TABLE_NAMES.BOOKS)
       .select('*')
       .eq('is_published', true)
-      .order('sort_order', { ascending: true }),
+      .order('created_at', { ascending: false }),
     supabase
       .from(TABLE_NAMES.BOOK_CATEGORIES)
       .select('*')

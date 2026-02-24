@@ -1,26 +1,24 @@
-import { SuggestionForm } from '@/components/public/SuggestionForm'
+import { ContactForm } from '@/components/public/ContactForm'
 import { SITE_NAME } from '@/lib/constants'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title:       `Sugerencias — ${SITE_NAME}`,
-  description: 'Sugerí una película, libro o canción para el Faro Católico. Tu opinión ayuda a crecer el contenido.',
+  title:       `Contacto — ${SITE_NAME}`,
+  description: '¿Tenés alguna consulta, sugerencia o simplemente querés saludar? Escribinos.',
 }
 
-export default function SugerenciasPage() {
+export default function ContactoPage() {
   return (
-    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 animate-fade-in">
       <div className="mb-10 text-center">
-        <h1 className="font-display text-3xl text-light mb-3">Sugerencias</h1>
+        <h1 className="font-display text-3xl text-light mb-3">Contacto</h1>
         <p className="text-light/50 text-sm leading-relaxed max-w-md mx-auto">
-          ¿Conocés una película, libro o canción que podría ayudar a crecer en la fe?
-          Compartila con nosotros y la evaluaremos para agregarla al Faro.
+          ¿Tenés alguna consulta, sugerencia o simplemente querés saludar?
+          Escribinos y lo leemos con mucho gusto.
         </p>
       </div>
 
-      <div className="bg-secondary border border-border rounded-card p-6 sm:p-8">
-        <SuggestionForm />
-      </div>
+      <ContactForm />
     </main>
   )
 }

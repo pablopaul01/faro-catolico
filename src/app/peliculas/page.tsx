@@ -19,7 +19,7 @@ export default async function PeliculasPage() {
       .from(TABLE_NAMES.MOVIES)
       .select('*')
       .eq('is_published', true)
-      .order('sort_order', { ascending: true }),
+      .order('created_at', { ascending: false }),
     supabase
       .from(TABLE_NAMES.MOVIE_CATEGORIES)
       .select('*')

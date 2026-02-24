@@ -16,6 +16,9 @@ export const ROUTES = {
   ADMIN_MUSIC_CATEGORIES:  '/admin/musica/categorias',
   SUGGESTIONS:             '/sugerencias',
   ADMIN_SUGGESTIONS:       '/admin/sugerencias',
+  PROPOSE:                 '/proponer',
+  ADMIN_SUBMISSIONS:       '/admin/propuestas',
+  SEARCH:                  '/buscar',
   AUTH_CALLBACK:           '/auth/callback',
 } as const
 
@@ -31,6 +34,8 @@ export const TABLE_NAMES = {
   MUSIC_CATEGORIES: 'music_categories',
   RATINGS:          'ratings',
   SUGGESTIONS:      'suggestions',
+  SUBMISSIONS:      'submissions',
+  CONTACT_MESSAGES: 'contact_messages',
 } as const
 
 // ─────────────────────────────────────────────

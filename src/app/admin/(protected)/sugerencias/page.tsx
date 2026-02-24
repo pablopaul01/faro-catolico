@@ -1,83 +1,74 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { CheckCheck, Trash2, Lightbulb } from 'lucide-react'
+import { Mail, MailOpen, Trash2 } from 'lucide-react'
 import {
-  fetchAllSuggestions,
-  markSuggestionReviewed,
-  deleteSuggestion,
-} from '@/services/suggestions.service'
-import type { Suggestion } from '@/types/app.types'
+  fetchAllContactMessages,
+  markContactMessageRead,
+  deleteContactMessage,
+} from '@/services/contactMessages.service'
+import type { ContactMessage } from '@/types/app.types'
 
-const TYPE_LABELS: Record<Suggestion['type'], string> = {
-  pelicula: 'Película',
-  libro:    'Libro',
-  cancion:  'Canción',
-}
+type Filter = 'todos' | 'no_leido' | 'leido'
 
-const TYPE_COLORS: Record<Suggestion['type'], string> = {
-  pelicula: 'bg-blue-900/30 text-blue-300 border-blue-700/30',
-  libro:    'bg-emerald-900/30 text-emerald-300 border-emerald-700/30',
-  cancion:  'bg-purple-900/30 text-purple-300 border-purple-700/30',
-}
-
-type Filter = 'todas' | 'pendiente' | 'revisado'
-
-export default function AdminSugerenciasPage() {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-  const [isLoading,   setIsLoading]   = useState(true)
-  const [filter,      setFilter]      = useState<Filter>('todas')
+export default function AdminContactoPage() {
+  const [messages,  setMessages]  = useState<ContactMessage[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [filter,    setFilter]    = useState<Filter>('todos')
 
   useEffect(() => {
-    fetchAllSuggestions()
-      .then(setSuggestions)
+    fetchAllContactMessages()
+      .then(setMessages)
       .finally(() => setIsLoading(false))
   }, [])
 
   const filtered = useMemo(() => {
-    if (filter === 'todas') return suggestions
-    return suggestions.filter((s) => s.status === filter)
-  }, [suggestions, filter])
+    if (filter === 'todos') return messages
+    return messages.filter((m) => m.status === filter)
+  }, [messages, filter])
 
-  const handleMarkReviewed = async (id: string) => {
-    await markSuggestionReviewed(id)
-    setSuggestions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, status: 'revisado' } : s))
+  const handleMarkRead = async (id: string) => {
+    await markContactMessageRead(id)
+    setMessages((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, status: 'leido' } : m))
     )
   }
 
   const handleDelete = async (id: string) => {
-    await deleteSuggestion(id)
-    setSuggestions((prev) => prev.filter((s) => s.id !== id))
+    await deleteContactMessage(id)
+    setMessages((prev) => prev.filter((m) => m.id !== id))
   }
 
-  const pendingCount = suggestions.filter((s) => s.status === 'pendiente').length
+  const unreadCount = messages.filter((m) => m.status === 'no_leido').length
 
   return (
     <div className="animate-fade-in">
-      <h1 className="font-display text-2xl text-light mb-1">Sugerencias</h1>
+      <h1 className="font-display text-2xl text-light mb-1">Mensajes de contacto</h1>
       <p className="text-light/50 text-sm mb-6">
-        Contenido propuesto por los visitantes
-        {pendingCount > 0 && (
+        Mensajes enviados desde la página de contacto
+        {unreadCount > 0 && (
           <span className="ml-2 px-2 py-0.5 rounded-full bg-accent/20 text-accent text-xs font-medium">
-            {pendingCount} pendiente{pendingCount > 1 ? 's' : ''}
+            {unreadCount} no leído{unreadCount > 1 ? 's' : ''}
           </span>
         )}
       </p>
 
-      {/* Filtros */}
       <div className="flex gap-2 mb-6">
-        {(['todas', 'pendiente', 'revisado'] as Filter[]).map((f) => (
+        {([
+          { value: 'todos',    label: 'Todos' },
+          { value: 'no_leido', label: 'No leídos' },
+          { value: 'leido',    label: 'Leídos' },
+        ] as { value: Filter; label: string }[]).map(({ value, label }) => (
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-sm text-sm capitalize transition-colors ${
-              filter === f
+            key={value}
+            onClick={() => setFilter(value)}
+            className={`px-4 py-1.5 rounded-sm text-sm transition-colors ${
+              filter === value
                 ? 'bg-accent text-primary font-semibold'
                 : 'border border-border text-light/50 hover:text-light'
             }`}
           >
-            {f === 'todas' ? 'Todas' : f === 'pendiente' ? 'Pendientes' : 'Revisadas'}
+            {label}
           </button>
         ))}
       </div>
@@ -85,58 +76,57 @@ export default function AdminSugerenciasPage() {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-secondary rounded-sm animate-pulse" />
+            <div key={i} className="h-24 bg-secondary rounded-sm animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-20 text-light/30">
-          <Lightbulb size={36} />
-          <p>No hay sugerencias{filter !== 'todas' ? ` ${filter === 'pendiente' ? 'pendientes' : 'revisadas'}` : ''}.</p>
+          <Mail size={36} />
+          <p>No hay mensajes{filter !== 'todos' ? ` ${filter === 'no_leido' ? 'sin leer' : 'leídos'}` : ''}.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((s) => (
+          {filtered.map((m) => (
             <div
-              key={s.id}
-              className="bg-secondary border border-border rounded-sm p-4 flex flex-col sm:flex-row sm:items-start gap-3"
+              key={m.id}
+              className={`bg-secondary border rounded-sm p-4 flex flex-col sm:flex-row sm:items-start gap-3 transition-colors ${
+                m.status === 'no_leido' ? 'border-accent/30' : 'border-border'
+              }`}
             >
-              {/* Info principal */}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${TYPE_COLORS[s.type]}`}>
-                    {TYPE_LABELS[s.type]}
-                  </span>
-                  {s.status === 'revisado' && (
-                    <span className="text-xs text-light/30">✓ Revisado</span>
+                  {m.status === 'no_leido' && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30">
+                      Nuevo
+                    </span>
+                  )}
+                  {m.subject && (
+                    <p className="text-light text-sm font-medium truncate">{m.subject}</p>
                   )}
                 </div>
 
-                <p className="text-light text-sm font-medium truncate">{s.title}</p>
-
-                {s.notes && (
-                  <p className="text-light/40 text-xs mt-1 line-clamp-2">{s.notes}</p>
-                )}
+                <p className="text-light/70 text-sm leading-relaxed line-clamp-3">{m.message}</p>
 
                 <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-light/30">
-                  {s.email && <span>✉ {s.email}</span>}
-                  <span>{new Date(s.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                  {m.name  && <span>👤 {m.name}</span>}
+                  {m.email && <span>✉ {m.email}</span>}
+                  <span>{new Date(m.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>
 
-              {/* Acciones */}
               <div className="flex items-center gap-2 shrink-0">
-                {s.status === 'pendiente' && (
+                {m.status === 'no_leido' && (
                   <button
-                    onClick={() => handleMarkReviewed(s.id)}
+                    onClick={() => handleMarkRead(m.id)}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-sm border border-accent/30 text-accent hover:bg-accent/10 transition-colors"
-                    title="Marcar como revisado"
+                    title="Marcar como leído"
                   >
-                    <CheckCheck size={13} />
-                    Revisado
+                    <MailOpen size={13} />
+                    Leído
                   </button>
                 )}
                 <button
-                  onClick={() => handleDelete(s.id)}
+                  onClick={() => handleDelete(m.id)}
                   className="p-1.5 text-light/30 hover:text-red-400 hover:bg-red-900/10 rounded-sm transition-colors"
                   title="Eliminar"
                 >

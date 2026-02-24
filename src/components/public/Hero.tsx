@@ -2,9 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import { ROUTES, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
+import { HeroSearch } from './HeroSearch'
 
 export const Hero = () => (
-  <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 pt-10 overflow-hidden">
+  <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-14 overflow-hidden">
     {/* Fondo decorativo — gradiente radial dorado */}
     <div
       aria-hidden
@@ -16,7 +17,7 @@ export const Hero = () => (
     />
 
     {/* Logo */}
-    <div className="animate-fade-in mb-4">
+    <div className="animate-fade-in mb-20 lg:mb-10">
       <Image
         src="/fc-logo.png"
         alt={`Logo ${SITE_NAME}`}
@@ -70,6 +71,9 @@ export const Hero = () => (
         Explorar música
       </Link>
     </div>
+
+    {/* Buscador */}
+    <HeroSearch />
 
     {/* Flecha de scroll */}
     <div

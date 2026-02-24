@@ -75,3 +75,39 @@ export const suggestionSchema = z.object({
 })
 
 export type SuggestionSchema = z.infer<typeof suggestionSchema>
+
+// ─────────────────────────────────────────────
+// Schema para propuestas de contenido
+// ─────────────────────────────────────────────
+export const submissionSchema = z.object({
+  type:           z.enum(['pelicula', 'libro', 'cancion'], { message: 'Selecciona un tipo' }),
+  title:          z.string().min(1, 'El título es obligatorio').max(200),
+  description:    z.string().max(2000).optional(),
+  year:           z.coerce.number().int().min(1900).max(2100).optional().or(z.literal('')),
+  youtubeId:      z.string().max(30).optional(),
+  externalUrl:    z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  thumbnailUrl:   z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  author:         z.string().max(200).optional(),
+  coverUrl:       z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  purchaseUrl:    z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  pdfUrl:         z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  artist:         z.string().max(200).optional(),
+  spotifyUrl:     z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
+  submitterName:  z.string().max(100).optional(),
+  submitterEmail: z.string().email('Debe ser un email válido').optional().or(z.literal('')),
+  notes:          z.string().max(500).optional(),
+})
+
+export type SubmissionSchema = z.infer<typeof submissionSchema>
+
+// ─────────────────────────────────────────────
+// Schema para mensajes de contacto
+// ─────────────────────────────────────────────
+export const contactSchema = z.object({
+  name:    z.string().max(100).optional(),
+  email:   z.string().email('Debe ser un email válido').optional().or(z.literal('')),
+  subject: z.string().max(200).optional(),
+  message: z.string().min(1, 'El mensaje es obligatorio').max(2000),
+})
+
+export type ContactSchema = z.infer<typeof contactSchema>

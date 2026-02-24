@@ -23,7 +23,7 @@ export const fetchAllBooks = async (): Promise<Book[]> => {
   const { data, error } = await supabase
     .from(TABLE_NAMES.BOOKS)
     .select('*')
-    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
   return data?.map(adaptBook) ?? []
