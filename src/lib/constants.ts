@@ -53,6 +53,13 @@ export const YOUTUBE_NOCOOKIE_BASE = 'https://www.youtube-nocookie.com/embed'
 export const YOUTUBE_THUMBNAIL_BASE = 'https://img.youtube.com/vi'
 
 // ─────────────────────────────────────────────
+// Supabase Storage
+// ─────────────────────────────────────────────
+export const STORAGE_BUCKETS = {
+  MEDIA: 'media',
+} as const
+
+// ─────────────────────────────────────────────
 // Paginación
 // ─────────────────────────────────────────────
 export const ITEMS_PER_PAGE = 12

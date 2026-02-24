@@ -4,18 +4,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        // Permite cualquier host HTTPS — necesario para portadas de libros
+        // que pueden provenir de cualquier dominio externo
         protocol: 'https',
-        hostname: 'img.youtube.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.ytimg.com',
-      },
-      {
-        protocol: 'https',
-        // Supabase Storage (comodin para cualquier project ref)
-        hostname: '*.supabase.co',
-        pathname: '/storage/v1/object/public/**',
+        hostname: '**',
       },
     ],
   },

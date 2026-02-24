@@ -4,8 +4,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Upload } from 'lucide-react'
 import { bookSchema, type BookSchema } from '@/lib/validations'
 import { createBook, updateBook } from '@/services/books.service'
+import { uploadPdf } from '@/services/storage.service'
 import { useBooksStore } from '@/stores/useBooksStore'
 import { ROUTES } from '@/lib/constants'
 import type { Book, BookCategory } from '@/types/app.types'
@@ -19,11 +21,14 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
   const router = useRouter()
   const addBook = useBooksStore((s) => s.addBook)
   const updateBookInStore = useBooksStore((s) => s.updateBook)
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [serverError,  setServerError]  = useState<string | null>(null)
+  const [isUploading,  setIsUploading]  = useState(false)
+  const [uploadError,  setUploadError]  = useState<string | null>(null)
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<BookSchema>({
     resolver: zodResolver(bookSchema),
@@ -42,6 +47,22 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
         }
       : { isPublished: false, sortOrder: 0 },
   })
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsUploading(true)
+    setUploadError(null)
+    try {
+      const url = await uploadPdf(file)
+      setValue('pdfUrl', url, { shouldValidate: true })
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Error al subir el archivo')
+    } finally {
+      setIsUploading(false)
+      e.target.value = ''
+    }
+  }
 
   const onSubmit = async (data: BookSchema) => {
     setServerError(null)
@@ -125,8 +146,33 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
         <input {...register('purchaseUrl')} placeholder="https://..." className={inputClass} />
       </FormField>
 
-      <FormField label="URL de PDF gratuito (opcional)" error={errors.pdfUrl?.message}>
-        <input {...register('pdfUrl')} placeholder="https://..." className={inputClass} />
+      {/* PDF — URL manual o subir archivo */}
+      <FormField label="PDF (opcional)" error={errors.pdfUrl?.message ?? uploadError ?? undefined}>
+        <div className="flex gap-2">
+          <input
+            {...register('pdfUrl')}
+            placeholder="https://... o subir archivo →"
+            className={inputClass}
+            disabled={isUploading}
+          />
+          <label
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-sm border text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
+              isUploading
+                ? 'border-border text-light/30 cursor-not-allowed'
+                : 'border-accent/40 text-accent hover:bg-accent/10'
+            }`}
+          >
+            <Upload size={13} />
+            {isUploading ? 'Subiendo...' : 'Subir PDF'}
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              className="hidden"
+              onChange={handlePdfUpload}
+              disabled={isUploading}
+            />
+          </label>
+        </div>
       </FormField>
 
       <label className="flex items-center gap-3 cursor-pointer">
@@ -143,7 +189,7 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
       <div className="flex items-center gap-3 pt-2">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="px-6 py-2.5 bg-accent text-primary font-semibold rounded-sm hover:bg-accent/90 disabled:opacity-50 transition-colors"
         >
           {isSubmitting ? 'Guardando...' : book ? 'Guardar cambios' : 'Crear libro'}
@@ -161,7 +207,7 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
 }
 
 const inputClass =
-  'w-full px-4 py-2.5 rounded-sm bg-primary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm'
+  'w-full px-4 py-2.5 rounded-sm bg-primary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm disabled:opacity-50'
 
 const FormField = ({
   label,
