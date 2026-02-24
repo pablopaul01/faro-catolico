@@ -49,7 +49,7 @@ export const Hero = () => (
       className="text-light/50 max-w-md text-sm sm:text-base leading-relaxed mb-10 animate-slide-up"
       style={{ animationDelay: '0.3s' }}
     >
-      Contenido curado para crecer en la fe: películas, libros y música
+      Contenido para crecer en la fe: películas, libros y música
       seleccionados con amor.
     </p>
 

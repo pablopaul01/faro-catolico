@@ -43,8 +43,8 @@ export const TABLE_NAMES = {
 // ─────────────────────────────────────────────
 export const SITE_NAME        = 'Faro Católico'
 export const SITE_TAGLINE     = 'Películas, libros y música para crecer en gracia'
-export const SITE_DESCRIPTION = 'Una plataforma de contenido curado para católicos: películas, libros y música seleccionados para el crecimiento espiritual.'
-export const SITE_URL         = 'https://faro-catolico.netlify.app'
+export const SITE_DESCRIPTION = 'Una plataforma de contenido para católicos: películas, libros y música seleccionados para el crecimiento espiritual.'
+export const SITE_URL         = 'https://farocatolico.netlify.app'
 
 // ─────────────────────────────────────────────
 // YouTube
