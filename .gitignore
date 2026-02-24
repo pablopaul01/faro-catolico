@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment variables — NUNCA commitear
+.env
+.env.local
+.env.*.local
+
+# Misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# Netlify
+.netlify/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

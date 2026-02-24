@@ -1,0 +1,52 @@
+import { notFound } from 'next/navigation'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { TABLE_NAMES } from '@/lib/constants'
+import { MovieForm } from '@/components/admin/movies/MovieForm'
+import type { Movie, MovieCategory } from '@/types/app.types'
+
+interface Props {
+  params: Promise<{ id: string }>
+}
+
+export default async function EditMoviePage({ params }: Props) {
+  const { id } = await params
+  const supabase = await createSupabaseServerClient()
+
+  const [movieRes, catsRes] = await Promise.all([
+    supabase.from(TABLE_NAMES.MOVIES).select('*').eq('id', id).single(),
+    supabase.from(TABLE_NAMES.MOVIE_CATEGORIES).select('*').order('sort_order', { ascending: true }),
+  ])
+
+  if (movieRes.error || !movieRes.data) notFound()
+
+  const data = movieRes.data
+  const movie: Movie = {
+    id:           data.id,
+    title:        data.title,
+    description:  data.description,
+    youtubeId:    data.youtube_id,
+    externalUrl:  data.external_url,
+    thumbnailUrl: data.thumbnail_url,
+    year:         data.year,
+    categoryId:   data.category_id,
+    isPublished:  data.is_published,
+    sortOrder:    data.sort_order,
+    createdAt:    data.created_at,
+    updatedAt:    data.updated_at,
+  }
+
+  const categories: MovieCategory[] = (catsRes.data ?? []).map((row) => ({
+    id:        row.id,
+    name:      row.name,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+  }))
+
+  return (
+    <div className="animate-fade-in">
+      <h1 className="font-display text-2xl text-light mb-2">Editar película</h1>
+      <p className="text-light/50 text-sm mb-8">{movie.title}</p>
+      <MovieForm movie={movie} categories={categories} />
+    </div>
+  )
+}

@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   Design System — Faro Católico
+   Tokens definidos via @theme (Tailwind v4)
+───────────────────────────────────────────── */
+@theme {
+  /* Colores de marca */
+  --color-primary:   #0D1B2A;
+  --color-secondary: #1B263B;
+  --color-accent:    #D4AF37;
+  --color-light:     #F8F9FA;
+  --color-muted:     #6B7280;
+  --color-border:    rgba(212, 175, 55, 0.2);
+
+  /* Tipografías — referencia las variables inyectadas por next/font/google */
+  --font-family-display: var(--font-cinzel), Georgia, serif;
+  --font-family-body:    var(--font-inter), system-ui, sans-serif;
+
+  /* Radios */
+  --radius-card: 0.75rem;
+  --radius-sm:   0.375rem;
+
+  /* Animaciones */
+  --animate-fade-in:  fadeIn  0.4s ease-out both;
+  --animate-slide-up: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-scale-in: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─────────────────────────────────────────────
+   Keyframes
+───────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────────
+   Base styles
+───────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-primary);
+    color: var(--color-light);
+    font-family: var(--font-family-body);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-display);
+  }
+
+  /* Scrollbar personalizado */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-primary);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: 3px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Utilidades personalizadas
+───────────────────────────────────────────── */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-family-display);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .bg-card {
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+  }
+
+  .gold-border {
+    border: 1px solid var(--color-accent);
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+  }
+
+  /* Aspect ratio para embeds de YouTube */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+}
