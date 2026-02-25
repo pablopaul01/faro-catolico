@@ -12,7 +12,7 @@ const SkeletonBookCard = () => (
 
 export default function LibrosLoading() {
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <div className="mb-8">
         <div className="h-9 bg-secondary rounded w-32 animate-pulse mb-2" />
         <div className="h-4 bg-secondary rounded w-72 animate-pulse" />

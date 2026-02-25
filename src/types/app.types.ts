@@ -15,6 +15,13 @@ export interface MovieCategory {
   createdAt: string
 }
 
+export interface MoviePlatform {
+  id:        string
+  name:      string
+  sortOrder: number
+  createdAt: string
+}
+
 export interface BookCategory {
   id:        string
   name:      string
@@ -31,11 +38,12 @@ export interface Movie {
   id:            string
   title:         string
   description:   string | null
-  youtubeId:     string
+  youtubeId:     string | null
   externalUrl:   string | null
   thumbnailUrl:  string | null
   year:          number | null
   categoryIds:   string[]
+  platformIds:   string[]
   isPublished:   boolean
   sortOrder:     number
   createdAt:     string
@@ -135,6 +143,8 @@ export interface Submission {
   artist:         string | null
   spotifyUrl:     string | null
   durationSec:    number | null
+  categoryIds:    string[]
+  platformIds:    string[]
   submitterName:  string | null
   submitterEmail: string | null
   notes:          string | null

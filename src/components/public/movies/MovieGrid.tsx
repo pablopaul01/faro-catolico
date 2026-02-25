@@ -1,13 +1,14 @@
 import { MovieCard } from './MovieCard'
-import type { Movie, RatingsMap } from '@/types/app.types'
+import type { Movie, MoviePlatform, RatingsMap } from '@/types/app.types'
 
 interface MovieGridProps {
-  movies:      Movie[]
-  ratingsMap?: RatingsMap
-  slider?:     boolean
+  movies:        Movie[]
+  ratingsMap?:   RatingsMap
+  platformsMap?: Record<string, MoviePlatform>
+  slider?:       boolean
 }
 
-export const MovieGrid = ({ movies, ratingsMap, slider }: MovieGridProps) => {
+export const MovieGrid = ({ movies, ratingsMap, platformsMap, slider }: MovieGridProps) => {
   if (movies.length === 0) {
     return (
       <div className="text-center py-20 text-light/30">
@@ -26,7 +27,11 @@ export const MovieGrid = ({ movies, ratingsMap, slider }: MovieGridProps) => {
             className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
             style={{ animationDelay: `${index * 0.06}s` }}
           >
-            <MovieCard movie={movie} ratingStats={ratingsMap?.[movie.id]} />
+            <MovieCard
+              movie={movie}
+              ratingStats={ratingsMap?.[movie.id]}
+              platforms={platformsMap ? movie.platformIds.map((pid) => platformsMap[pid]).filter(Boolean) : undefined}
+            />
           </div>
         ))}
       </div>

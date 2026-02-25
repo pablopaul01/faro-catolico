@@ -7,6 +7,8 @@ function adaptSubmission(row: Record<string, unknown>): Submission {
     id:             row.id             as string,
     type:           row.type           as Submission['type'],
     title:          row.title          as string,
+    categoryIds:    (row.category_ids  as string[] | null) ?? [],
+    platformIds:    (row.platform_ids  as string[] | null) ?? [],
     description:    row.description    as string | null,
     year:           row.year           as number | null,
     youtubeId:      row.youtube_id     as string | null,
@@ -28,27 +30,31 @@ function adaptSubmission(row: Record<string, unknown>): Submission {
 }
 
 export async function createSubmission(payload: {
-  type:           'pelicula' | 'libro' | 'cancion'
-  title:          string
-  description?:   string
-  year?:          number
-  youtubeId?:     string
-  externalUrl?:   string
-  thumbnailUrl?:  string
-  author?:        string
-  coverUrl?:      string
-  purchaseUrl?:   string
-  pdfUrl?:        string
-  artist?:        string
-  spotifyUrl?:    string
+  type:            'pelicula' | 'libro' | 'cancion'
+  title:           string
+  categoryIds?:    string[]
+  platformIds?:    string[]
+  description?:    string
+  year?:           number
+  youtubeId?:      string
+  externalUrl?:    string
+  thumbnailUrl?:   string
+  author?:         string
+  coverUrl?:       string
+  purchaseUrl?:    string
+  pdfUrl?:         string
+  artist?:         string
+  spotifyUrl?:     string
   submitterName?:  string
   submitterEmail?: string
-  notes?:         string
+  notes?:          string
 }): Promise<void> {
   const supabase = getSupabaseBrowserClient()
   const { error } = await supabase.from(TABLE_NAMES.SUBMISSIONS).insert({
     type:            payload.type,
     title:           payload.title,
+    category_ids:    payload.categoryIds?.length ? payload.categoryIds : null,
+    platform_ids:    payload.platformIds?.length ? payload.platformIds : null,
     description:     payload.description     || null,
     year:            payload.year            || null,
     youtube_id:      payload.youtubeId       || null,
@@ -81,7 +87,7 @@ export async function approveSubmission(sub: Submission): Promise<void> {
   const supabase = getSupabaseBrowserClient()
 
   if (sub.type === 'pelicula') {
-    const { error } = await supabase.from(TABLE_NAMES.MOVIES).insert({
+    const { data: movie, error } = await supabase.from(TABLE_NAMES.MOVIES).insert({
       title:         sub.title,
       description:   sub.description,
       year:          sub.year,
@@ -90,10 +96,22 @@ export async function approveSubmission(sub: Submission): Promise<void> {
       thumbnail_url: sub.thumbnailUrl,
       is_published:  true,
       sort_order:    0,
-    })
+    }).select('id').single()
     if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.MOVIE_CATEGORY_ITEMS).insert(
+        sub.categoryIds.map((cid) => ({ movie_id: movie.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
+    if (sub.platformIds.length > 0) {
+      const { error: platErr } = await supabase.from(TABLE_NAMES.MOVIE_PLATFORM_ITEMS).insert(
+        sub.platformIds.map((pid) => ({ movie_id: movie.id, platform_id: pid }))
+      )
+      if (platErr) throw new Error(platErr.message)
+    }
   } else if (sub.type === 'libro') {
-    const { error } = await supabase.from(TABLE_NAMES.BOOKS).insert({
+    const { data: book, error } = await supabase.from(TABLE_NAMES.BOOKS).insert({
       title:        sub.title,
       author:       sub.author ?? '',
       description:  sub.description,
@@ -103,10 +121,16 @@ export async function approveSubmission(sub: Submission): Promise<void> {
       pdf_url:      sub.pdfUrl,
       is_published: true,
       sort_order:   0,
-    })
+    }).select('id').single()
     if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.BOOK_CATEGORY_ITEMS).insert(
+        sub.categoryIds.map((cid) => ({ book_id: book.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
   } else {
-    const { error } = await supabase.from(TABLE_NAMES.SONGS).insert({
+    const { data: song, error } = await supabase.from(TABLE_NAMES.SONGS).insert({
       title:         sub.title,
       artist:        sub.artist ?? '',
       youtube_id:    sub.youtubeId,
@@ -116,8 +140,14 @@ export async function approveSubmission(sub: Submission): Promise<void> {
       duration_sec:  sub.durationSec,
       is_published:  true,
       sort_order:    0,
-    })
+    }).select('id').single()
     if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.SONG_CATEGORIES).insert(
+        sub.categoryIds.map((cid) => ({ song_id: song.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
   }
 
   const { error } = await supabase

@@ -8,18 +8,20 @@ import { movieSchema, type MovieSchema } from '@/lib/validations'
 import { createMovie, updateMovie } from '@/services/movies.service'
 import { useMoviesStore } from '@/stores/useMoviesStore'
 import { ROUTES } from '@/lib/constants'
-import type { Movie, MovieCategory } from '@/types/app.types'
+import type { Movie, MovieCategory, MoviePlatform } from '@/types/app.types'
 
 interface MovieFormProps {
   movie?:     Movie
   categories: MovieCategory[]
+  platforms:  MoviePlatform[]
 }
 
-export const MovieForm = ({ movie, categories }: MovieFormProps) => {
+export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
   const router   = useRouter()
   const addMovie = useMoviesStore((s) => s.addMovie)
   const updateMovieInStore = useMoviesStore((s) => s.updateMovie)
   const [serverError, setServerError] = useState<string | null>(null)
+  const [selectedPlatformIds, setSelectedPlatformIds] = useState<string[]>(movie?.platformIds ?? [])
 
   const {
     register,
@@ -33,7 +35,7 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
       ? {
           title:        movie.title,
           description:  movie.description  ?? undefined,
-          youtubeId:    movie.youtubeId,
+          youtubeId:    movie.youtubeId    ?? '',
           externalUrl:  movie.externalUrl  ?? '',
           thumbnailUrl: movie.thumbnailUrl ?? '',
           year:         movie.year         ?? undefined,
@@ -55,12 +57,20 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
     )
   }
 
+  const togglePlatform = (pid: string) => {
+    setSelectedPlatformIds((prev) =>
+      prev.includes(pid) ? prev.filter((id) => id !== pid) : [...prev, pid]
+    )
+  }
+
   const onSubmit = async (data: MovieSchema) => {
     setServerError(null)
     try {
       const payload = {
         ...data,
         categoryIds:  selectedCategoryIds,
+        platformIds:  selectedPlatformIds,
+        youtubeId:    data.youtubeId    || null,
         externalUrl:  data.externalUrl  || null,
         thumbnailUrl: data.thumbnailUrl || null,
         description:  data.description  || null,
@@ -89,7 +99,7 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
 
       {/* ID de YouTube */}
       <FormField
-        label="ID de YouTube *"
+        label="ID de YouTube (opcional)"
         hint="Solo el ID, ej: dQw4w9WgXcQ (no la URL completa)"
         error={errors.youtubeId?.message}
       >
@@ -126,6 +136,32 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
                   className="sr-only"
                 />
                 {cat.name}
+              </label>
+            ))}
+          </div>
+        </FormField>
+      )}
+
+      {/* Plataformas (múltiples) */}
+      {platforms.length > 0 && (
+        <FormField label="Plataformas de streaming">
+          <div className="flex flex-wrap gap-2 mt-1">
+            {platforms.map((plat) => (
+              <label
+                key={plat.id}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-sm transition-colors cursor-pointer ${
+                  selectedPlatformIds.includes(plat.id)
+                    ? 'bg-accent/20 border-accent text-accent'
+                    : 'border-border text-light/60 hover:border-accent/40 hover:text-light'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedPlatformIds.includes(plat.id)}
+                  onChange={() => togglePlatform(plat.id)}
+                  className="sr-only"
+                />
+                {plat.name}
               </label>
             ))}
           </div>

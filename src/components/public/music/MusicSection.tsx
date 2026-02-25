@@ -27,9 +27,7 @@ interface MusicSectionProps {
 }
 
 export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProps) => {
-  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(
-    categories[0]?.id ?? null
-  )
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null)
   const [inputQ,  setInputQ]  = useState('')
   const [q,       setQ]       = useState('')
   const [sort,    setSort]    = useState<SortKey>('recent')
@@ -104,7 +102,21 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
 
       {/* Tabs de categorías */}
       {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button
+            onClick={() => setActiveCategoryId(null)}
+            className={cn(
+              'px-4 py-2 rounded-sm text-sm transition-all duration-200',
+              activeCategoryId === null
+                ? 'bg-accent text-primary font-semibold'
+                : 'border border-border text-light/50 hover:border-accent/40 hover:text-light'
+            )}
+          >
+            Todos
+            <span className={cn('ml-2 text-xs', activeCategoryId === null ? 'text-primary/70' : 'text-light/30')}>
+              {songs.length}
+            </span>
+          </button>
           {categories.map((cat) => {
             const count = songs.filter((s) => s.categoryIds.includes(cat.id)).length
             return (

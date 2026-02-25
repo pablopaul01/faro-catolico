@@ -51,7 +51,7 @@ export default async function LibrosPage() {
   }))
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SectionHeader
         title="Libros"
         subtitle="Lectura seleccionada para el alma — espiritualidad, santos y formación"

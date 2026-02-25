@@ -51,7 +51,7 @@ export default async function MusicaPage() {
   }))
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SectionHeader
         title="Música"
         subtitle="Canciones para cada momento del día y del corazón"

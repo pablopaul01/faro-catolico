@@ -4,16 +4,17 @@ import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { YoutubeEmbed } from './YoutubeEmbed'
 import { StarRating } from '@/components/public/StarRating'
-import type { Movie, RatingStats } from '@/types/app.types'
+import type { Movie, MoviePlatform, RatingStats } from '@/types/app.types'
 
 const DESCRIPTION_LIMIT = 110
 
 interface MovieCardProps {
-  movie:       Movie
+  movie:        Movie
   ratingStats?: RatingStats
+  platforms?:   MoviePlatform[]
 }
 
-export const MovieCard = ({ movie, ratingStats }: MovieCardProps) => {
+export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => {
   const { title, description, youtubeId, externalUrl, year, thumbnailUrl } = movie
   const [expanded, setExpanded] = useState(false)
 
@@ -58,6 +59,19 @@ export const MovieCard = ({ movie, ratingStats }: MovieCardProps) => {
           avgRating={ratingStats?.avgRating}
           ratingCount={ratingStats?.ratingCount}
         />
+
+        {platforms && platforms.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {platforms.map((plat) => (
+              <span
+                key={plat.id}
+                className="px-2 py-0.5 rounded-sm border border-accent/40 text-accent text-xs"
+              >
+                {plat.name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {externalUrl && (
           <a

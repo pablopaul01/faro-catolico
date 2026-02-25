@@ -4,7 +4,7 @@ import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
 import { MovieFilterSection } from '@/components/public/movies/MovieFilterSection'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import type { Metadata } from 'next'
-import type { Movie, MovieCategory } from '@/types/app.types'
+import type { Movie, MovieCategory, MoviePlatform } from '@/types/app.types'
 
 export const metadata: Metadata = {
   title:       `Películas recomendadas — ${SITE_NAME}`,
@@ -14,14 +14,18 @@ export const metadata: Metadata = {
 export default async function PeliculasPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [moviesRes, catsRes, ratingsMap] = await Promise.all([
+  const [moviesRes, catsRes, platsRes, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.MOVIES)
-      .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id)`)
+      .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
       .eq('is_published', true)
       .order('created_at', { ascending: false }),
     supabase
       .from(TABLE_NAMES.MOVIE_CATEGORIES)
+      .select('*')
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from(TABLE_NAMES.MOVIE_PLATFORMS)
       .select('*')
       .order('sort_order', { ascending: true }),
     fetchRatingsForContent('pelicula'),
@@ -36,6 +40,7 @@ export default async function PeliculasPage() {
     thumbnailUrl: row.thumbnail_url,
     year:         row.year,
     categoryIds:  (row.movie_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
+    platformIds:  (row.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
     isPublished:  row.is_published,
     sortOrder:    row.sort_order,
     createdAt:    row.created_at,
@@ -49,13 +54,23 @@ export default async function PeliculasPage() {
     createdAt: row.created_at,
   }))
 
+  const platformsMap: Record<string, MoviePlatform> = {}
+  for (const row of platsRes.data ?? []) {
+    platformsMap[row.id] = { id: row.id, name: row.name, sortOrder: row.sort_order, createdAt: row.created_at }
+  }
+
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SectionHeader
         title="Películas"
         subtitle="Vidas de santos, documentales y films aptos para toda la familia"
       />
-      <MovieFilterSection movies={movies} categories={categories} ratingsMap={ratingsMap} />
+      <MovieFilterSection
+        movies={movies}
+        categories={categories}
+        ratingsMap={ratingsMap}
+        platformsMap={platformsMap}
+      />
     </main>
   )
 }

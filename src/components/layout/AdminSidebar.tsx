@@ -2,19 +2,28 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send } from 'lucide-react'
+import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send, MonitorPlay } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { ROUTES, SITE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { href: ROUTES.ADMIN,        label: 'Dashboard',  icon: LayoutDashboard, sub: null },
-  { href: ROUTES.ADMIN_MOVIES, label: 'Películas',  icon: Film,            sub: { href: ROUTES.ADMIN_MOVIE_CATEGORIES, label: 'Categorías' } },
-  { href: ROUTES.ADMIN_BOOKS,  label: 'Libros',     icon: BookOpen,        sub: { href: ROUTES.ADMIN_BOOK_CATEGORIES,  label: 'Categorías' } },
-  { href: ROUTES.ADMIN_MUSIC,        label: 'Música',       icon: Music,       sub: { href: ROUTES.ADMIN_MUSIC_CATEGORIES, label: 'Categorías' } },
-  { href: ROUTES.ADMIN_SUBMISSIONS,   label: 'Propuestas',   icon: Send,        sub: null },
-  { href: ROUTES.ADMIN_SUGGESTIONS,  label: 'Contacto',     icon: Mail,        sub: null },
-] as const
+type SubItem = { href: string; label: string; icon?: typeof Tag }
+
+const navItems: { href: string; label: string; icon: typeof Film; sub: SubItem[] }[] = [
+  { href: ROUTES.ADMIN,              label: 'Dashboard',  icon: LayoutDashboard, sub: [] },
+  { href: ROUTES.ADMIN_MOVIES,       label: 'Películas',  icon: Film,            sub: [
+    { href: ROUTES.ADMIN_MOVIE_CATEGORIES, label: 'Categorías',  icon: Tag },
+    { href: ROUTES.ADMIN_MOVIE_PLATFORMS,  label: 'Plataformas', icon: MonitorPlay },
+  ]},
+  { href: ROUTES.ADMIN_BOOKS,        label: 'Libros',     icon: BookOpen,        sub: [
+    { href: ROUTES.ADMIN_BOOK_CATEGORIES, label: 'Categorías', icon: Tag },
+  ]},
+  { href: ROUTES.ADMIN_MUSIC,        label: 'Música',     icon: Music,           sub: [
+    { href: ROUTES.ADMIN_MUSIC_CATEGORIES, label: 'Categorías', icon: Tag },
+  ]},
+  { href: ROUTES.ADMIN_SUBMISSIONS,  label: 'Propuestas', icon: Send,            sub: [] },
+  { href: ROUTES.ADMIN_SUGGESTIONS,  label: 'Contacto',   icon: Mail,            sub: [] },
+]
 
 export const AdminSidebar = () => {
   const pathname = usePathname()
@@ -39,8 +48,7 @@ export const AdminSidebar = () => {
       {/* Navegación */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map(({ href, label, icon: Icon, sub }) => {
-          const isActive = pathname === href || (href !== ROUTES.ADMIN && pathname.startsWith(href) && !pathname.startsWith(`${href}/categorias`))
-          const isSubActive = sub && pathname.startsWith(sub.href)
+          const isActive = pathname === href || (href !== ROUTES.ADMIN && pathname.startsWith(href) && sub.every((s) => !pathname.startsWith(s.href)))
           return (
             <div key={href}>
               <Link
@@ -55,20 +63,25 @@ export const AdminSidebar = () => {
                 <Icon size={17} />
                 {label}
               </Link>
-              {sub && (
-                <Link
-                  href={sub.href}
-                  className={cn(
-                    'flex items-center gap-3 pl-9 pr-3 py-2 rounded-sm text-xs transition-all duration-150',
-                    isSubActive
-                      ? 'text-accent font-medium'
-                      : 'text-light/40 hover:text-light/70 hover:bg-white/5'
-                  )}
-                >
-                  <Tag size={13} />
-                  {sub.label}
-                </Link>
-              )}
+              {sub.map((s) => {
+                const SubIcon = s.icon ?? Tag
+                const isSubActive = pathname.startsWith(s.href)
+                return (
+                  <Link
+                    key={s.href}
+                    href={s.href}
+                    className={cn(
+                      'flex items-center gap-3 pl-9 pr-3 py-2 rounded-sm text-xs transition-all duration-150',
+                      isSubActive
+                        ? 'text-accent font-medium'
+                        : 'text-light/40 hover:text-light/70 hover:bg-white/5'
+                    )}
+                  >
+                    <SubIcon size={13} />
+                    {s.label}
+                  </Link>
+                )
+              })}
             </div>
           )
         })}

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { MovieGrid } from './MovieGrid'
 import { cn } from '@/lib/utils'
-import type { Movie, MovieCategory, RatingsMap } from '@/types/app.types'
+import type { Movie, MovieCategory, MoviePlatform, RatingsMap } from '@/types/app.types'
 
 type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za'
 
@@ -23,12 +23,13 @@ const sortMovies = (a: Movie, b: Movie, sort: SortKey): number => {
 }
 
 interface MovieFilterSectionProps {
-  movies:      Movie[]
-  categories:  MovieCategory[]
-  ratingsMap?: RatingsMap
+  movies:        Movie[]
+  categories:    MovieCategory[]
+  ratingsMap?:   RatingsMap
+  platformsMap?: Record<string, MoviePlatform>
 }
 
-export const MovieFilterSection = ({ movies, categories, ratingsMap }: MovieFilterSectionProps) => {
+export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMap }: MovieFilterSectionProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [inputQ,   setInputQ]   = useState('')
   const [q,        setQ]        = useState('')
@@ -159,7 +160,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap }: MovieFilt
         </div>
       ) : (
         <>
-          <MovieGrid movies={paginated} ratingsMap={ratingsMap} />
+          <MovieGrid movies={paginated} ratingsMap={ratingsMap} platformsMap={platformsMap} />
 
           {/* Paginación */}
           <div className="flex items-center justify-between gap-4 mt-8">

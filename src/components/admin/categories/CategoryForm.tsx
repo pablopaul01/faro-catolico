@@ -14,15 +14,19 @@ import {
 import {
   createMusicCategory, updateMusicCategory,
 } from '@/services/musicCategories.service'
+import {
+  createMoviePlatform, updateMoviePlatform,
+} from '@/services/moviePlatforms.service'
 import { useMovieCategoriesStore }  from '@/stores/useMovieCategoriesStore'
 import { useBookCategoriesStore }   from '@/stores/useBookCategoriesStore'
 import { useMusicCategoriesStore }  from '@/stores/useMusicCategoriesStore'
+import { useMoviePlatformsStore }   from '@/stores/useMoviePlatformsStore'
 import { ROUTES } from '@/lib/constants'
-import type { MovieCategory, BookCategory, MusicCategory } from '@/types/app.types'
+import type { MovieCategory, BookCategory, MusicCategory, MoviePlatform } from '@/types/app.types'
 
 interface CategoryFormProps {
-  entityType: 'peliculas' | 'libros' | 'musica'
-  category?:  MovieCategory | BookCategory | MusicCategory
+  entityType: 'peliculas' | 'libros' | 'musica' | 'plataformas'
+  category?:  MovieCategory | BookCategory | MusicCategory | MoviePlatform
 }
 
 export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
@@ -35,11 +39,14 @@ export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
   const updateBookCatStore  = useBookCategoriesStore((s) => s.updateCategory)
   const addMusicCategory    = useMusicCategoriesStore((s) => s.addCategory)
   const updateMusicCatStore = useMusicCategoriesStore((s) => s.updateCategory)
+  const addMoviePlatform    = useMoviePlatformsStore((s) => s.addPlatform)
+  const updatePlatformStore = useMoviePlatformsStore((s) => s.updatePlatform)
 
   const backHref =
-    entityType === 'peliculas' ? ROUTES.ADMIN_MOVIE_CATEGORIES :
-    entityType === 'libros'    ? ROUTES.ADMIN_BOOK_CATEGORIES  :
-                                 ROUTES.ADMIN_MUSIC_CATEGORIES
+    entityType === 'peliculas'   ? ROUTES.ADMIN_MOVIE_CATEGORIES :
+    entityType === 'libros'      ? ROUTES.ADMIN_BOOK_CATEGORIES  :
+    entityType === 'plataformas' ? ROUTES.ADMIN_MOVIE_PLATFORMS  :
+                                   ROUTES.ADMIN_MUSIC_CATEGORIES
 
   const {
     register,
@@ -70,6 +77,14 @@ export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
         } else {
           const created = await createBookCategory(data)
           addBookCategory(created)
+        }
+      } else if (entityType === 'plataformas') {
+        if (category) {
+          const updated = await updateMoviePlatform(category.id, data)
+          updatePlatformStore(category.id, updated)
+        } else {
+          const created = await createMoviePlatform(data)
+          addMoviePlatform(created)
         }
       } else {
         if (category) {
@@ -120,7 +135,7 @@ export const CategoryForm = ({ entityType, category }: CategoryFormProps) => {
           disabled={isSubmitting}
           className="px-6 py-2.5 bg-accent text-primary font-semibold rounded-sm hover:bg-accent/90 disabled:opacity-50 transition-colors"
         >
-          {isSubmitting ? 'Guardando...' : category ? 'Guardar cambios' : 'Crear categoría'}
+          {isSubmitting ? 'Guardando...' : category ? 'Guardar cambios' : entityType === 'plataformas' ? 'Crear plataforma' : 'Crear categoría'}
         </button>
         <button
           type="button"

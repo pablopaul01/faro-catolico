@@ -24,7 +24,6 @@ export const Footer = () => (
             {SITE_NAME}
           </Link>
           <p className="text-light/40 text-sm leading-relaxed">{SITE_TAGLINE}</p>
-          <p className="text-light/25 text-xs mt-3">Lazos de Amor Mariano</p>
         </div>
 
         {/* Contenido */}
