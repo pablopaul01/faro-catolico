@@ -1,10 +1,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
 import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
-import { MovieFilterSection } from '@/components/public/movies/MovieFilterSection'
+import { MoviesPageTabs } from '@/components/public/movies/MoviesPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import type { Metadata } from 'next'
-import type { Movie, MovieCategory, MoviePlatform } from '@/types/app.types'
+import type { Movie, MovieCategory, MoviePlatform, YoutubePlaylist, YoutubeChannel } from '@/types/app.types'
 
 export const metadata: Metadata = {
   title:       `Películas recomendadas — ${SITE_NAME}`,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function PeliculasPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [moviesRes, catsRes, platsRes, ratingsMap] = await Promise.all([
+  const [moviesRes, catsRes, platsRes, ratingsMap, ytPlRes, ytChRes] = await Promise.all([
     supabase
       .from(TABLE_NAMES.MOVIES)
       .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
@@ -29,6 +29,16 @@ export default async function PeliculasPage() {
       .select('*')
       .order('sort_order', { ascending: true }),
     fetchRatingsForContent('pelicula'),
+    supabase
+      .from(TABLE_NAMES.YOUTUBE_PLAYLISTS)
+      .select(`*, ${TABLE_NAMES.YOUTUBE_PLAYLIST_CATEGORY_ITEMS}(category_id)`)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from(TABLE_NAMES.YOUTUBE_CHANNELS)
+      .select(`*, ${TABLE_NAMES.YOUTUBE_CHANNEL_CATEGORY_ITEMS}(category_id)`)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true }),
   ])
 
   const movies: Movie[] = (moviesRes.data ?? []).map((row) => ({
@@ -59,14 +69,42 @@ export default async function PeliculasPage() {
     platformsMap[row.id] = { id: row.id, name: row.name, sortOrder: row.sort_order, createdAt: row.created_at }
   }
 
+  const youtubePlaylists: YoutubePlaylist[] = (ytPlRes.data ?? []).map((row) => ({
+    id:            row.id,
+    title:         row.title,
+    description:   row.description,
+    youtubeListId: row.youtube_list_id,
+    thumbnailUrl:  row.thumbnail_url,
+    categoryIds:   (row.youtube_playlist_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
+    isPublished:   row.is_published,
+    sortOrder:     row.sort_order,
+    createdAt:     row.created_at,
+    updatedAt:     row.updated_at,
+  }))
+
+  const youtubeChannels: YoutubeChannel[] = (ytChRes.data ?? []).map((row) => ({
+    id:           row.id,
+    name:         row.name,
+    description:  row.description,
+    channelUrl:   row.channel_url,
+    thumbnailUrl: row.thumbnail_url,
+    categoryIds:  (row.youtube_channel_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
+    isPublished:  row.is_published,
+    sortOrder:    row.sort_order,
+    createdAt:    row.created_at,
+    updatedAt:    row.updated_at,
+  }))
+
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SectionHeader
         title="Películas"
-        subtitle="Vidas de santos, documentales y films aptos para toda la familia"
+        subtitle="Vidas de santos, documentales, playlists y canales para toda la familia"
       />
-      <MovieFilterSection
+      <MoviesPageTabs
         movies={movies}
+        youtubePlaylists={youtubePlaylists}
+        youtubeChannels={youtubeChannels}
         categories={categories}
         ratingsMap={ratingsMap}
         platformsMap={platformsMap}

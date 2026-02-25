@@ -98,10 +98,38 @@ export interface Playlist {
   updatedAt:    string
 }
 
-export type MovieFormPayload    = Omit<Movie,    'id' | 'createdAt' | 'updatedAt'>
-export type BookFormPayload     = Omit<Book,     'id' | 'createdAt' | 'updatedAt'>
-export type SongFormPayload     = Omit<Song,     'id' | 'createdAt' | 'updatedAt'>
-export type PlaylistFormPayload = Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>
+export interface YoutubePlaylist {
+  id:            string
+  title:         string
+  description:   string | null
+  youtubeListId: string
+  thumbnailUrl:  string | null
+  categoryIds:   string[]
+  isPublished:   boolean
+  sortOrder:     number
+  createdAt:     string
+  updatedAt:     string
+}
+
+export interface YoutubeChannel {
+  id:           string
+  name:         string
+  description:  string | null
+  channelUrl:   string
+  thumbnailUrl: string | null
+  categoryIds:  string[]
+  isPublished:  boolean
+  sortOrder:    number
+  createdAt:    string
+  updatedAt:    string
+}
+
+export type MovieFormPayload          = Omit<Movie,           'id' | 'createdAt' | 'updatedAt'>
+export type BookFormPayload           = Omit<Book,            'id' | 'createdAt' | 'updatedAt'>
+export type SongFormPayload           = Omit<Song,            'id' | 'createdAt' | 'updatedAt'>
+export type PlaylistFormPayload       = Omit<Playlist,        'id' | 'createdAt' | 'updatedAt'>
+export type YoutubePlaylistFormPayload = Omit<YoutubePlaylist, 'id' | 'createdAt' | 'updatedAt'>
+export type YoutubeChannelFormPayload  = Omit<YoutubeChannel,  'id' | 'createdAt' | 'updatedAt'>
 
 // ─────────────────────────────────────────────
 // Valoraciones
@@ -143,7 +171,7 @@ export interface ContactMessage {
 // ─────────────────────────────────────────────
 export interface Submission {
   id:             string
-  type:           'pelicula' | 'libro' | 'cancion' | 'playlist'
+  type:           'pelicula' | 'libro' | 'cancion' | 'playlist' | 'youtube_playlist' | 'youtube_channel'
   title:          string
   description:    string | null
   year:           number | null

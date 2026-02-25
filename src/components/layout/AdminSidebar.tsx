@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send, MonitorPlay, ListMusic } from 'lucide-react'
+import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send, MonitorPlay, ListMusic, PlaySquare, Youtube } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { ROUTES, SITE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -12,8 +12,10 @@ type SubItem = { href: string; label: string; icon?: typeof Tag }
 const navItems: { href: string; label: string; icon: typeof Film; sub: SubItem[] }[] = [
   { href: ROUTES.ADMIN,              label: 'Dashboard',  icon: LayoutDashboard, sub: [] },
   { href: ROUTES.ADMIN_MOVIES,       label: 'Películas',  icon: Film,            sub: [
-    { href: ROUTES.ADMIN_MOVIE_CATEGORIES, label: 'Categorías',  icon: Tag },
-    { href: ROUTES.ADMIN_MOVIE_PLATFORMS,  label: 'Plataformas', icon: MonitorPlay },
+    { href: ROUTES.ADMIN_MOVIE_CATEGORIES, label: 'Categorías',   icon: Tag },
+    { href: ROUTES.ADMIN_MOVIE_PLATFORMS,  label: 'Plataformas',  icon: MonitorPlay },
+    { href: ROUTES.ADMIN_YOUTUBE_PLAYLISTS, label: 'Playlists YT', icon: PlaySquare },
+    { href: ROUTES.ADMIN_YOUTUBE_CHANNELS,  label: 'Canales YT',   icon: Youtube },
   ]},
   { href: ROUTES.ADMIN_BOOKS,        label: 'Libros',     icon: BookOpen,        sub: [
     { href: ROUTES.ADMIN_BOOK_CATEGORIES, label: 'Categorías', icon: Tag },

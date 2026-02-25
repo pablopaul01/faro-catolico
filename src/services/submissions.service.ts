@@ -30,7 +30,7 @@ function adaptSubmission(row: Record<string, unknown>): Submission {
 }
 
 export async function createSubmission(payload: {
-  type:            'pelicula' | 'libro' | 'cancion' | 'playlist'
+  type:            'pelicula' | 'libro' | 'cancion' | 'playlist' | 'youtube_playlist' | 'youtube_channel'
   title:           string
   categoryIds?:    string[]
   platformIds?:    string[]
@@ -161,6 +161,38 @@ export async function approveSubmission(sub: Submission): Promise<void> {
     if (sub.categoryIds.length > 0) {
       const { error: catErr } = await supabase.from(TABLE_NAMES.PLAYLIST_CATEGORY_ITEMS).insert(
         sub.categoryIds.map((cid) => ({ playlist_id: playlist.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
+  } else if (sub.type === 'youtube_playlist') {
+    const { data: ytpl, error } = await supabase.from(TABLE_NAMES.YOUTUBE_PLAYLISTS).insert({
+      title:           sub.title,
+      description:     sub.description,
+      youtube_list_id: sub.youtubeId ?? '',
+      thumbnail_url:   sub.thumbnailUrl,
+      is_published:    true,
+      sort_order:      0,
+    }).select('id').single()
+    if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.YOUTUBE_PLAYLIST_CATEGORY_ITEMS).insert(
+        sub.categoryIds.map((cid) => ({ playlist_id: ytpl.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
+  } else if (sub.type === 'youtube_channel') {
+    const { data: ytch, error } = await supabase.from(TABLE_NAMES.YOUTUBE_CHANNELS).insert({
+      name:          sub.title,
+      description:   sub.description,
+      channel_url:   sub.externalUrl ?? '',
+      thumbnail_url: sub.thumbnailUrl,
+      is_published:  true,
+      sort_order:    0,
+    }).select('id').single()
+    if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.YOUTUBE_CHANNEL_CATEGORY_ITEMS).insert(
+        sub.categoryIds.map((cid) => ({ channel_id: ytch.id, category_id: cid }))
       )
       if (catErr) throw new Error(catErr.message)
     }

@@ -14,12 +14,21 @@ import type { Submission } from '@/types/app.types'
 
 const YOUTUBE_WATCH = 'https://www.youtube.com/watch?v='
 
-const TYPE_LABELS: Record<string, string> = { pelicula: 'Película', libro: 'Libro', cancion: 'Canción', playlist: 'Playlist' }
+const TYPE_LABELS: Record<string, string> = {
+  pelicula:         'Película',
+  libro:            'Libro',
+  cancion:          'Canción',
+  playlist:         'Playlist',
+  youtube_playlist: 'Playlist YT',
+  youtube_channel:  'Canal YT',
+}
 const TYPE_COLORS: Record<string, string> = {
-  pelicula: 'bg-blue-900/40 text-blue-300 border-blue-700/40',
-  libro:    'bg-emerald-900/40 text-emerald-300 border-emerald-700/40',
-  cancion:  'bg-purple-900/40 text-purple-300 border-purple-700/40',
-  playlist: 'bg-pink-900/40 text-pink-300 border-pink-700/40',
+  pelicula:         'bg-blue-900/40 text-blue-300 border-blue-700/40',
+  libro:            'bg-emerald-900/40 text-emerald-300 border-emerald-700/40',
+  cancion:          'bg-purple-900/40 text-purple-300 border-purple-700/40',
+  playlist:         'bg-pink-900/40 text-pink-300 border-pink-700/40',
+  youtube_playlist: 'bg-red-900/40 text-red-300 border-red-700/40',
+  youtube_channel:  'bg-orange-900/40 text-orange-300 border-orange-700/40',
 }
 const STATUS_COLORS: Record<string, string> = {
   pendiente: 'text-yellow-400',
@@ -219,6 +228,20 @@ function SubmissionCard({
             <div className="sm:col-span-2">
               <label className={labelCls}>URL de la playlist de Spotify</label>
               <input value={draft.spotifyUrl ?? ''} onChange={set('spotifyUrl')} placeholder="https://open.spotify.com/playlist/..." className={inputCls} />
+            </div>
+          )}
+
+          {sub.type === 'youtube_playlist' && (
+            <div className="sm:col-span-2">
+              <label className={labelCls}>ID de la playlist de YouTube</label>
+              <input value={draft.youtubeId ?? ''} onChange={set('youtubeId')} placeholder="PLxxxxxxxxxxxxxxxxxxxxxx" className={inputCls} />
+            </div>
+          )}
+
+          {sub.type === 'youtube_channel' && (
+            <div className="sm:col-span-2">
+              <label className={labelCls}>URL del canal de YouTube</label>
+              <input value={draft.externalUrl ?? ''} onChange={set('externalUrl')} placeholder="https://www.youtube.com/@nombrecanal" className={inputCls} />
             </div>
           )}
 

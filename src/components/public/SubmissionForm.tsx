@@ -77,9 +77,11 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
   const tipo = watch('type')
 
   const activeCategoryList =
-    tipo === 'pelicula' ? movieCategories :
-    tipo === 'libro'    ? bookCategories  :
-                          musicCategories
+    tipo === 'pelicula'        ? movieCategories :
+    tipo === 'libro'           ? bookCategories  :
+    tipo === 'youtube_playlist' ||
+    tipo === 'youtube_channel' ? movieCategories :
+                                 musicCategories
 
   const toggleCategory = (id: string) => {
     const next = selectedCategoryIds.includes(id)
@@ -164,6 +166,8 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
           <option value="libro">Libro</option>
           <option value="cancion">Canción</option>
           <option value="playlist">Playlist de Spotify</option>
+          <option value="youtube_playlist">Playlist de YouTube</option>
+          <option value="youtube_channel">Canal de YouTube</option>
         </select>
       </Field>
 
@@ -174,8 +178,10 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
           placeholder={
             tipo === 'pelicula' ? 'Ej: La Pasión de Cristo' :
             tipo === 'libro'    ? 'Ej: El Señor del Mundo'  :
-            tipo === 'playlist' ? 'Ej: Canciones para la oración' :
-                                  'Ej: Ave María'
+            tipo === 'playlist'         ? 'Ej: Canciones para la oración' :
+            tipo === 'youtube_playlist' ? 'Ej: Documentales católicos'    :
+            tipo === 'youtube_channel'  ? 'Nombre del canal de YouTube'   :
+                                          'Ej: Ave María'
           }
           className={inputClass}
         />
@@ -222,6 +228,18 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
       {tipo === 'playlist' && (
         <Field label="URL de la playlist de Spotify *" error={errors.spotifyUrl?.message}>
           <input {...register('spotifyUrl')} placeholder="https://open.spotify.com/playlist/..." className={inputClass} />
+        </Field>
+      )}
+
+      {tipo === 'youtube_playlist' && (
+        <Field label="ID de la playlist de YouTube *" hint="El código después de ?list= en la URL de YouTube" error={errors.youtubeId?.message}>
+          <input {...register('youtubeId')} placeholder="Ej: PLxxxxxxxxxxxxxxxxxxxxxx" className={inputClass} />
+        </Field>
+      )}
+
+      {tipo === 'youtube_channel' && (
+        <Field label="URL del canal de YouTube *" error={errors.externalUrl?.message}>
+          <input {...register('externalUrl')} placeholder="https://www.youtube.com/@nombrecanal" className={inputClass} />
         </Field>
       )}
 

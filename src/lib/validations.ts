@@ -92,10 +92,40 @@ export const playlistSchema = z.object({
 export type PlaylistSchema = z.infer<typeof playlistSchema>
 
 // ─────────────────────────────────────────────
+// Schema para playlists de YouTube
+// ─────────────────────────────────────────────
+export const youtubePlaylistSchema = z.object({
+  title:         z.string().min(1, 'El título es obligatorio').max(200),
+  description:   z.string().max(2000).nullable().optional().or(z.literal('')),
+  youtubeListId: z.string().min(1, 'El ID de la playlist es obligatorio').max(200),
+  thumbnailUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
+  categoryIds:   z.array(z.string().uuid()),
+  isPublished:   z.boolean(),
+  sortOrder:     z.number().int().min(0),
+})
+
+export type YoutubePlaylistSchema = z.infer<typeof youtubePlaylistSchema>
+
+// ─────────────────────────────────────────────
+// Schema para canales de YouTube
+// ─────────────────────────────────────────────
+export const youtubeChannelSchema = z.object({
+  name:         z.string().min(1, 'El nombre es obligatorio').max(200),
+  description:  z.string().max(2000).nullable().optional().or(z.literal('')),
+  channelUrl:   z.string().url('Debe ser una URL válida').min(1, 'La URL del canal es obligatoria'),
+  thumbnailUrl: z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
+  categoryIds:  z.array(z.string().uuid()),
+  isPublished:  z.boolean(),
+  sortOrder:    z.number().int().min(0),
+})
+
+export type YoutubeChannelSchema = z.infer<typeof youtubeChannelSchema>
+
+// ─────────────────────────────────────────────
 // Schema para propuestas de contenido
 // ─────────────────────────────────────────────
 export const submissionSchema = z.object({
-  type:           z.enum(['pelicula', 'libro', 'cancion', 'playlist'], { message: 'Selecciona un tipo' }),
+  type:           z.enum(['pelicula', 'libro', 'cancion', 'playlist', 'youtube_playlist', 'youtube_channel'], { message: 'Selecciona un tipo' }),
   title:          z.string().min(1, 'El título es obligatorio').max(200),
   categoryIds:    z.array(z.string().uuid()),
   platformIds:    z.array(z.string().uuid()),
