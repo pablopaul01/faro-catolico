@@ -45,7 +45,7 @@ export default async function SugerirContenidoPage() {
   }))
 
   return (
-    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 animate-fade-in">
+    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 pb-24 animate-fade-in">
       <h1 className="font-display text-3xl sm:text-4xl text-light mb-2">Sugerir contenido</h1>
       <p className="text-light/50 text-sm mb-8">
         ¿Conocés una película, libro o canción que debería estar en Faro Católico?

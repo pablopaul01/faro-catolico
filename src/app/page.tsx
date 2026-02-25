@@ -106,7 +106,7 @@ export default async function HomePage() {
       </div>
 
       {/* Sección música */}
-      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pt-10">
+      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pt-10 pb-24">
         <SectionHeader
           title="Música"
           subtitle="Canciones para cada momento del corazón"

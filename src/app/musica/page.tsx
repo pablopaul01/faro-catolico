@@ -1,10 +1,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
 import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
-import { MusicSection } from '@/components/public/music/MusicSection'
+import { MusicPageTabs } from '@/components/public/music/MusicPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import type { Metadata } from 'next'
-import type { Song, MusicCategory } from '@/types/app.types'
+import type { Song, MusicCategory, Playlist } from '@/types/app.types'
 
 export const metadata: Metadata = {
   title:       `Música católica — ${SITE_NAME}`,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function MusicaPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [{ data: songsData }, { data: catsData }, ratingsMap] = await Promise.all([
+  const [{ data: songsData }, { data: catsData }, { data: playlistsData }, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.SONGS)
       .select(`*, ${TABLE_NAMES.SONG_CATEGORIES}(category_id)`)
@@ -24,6 +24,11 @@ export default async function MusicaPage() {
       .from(TABLE_NAMES.MUSIC_CATEGORIES)
       .select('*')
       .order('sort_order', { ascending: true }),
+    supabase
+      .from(TABLE_NAMES.PLAYLISTS)
+      .select(`*, ${TABLE_NAMES.PLAYLIST_CATEGORY_ITEMS}(category_id)`)
+      .eq('is_published', true)
+      .order('created_at', { ascending: false }),
     fetchRatingsForContent('cancion'),
   ])
 
@@ -50,13 +55,26 @@ export default async function MusicaPage() {
     createdAt: row.created_at,
   }))
 
+  const playlists: Playlist[] = (playlistsData ?? []).map((row) => ({
+    id:           row.id,
+    title:        row.title,
+    description:  row.description,
+    spotifyUrl:   row.spotify_url,
+    thumbnailUrl: row.thumbnail_url,
+    categoryIds:  (row.playlist_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
+    isPublished:  row.is_published,
+    sortOrder:    row.sort_order,
+    createdAt:    row.created_at,
+    updatedAt:    row.updated_at,
+  }))
+
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SectionHeader
         title="Música"
-        subtitle="Canciones para cada momento del día y del corazón"
+        subtitle="Canciones y playlists para cada momento del día y del corazón"
       />
-      <MusicSection songs={songs} categories={categories} ratingsMap={ratingsMap} />
+      <MusicPageTabs songs={songs} playlists={playlists} categories={categories} ratingsMap={ratingsMap} />
     </main>
   )
 }

@@ -46,7 +46,11 @@ export const MovieGrid = ({ movies, ratingsMap, platformsMap, slider }: MovieGri
           className="animate-slide-up h-full"
           style={{ animationDelay: `${index * 0.06}s` }}
         >
-          <MovieCard movie={movie} ratingStats={ratingsMap?.[movie.id]} />
+          <MovieCard
+              movie={movie}
+              ratingStats={ratingsMap?.[movie.id]}
+              platforms={platformsMap ? movie.platformIds.map((pid) => platformsMap[pid]).filter(Boolean) : undefined}
+            />
         </div>
       ))}
     </div>

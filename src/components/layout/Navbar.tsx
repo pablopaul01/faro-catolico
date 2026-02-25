@@ -28,7 +28,7 @@ export const Navbar = () => {
           href={ROUTES.HOME}
           className="flex items-center gap-2.5 font-display text-xl text-accent hover:text-accent/80 transition-colors"
         >
-          <Image src="/fc-logo.png" alt={SITE_NAME} width={32} height={32} />
+          <Image src="/fc-logo.png" alt={SITE_NAME} width={54} height={54} />
           {SITE_NAME}
         </Link>
 
@@ -85,7 +85,7 @@ export const Navbar = () => {
             <Link
               key={href}
               href={href}
-              onClick={() => setIsOpen(false)}
+              onClick={() => { setIsOpen(false); window.scrollTo(0, 0) }}
               className="block px-3 py-2.5 text-sm text-light/70 hover:text-light hover:bg-white/5 rounded-sm transition-colors"
             >
               {label}

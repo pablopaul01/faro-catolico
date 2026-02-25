@@ -79,8 +79,23 @@ export type SuggestionSchema = z.infer<typeof suggestionSchema>
 // ─────────────────────────────────────────────
 // Schema para propuestas de contenido
 // ─────────────────────────────────────────────
+export const playlistSchema = z.object({
+  title:        z.string().min(1, 'El título es obligatorio').max(200),
+  description:  z.string().max(2000).nullable().optional().or(z.literal('')),
+  spotifyUrl:   z.string().url('Debe ser una URL válida de Spotify').min(1, 'La URL de Spotify es obligatoria'),
+  thumbnailUrl: z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
+  categoryIds:  z.array(z.string().uuid()),
+  isPublished:  z.boolean(),
+  sortOrder:    z.number().int().min(0),
+})
+
+export type PlaylistSchema = z.infer<typeof playlistSchema>
+
+// ─────────────────────────────────────────────
+// Schema para propuestas de contenido
+// ─────────────────────────────────────────────
 export const submissionSchema = z.object({
-  type:           z.enum(['pelicula', 'libro', 'cancion'], { message: 'Selecciona un tipo' }),
+  type:           z.enum(['pelicula', 'libro', 'cancion', 'playlist'], { message: 'Selecciona un tipo' }),
   title:          z.string().min(1, 'El título es obligatorio').max(200),
   categoryIds:    z.array(z.string().uuid()),
   platformIds:    z.array(z.string().uuid()),

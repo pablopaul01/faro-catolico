@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ContactoPage() {
   return (
-    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 animate-fade-in">
+    <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 animate-fade-in pb-24">
       <div className="mb-10 text-center">
         <h1 className="font-display text-3xl text-light mb-3">Contacto</h1>
         <p className="text-light/50 text-sm leading-relaxed max-w-md mx-auto">

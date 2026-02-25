@@ -85,9 +85,23 @@ export interface Song {
 // ─────────────────────────────────────────────
 // Payloads de formularios (sin campos generados por la DB)
 // ─────────────────────────────────────────────
-export type MovieFormPayload = Omit<Movie, 'id' | 'createdAt' | 'updatedAt'>
-export type BookFormPayload  = Omit<Book,  'id' | 'createdAt' | 'updatedAt'>
-export type SongFormPayload  = Omit<Song,  'id' | 'createdAt' | 'updatedAt'>
+export interface Playlist {
+  id:           string
+  title:        string
+  description:  string | null
+  spotifyUrl:   string
+  thumbnailUrl: string | null
+  categoryIds:  string[]
+  isPublished:  boolean
+  sortOrder:    number
+  createdAt:    string
+  updatedAt:    string
+}
+
+export type MovieFormPayload    = Omit<Movie,    'id' | 'createdAt' | 'updatedAt'>
+export type BookFormPayload     = Omit<Book,     'id' | 'createdAt' | 'updatedAt'>
+export type SongFormPayload     = Omit<Song,     'id' | 'createdAt' | 'updatedAt'>
+export type PlaylistFormPayload = Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>
 
 // ─────────────────────────────────────────────
 // Valoraciones
@@ -129,7 +143,7 @@ export interface ContactMessage {
 // ─────────────────────────────────────────────
 export interface Submission {
   id:             string
-  type:           'pelicula' | 'libro' | 'cancion'
+  type:           'pelicula' | 'libro' | 'cancion' | 'playlist'
   title:          string
   description:    string | null
   year:           number | null

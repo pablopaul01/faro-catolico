@@ -51,7 +51,7 @@ export function SuggestionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 max-w-lg mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 max-w-lg mx-auto pb-24">
       {/* Tipo */}
       <div className="flex flex-col gap-1.5">
         <label className="text-sm text-light/70">Tipo de contenido</label>

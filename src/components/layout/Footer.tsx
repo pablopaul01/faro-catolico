@@ -20,7 +20,7 @@ export const Footer = () => (
         {/* Marca */}
         <div>
           <Link href={ROUTES.HOME} className="flex items-center gap-2 font-display text-lg text-accent mb-3">
-            <Image src="/fc-logo.png" alt={SITE_NAME} width={28} height={28} />
+            <Image src="/fc-logo.png" alt={SITE_NAME} width={54} height={54} />
             {SITE_NAME}
           </Link>
           <p className="text-light/40 text-sm leading-relaxed">{SITE_TAGLINE}</p>

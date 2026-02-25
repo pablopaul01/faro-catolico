@@ -30,7 +30,7 @@ function adaptSubmission(row: Record<string, unknown>): Submission {
 }
 
 export async function createSubmission(payload: {
-  type:            'pelicula' | 'libro' | 'cancion'
+  type:            'pelicula' | 'libro' | 'cancion' | 'playlist'
   title:           string
   categoryIds?:    string[]
   platformIds?:    string[]
@@ -129,7 +129,7 @@ export async function approveSubmission(sub: Submission): Promise<void> {
       )
       if (catErr) throw new Error(catErr.message)
     }
-  } else {
+  } else if (sub.type === 'cancion') {
     const { data: song, error } = await supabase.from(TABLE_NAMES.SONGS).insert({
       title:         sub.title,
       artist:        sub.artist ?? '',
@@ -145,6 +145,22 @@ export async function approveSubmission(sub: Submission): Promise<void> {
     if (sub.categoryIds.length > 0) {
       const { error: catErr } = await supabase.from(TABLE_NAMES.SONG_CATEGORIES).insert(
         sub.categoryIds.map((cid) => ({ song_id: song.id, category_id: cid }))
+      )
+      if (catErr) throw new Error(catErr.message)
+    }
+  } else if (sub.type === 'playlist') {
+    const { data: playlist, error } = await supabase.from(TABLE_NAMES.PLAYLISTS).insert({
+      title:         sub.title,
+      description:   sub.description,
+      spotify_url:   sub.spotifyUrl ?? '',
+      thumbnail_url: sub.thumbnailUrl,
+      is_published:  true,
+      sort_order:    0,
+    }).select('id').single()
+    if (error) throw new Error(error.message)
+    if (sub.categoryIds.length > 0) {
+      const { error: catErr } = await supabase.from(TABLE_NAMES.PLAYLIST_CATEGORY_ITEMS).insert(
+        sub.categoryIds.map((cid) => ({ playlist_id: playlist.id, category_id: cid }))
       )
       if (catErr) throw new Error(catErr.message)
     }

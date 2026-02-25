@@ -163,6 +163,7 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
           <option value="pelicula">Película</option>
           <option value="libro">Libro</option>
           <option value="cancion">Canción</option>
+          <option value="playlist">Playlist de Spotify</option>
         </select>
       </Field>
 
@@ -170,7 +171,12 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
       <Field label="Título *" error={errors.title?.message}>
         <input
           {...register('title')}
-          placeholder={tipo === 'pelicula' ? 'Ej: La Pasión de Cristo' : tipo === 'libro' ? 'Ej: El Señor del Mundo' : 'Ej: Ave María'}
+          placeholder={
+            tipo === 'pelicula' ? 'Ej: La Pasión de Cristo' :
+            tipo === 'libro'    ? 'Ej: El Señor del Mundo'  :
+            tipo === 'playlist' ? 'Ej: Canciones para la oración' :
+                                  'Ej: Ave María'
+          }
           className={inputClass}
         />
       </Field>
@@ -208,9 +214,15 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
             <input {...register('youtubeId')} placeholder="Ej: dQw4w9WgXcQ" className={inputClass} />
           </Field>
           <Field label="URL de Spotify (opcional)" error={errors.spotifyUrl?.message}>
-            <input {...register('spotifyUrl')} placeholder="https://open.spotify.com/..." className={inputClass} />
+            <input {...register('spotifyUrl')} placeholder="https://open.spotify.com/track/..." className={inputClass} />
           </Field>
         </>
+      )}
+
+      {tipo === 'playlist' && (
+        <Field label="URL de la playlist de Spotify *" error={errors.spotifyUrl?.message}>
+          <input {...register('spotifyUrl')} placeholder="https://open.spotify.com/playlist/..." className={inputClass} />
+        </Field>
       )}
 
       {/* Categorías */}
