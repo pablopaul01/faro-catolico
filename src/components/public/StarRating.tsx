@@ -33,15 +33,21 @@ export function StarRating({
   }, [storageKey])
 
   const handleRate = async (star: number) => {
-    if (myVote !== null || loading) return
+    if (loading || star === myVote) return
     setLoading(true)
     try {
       await submitRating(contentType, contentId, star)
       localStorage.setItem(storageKey, String(star))
+      if (myVote !== null) {
+        // Cambio de voto: el conteo no varía, solo se ajusta el promedio
+        setLocalAvg((localAvg * localCount - myVote + star) / localCount)
+      } else {
+        // Primer voto: el conteo sube en 1
+        const newCount = localCount + 1
+        setLocalCount(newCount)
+        setLocalAvg((localAvg * localCount + star) / newCount)
+      }
       setMyVote(star)
-      const newCount = localCount + 1
-      setLocalCount(newCount)
-      setLocalAvg((localAvg * localCount + star) / newCount)
       router.refresh()
     } catch (err) {
       console.error('Error al guardar rating:', err)
@@ -62,11 +68,11 @@ export function StarRating({
           <button
             key={star}
             type="button"
-            disabled={myVote !== null || loading}
+            disabled={loading}
             onClick={() => handleRate(star)}
-            onMouseEnter={() => myVote === null && setHover(star)}
-            className="disabled:cursor-default"
-            aria-label={`Votar ${star} estrella${star > 1 ? 's' : ''}`}
+            onMouseEnter={() => setHover(star)}
+            className="disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={`${myVote !== null ? 'Cambiar a' : 'Votar'} ${star} estrella${star > 1 ? 's' : ''}`}
           >
             <Star
               size={14}
