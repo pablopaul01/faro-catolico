@@ -251,6 +251,15 @@ export async function updateSubmission(id: string, payload: {
 
 export async function deleteSubmission(id: string): Promise<void> {
   const supabase = getSupabaseBrowserClient()
+  const { data: sub } = await supabase
+    .from(TABLE_NAMES.SUBMISSIONS)
+    .select('type, pdf_url')
+    .eq('id', id)
+    .single()
+  if (sub?.type === 'libro' && sub.pdf_url?.includes('/storage/v1/object/public/media/')) {
+    const filePath = sub.pdf_url.split('/storage/v1/object/public/media/')[1]
+    await supabase.storage.from('media').remove([filePath]) // best-effort
+  }
   const { error } = await supabase
     .from(TABLE_NAMES.SUBMISSIONS)
     .delete()

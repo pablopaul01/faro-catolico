@@ -1,9 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { PlaySquare, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
-import { YOUTUBE_NOCOOKIE_BASE } from '@/lib/constants'
-import { cn } from '@/lib/utils'
+import { ExternalLink, PlaySquare } from 'lucide-react'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { YoutubePlaylist } from '@/types/app.types'
 
@@ -13,10 +10,8 @@ interface YoutubePlaylistCardProps {
 }
 
 export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePlaylistCardProps) {
-  const [expanded, setExpanded] = useState(false)
   const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
-  const embedUrl = `${YOUTUBE_NOCOOKIE_BASE}/videoseries?list=${playlist.youtubeListId}`
   const youtubeUrl = `https://www.youtube.com/playlist?list=${playlist.youtubeListId}`
 
   return (
@@ -54,40 +49,15 @@ export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePla
           </div>
         )}
 
-        {/* Embed expandible */}
-        {!copyrightMode && expanded && (
-          <div className="rounded-sm overflow-hidden border border-border mt-1">
-            <iframe
-              src={embedUrl}
-              width="100%"
-              height="250"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="block"
-            />
-          </div>
-        )}
-
         {!copyrightMode && (
-          <div className="flex items-center gap-3 mt-auto pt-2">
-            <button
-              onClick={() => setExpanded((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-accent/80 hover:text-accent transition-colors"
-            >
-              {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-              {expanded ? 'Ocultar' : 'Ver playlist'}
-            </button>
-            <a
-              href={youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                'flex items-center gap-1 text-xs text-light/40 hover:text-accent transition-colors ml-auto'
-              )}
-            >
-              Abrir en YouTube <ExternalLink size={11} />
-            </a>
-          </div>
+          <a
+            href={youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto pt-2 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
+          >
+            Abrir en YouTube <ExternalLink size={11} />
+          </a>
         )}
       </div>
     </article>
