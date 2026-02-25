@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { PlaySquare, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
 import { YOUTUBE_NOCOOKIE_BASE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { YoutubePlaylist } from '@/types/app.types'
 
 interface YoutubePlaylistCardProps {
@@ -13,6 +14,7 @@ interface YoutubePlaylistCardProps {
 
 export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePlaylistCardProps) {
   const [expanded, setExpanded] = useState(false)
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   const embedUrl = `${YOUTUBE_NOCOOKIE_BASE}/videoseries?list=${playlist.youtubeListId}`
   const youtubeUrl = `https://www.youtube.com/playlist?list=${playlist.youtubeListId}`
@@ -53,7 +55,7 @@ export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePla
         )}
 
         {/* Embed expandible */}
-        {expanded && (
+        {!copyrightMode && expanded && (
           <div className="rounded-sm overflow-hidden border border-border mt-1">
             <iframe
               src={embedUrl}
@@ -66,25 +68,27 @@ export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePla
           </div>
         )}
 
-        <div className="flex items-center gap-3 mt-auto pt-2">
-          <button
-            onClick={() => setExpanded((v) => !v)}
-            className="flex items-center gap-1.5 text-xs text-accent/80 hover:text-accent transition-colors"
-          >
-            {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-            {expanded ? 'Ocultar' : 'Ver playlist'}
-          </button>
-          <a
-            href={youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              'flex items-center gap-1 text-xs text-light/40 hover:text-accent transition-colors ml-auto'
-            )}
-          >
-            Abrir en YouTube <ExternalLink size={11} />
-          </a>
-        </div>
+        {!copyrightMode && (
+          <div className="flex items-center gap-3 mt-auto pt-2">
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="flex items-center gap-1.5 text-xs text-accent/80 hover:text-accent transition-colors"
+            >
+              {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              {expanded ? 'Ocultar' : 'Ver playlist'}
+            </button>
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                'flex items-center gap-1 text-xs text-light/40 hover:text-accent transition-colors ml-auto'
+              )}
+            >
+              Abrir en YouTube <ExternalLink size={11} />
+            </a>
+          </div>
+        )}
       </div>
     </article>
   )

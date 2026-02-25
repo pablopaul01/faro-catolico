@@ -1,8 +1,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
+import { fetchSettingsServer } from '@/services/settings.server'
 import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
 import { MusicPageTabs } from '@/components/public/music/MusicPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
+import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Metadata } from 'next'
 import type { Song, MusicCategory, Playlist } from '@/types/app.types'
 
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
 export default async function MusicaPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [{ data: songsData }, { data: catsData }, { data: playlistsData }, ratingsMap] = await Promise.all([
+  const [settings, { data: songsData }, { data: catsData }, { data: playlistsData }, ratingsMap] = await Promise.all([
+    fetchSettingsServer(),
     supabase
       .from(TABLE_NAMES.SONGS)
       .select(`*, ${TABLE_NAMES.SONG_CATEGORIES}(category_id)`)
@@ -70,6 +73,7 @@ export default async function MusicaPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
+      <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <SectionHeader
         title="Música"
         subtitle="Canciones y playlists para cada momento del día y del corazón"

@@ -1,8 +1,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
+import { fetchSettingsServer } from '@/services/settings.server'
 import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
 import { MoviesPageTabs } from '@/components/public/movies/MoviesPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
+import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Metadata } from 'next'
 import type { Movie, MovieCategory, MoviePlatform, YoutubePlaylist, YoutubeChannel } from '@/types/app.types'
 
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
 export default async function PeliculasPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [moviesRes, catsRes, platsRes, ratingsMap, ytPlRes, ytChRes] = await Promise.all([
+  const [settings, moviesRes, catsRes, platsRes, ratingsMap, ytPlRes, ytChRes] = await Promise.all([
+    fetchSettingsServer(),
     supabase
       .from(TABLE_NAMES.MOVIES)
       .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
@@ -97,6 +100,7 @@ export default async function PeliculasPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
+      <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <SectionHeader
         title="Películas"
         subtitle="Vidas de santos, documentales, playlists y canales para toda la familia"

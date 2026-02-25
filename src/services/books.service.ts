@@ -113,6 +113,19 @@ export const updateBook = async (
 
 export const deleteBook = async (id: string): Promise<void> => {
   const supabase = getSupabaseBrowserClient()
+
+  // Intentar eliminar el PDF del storage si fue subido al bucket media
+  const { data: book } = await supabase
+    .from(TABLE_NAMES.BOOKS)
+    .select('pdf_url')
+    .eq('id', id)
+    .single()
+
+  if (book?.pdf_url?.includes('/storage/v1/object/public/media/')) {
+    const filePath = book.pdf_url.split('/storage/v1/object/public/media/')[1]
+    await supabase.storage.from('media').remove([filePath]) // best-effort
+  }
+
   const { error } = await supabase
     .from(TABLE_NAMES.BOOKS)
     .delete()

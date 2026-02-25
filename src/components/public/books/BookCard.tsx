@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { ExternalLink, FileText, X, Download } from 'lucide-react'
 import { StarRating } from '@/components/public/StarRating'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Book, RatingStats } from '@/types/app.types'
 
 interface BookCardProps {
@@ -22,6 +23,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const [expanded,  setExpanded]  = useState(false)
   const [showPdf,   setShowPdf]   = useState(false)
   const [mounted,   setMounted]   = useState(false)
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -132,38 +134,40 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
           />
 
           {/* Links */}
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
-            {purchaseUrl && (
-              <a
-                href={purchaseUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-light/40 hover:text-light/70 transition-colors"
-              >
-                Conseguir libro <ExternalLink size={11} />
-              </a>
-            )}
-            {!purchaseUrl && <span />}
-            {pdfUrl && isSupabaseUrl(pdfUrl) ? (
-              <button
-                onClick={handlePdfClick}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
-              >
-                <FileText size={14} />
-                Leer PDF
-              </button>
-            ) : pdfUrl ? (
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
-              >
-                <FileText size={14} />
-                PDF gratis
-              </a>
-            ) : null}
-          </div>
+          {!copyrightMode && (
+            <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
+              {purchaseUrl && (
+                <a
+                  href={purchaseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-light/40 hover:text-light/70 transition-colors"
+                >
+                  Conseguir libro <ExternalLink size={11} />
+                </a>
+              )}
+              {!purchaseUrl && <span />}
+              {pdfUrl && isSupabaseUrl(pdfUrl) ? (
+                <button
+                  onClick={handlePdfClick}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
+                >
+                  <FileText size={14} />
+                  Leer PDF
+                </button>
+              ) : pdfUrl ? (
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
+                >
+                  <FileText size={14} />
+                  PDF gratis
+                </a>
+              ) : null}
+            </div>
+          )}
         </div>
       </article>
 

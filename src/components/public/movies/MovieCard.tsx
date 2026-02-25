@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { YoutubeEmbed } from './YoutubeEmbed'
 import { StarRating } from '@/components/public/StarRating'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Movie, MoviePlatform, RatingStats } from '@/types/app.types'
 
 const DESCRIPTION_LIMIT = 110
@@ -17,6 +18,7 @@ interface MovieCardProps {
 export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => {
   const { title, description, youtubeId, externalUrl, year, thumbnailUrl } = movie
   const [expanded, setExpanded] = useState(false)
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   const isLong = description && description.length > DESCRIPTION_LIMIT
   const displayText = isLong && !expanded
@@ -26,9 +28,11 @@ export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => 
   return (
     <article className="bg-card rounded-card overflow-hidden flex flex-col h-full group transition-all duration-300 hover:gold-glow hover:-translate-y-1">
       {/* Embed / thumbnail */}
-      <div className="flex-shrink-0">
-        <YoutubeEmbed youtubeId={youtubeId} title={title} thumbnailUrl={thumbnailUrl} />
-      </div>
+      {!copyrightMode && (
+        <div className="flex-shrink-0">
+          <YoutubeEmbed youtubeId={youtubeId} title={title} thumbnailUrl={thumbnailUrl} />
+        </div>
+      )}
 
       {/* Contenido */}
       <div className="p-4 flex-1 flex flex-col gap-2">
@@ -60,29 +64,46 @@ export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => 
           ratingCount={ratingStats?.ratingCount}
         />
 
-        {platforms && platforms.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {platforms.map((plat) => (
-              <span
-                key={plat.id}
-                className="px-2 py-0.5 rounded-sm border border-accent/40 text-accent text-xs"
-              >
-                {plat.name}
-              </span>
-            ))}
+        {/* Sin medio disponible */}
+        {!youtubeId && !externalUrl ? (
+          <div className="mt-auto pt-2">
+            <p className="text-light/40 text-xs italic leading-relaxed">
+              Esta sugerencia no tiene un medio gratuito para verla
+              {platforms && platforms.length > 0 ? ', pero puedes encontrarla en:' : '.'}
+            </p>
+            {platforms && platforms.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {platforms.map((plat) => (
+                  <span key={plat.id} className="px-2 py-0.5 rounded-sm border border-accent/40 text-accent text-xs">
+                    {plat.name}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-
-        {externalUrl && (
-          <a
-            href={externalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors pt-2"
-          >
-            Ver en plataforma
-            <ExternalLink size={12} />
-          </a>
+        ) : (
+          <>
+            {platforms && platforms.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {platforms.map((plat) => (
+                  <span key={plat.id} className="px-2 py-0.5 rounded-sm border border-accent/40 text-accent text-xs">
+                    {plat.name}
+                  </span>
+                ))}
+              </div>
+            )}
+            {!copyrightMode && externalUrl && (
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto inline-flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors pt-2"
+              >
+                Ver en plataforma
+                <ExternalLink size={12} />
+              </a>
+            )}
+          </>
         )}
       </div>
     </article>

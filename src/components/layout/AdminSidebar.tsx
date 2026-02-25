@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send, MonitorPlay, ListMusic, PlaySquare, Youtube } from 'lucide-react'
+import { Film, BookOpen, Music, LayoutDashboard, LogOut, Tag, Mail, Send, MonitorPlay, ListMusic, PlaySquare, Youtube, Settings2 } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { ROUTES, SITE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -24,8 +24,9 @@ const navItems: { href: string; label: string; icon: typeof Film; sub: SubItem[]
     { href: ROUTES.ADMIN_MUSIC_CATEGORIES, label: 'Categorías', icon: Tag },
     { href: ROUTES.ADMIN_PLAYLISTS,        label: 'Playlists',  icon: ListMusic },
   ]},
-  { href: ROUTES.ADMIN_SUBMISSIONS,  label: 'Propuestas', icon: Send,            sub: [] },
-  { href: ROUTES.ADMIN_SUGGESTIONS,  label: 'Contacto',   icon: Mail,            sub: [] },
+  { href: ROUTES.ADMIN_SUBMISSIONS,  label: 'Propuestas',    icon: Send,      sub: [] },
+  { href: ROUTES.ADMIN_SUGGESTIONS,  label: 'Contacto',      icon: Mail,      sub: [] },
+  { href: ROUTES.ADMIN_SETTINGS,     label: 'Configuración', icon: Settings2, sub: [] },
 ]
 
 export const AdminSidebar = () => {

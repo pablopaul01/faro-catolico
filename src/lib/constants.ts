@@ -22,6 +22,7 @@ export const ROUTES = {
   ADMIN_SUGGESTIONS:       '/admin/sugerencias',
   PROPOSE:                 '/proponer',
   ADMIN_SUBMISSIONS:       '/admin/propuestas',
+  ADMIN_SETTINGS:          '/admin/configuracion',
   SEARCH:                  '/buscar',
   AUTH_CALLBACK:           '/auth/callback',
 } as const
@@ -51,6 +52,7 @@ export const TABLE_NAMES = {
   SUGGESTIONS:      'suggestions',
   SUBMISSIONS:      'submissions',
   CONTACT_MESSAGES: 'contact_messages',
+  SETTINGS:         'settings',
 } as const
 
 // ─────────────────────────────────────────────

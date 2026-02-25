@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ExternalLink, Music2, ChevronUp, Play } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Playlist } from '@/types/app.types'
 
 interface PlaylistCardProps {
@@ -26,6 +27,7 @@ function getSpotifyPlaylistEmbedUrl(url: string): string | null {
 export const PlaylistCard = ({ playlist, categoryNames = [] }: PlaylistCardProps) => {
   const { title, description, spotifyUrl, thumbnailUrl } = playlist
   const [showPlayer, setShowPlayer] = useState(false)
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   const embedUrl  = getSpotifyPlaylistEmbedUrl(spotifyUrl)
   const isLong    = description && description.length > DESCRIPTION_LIMIT
@@ -67,36 +69,38 @@ export const PlaylistCard = ({ playlist, categoryNames = [] }: PlaylistCardProps
         </div>
 
         {/* Controles */}
-        <div className="flex items-center gap-2 shrink-0">
-          {embedUrl && (
-            <button
-              onClick={() => setShowPlayer((v) => !v)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
-                showPlayer
-                  ? 'bg-accent text-primary'
-                  : 'border border-accent/40 text-accent hover:bg-accent/10'
-              )}
-              title={showPlayer ? 'Cerrar reproductor' : 'Abrir reproductor'}
+        {!copyrightMode && (
+          <div className="flex items-center gap-2 shrink-0">
+            {embedUrl && (
+              <button
+                onClick={() => setShowPlayer((v) => !v)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
+                  showPlayer
+                    ? 'bg-accent text-primary'
+                    : 'border border-accent/40 text-accent hover:bg-accent/10'
+                )}
+                title={showPlayer ? 'Cerrar reproductor' : 'Abrir reproductor'}
+              >
+                {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
+                {showPlayer ? 'Cerrar' : 'Reproducir'}
+              </button>
+            )}
+            <a
+              href={spotifyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
+              title="Abrir en Spotify"
             >
-              {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
-              {showPlayer ? 'Cerrar' : 'Reproducir'}
-            </button>
-          )}
-          <a
-            href={spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
-            title="Abrir en Spotify"
-          >
-            <ExternalLink size={14} />
-          </a>
-        </div>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Player expandible */}
-      {embedUrl && showPlayer && (
+      {!copyrightMode && embedUrl && showPlayer && (
         <div className="px-4 pb-4">
           <iframe
             src={embedUrl}

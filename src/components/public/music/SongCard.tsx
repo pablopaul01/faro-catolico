@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ExternalLink, Music2, Clock, Play, ChevronUp } from 'lucide-react'
 import { formatDuration, getYouTubeEmbedUrl, cn } from '@/lib/utils'
 import { StarRating } from '@/components/public/StarRating'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Song, RatingStats } from '@/types/app.types'
 
 interface SongCardProps {
@@ -26,6 +27,7 @@ const getSpotifyEmbedUrl = (url: string): string | null => {
 export const SongCard = ({ song, ratingStats }: SongCardProps) => {
   const { title, artist, youtubeId, spotifyUrl, externalUrl, durationSec, thumbnailUrl } = song
   const [showPlayer, setShowPlayer] = useState(false)
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   const spotifyEmbed = spotifyUrl ? getSpotifyEmbedUrl(spotifyUrl) : null
   const hasPlayer    = !!(spotifyEmbed || youtubeId)
@@ -75,7 +77,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
           )}
 
           {/* Botón reproducir inline */}
-          {hasPlayer && (
+          {!copyrightMode && hasPlayer && (
             <button
               onClick={() => setShowPlayer((v) => !v)}
               className={cn(
@@ -92,7 +94,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
           )}
 
           {/* Links externos */}
-          {youtubeId && (
+          {!copyrightMode && youtubeId && (
             <a
               href={`https://www.youtube.com/watch?v=${youtubeId}`}
               target="_blank"
@@ -103,7 +105,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
               <ExternalLink size={14} />
             </a>
           )}
-          {spotifyUrl && (
+          {!copyrightMode && spotifyUrl && (
             <a
               href={spotifyUrl}
               target="_blank"
@@ -114,7 +116,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
               <ExternalLink size={14} />
             </a>
           )}
-          {!youtubeId && !spotifyUrl && externalUrl && (
+          {!copyrightMode && !youtubeId && !spotifyUrl && externalUrl && (
             <a
               href={externalUrl}
               target="_blank"
@@ -129,7 +131,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
       </div>
 
       {/* Player inline expandible */}
-      {hasPlayer && showPlayer && (
+      {!copyrightMode && hasPlayer && showPlayer && (
         <div className="px-4 pb-4">
           {spotifyEmbed ? (
             <iframe

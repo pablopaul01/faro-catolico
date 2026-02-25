@@ -1,4 +1,7 @@
+'use client'
+
 import { Youtube, ExternalLink } from 'lucide-react'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { YoutubeChannel } from '@/types/app.types'
 
 interface YoutubeChannelCardProps {
@@ -7,6 +10,7 @@ interface YoutubeChannelCardProps {
 }
 
 export function YoutubeChannelCard({ channel, categoryNames = [] }: YoutubeChannelCardProps) {
+  const copyrightMode = useSettingsStore((s) => s.copyrightMode)
   return (
     <article className="bg-secondary border border-border rounded-card overflow-hidden flex flex-col group transition-all duration-300 hover:gold-glow hover:-translate-y-1">
       {/* Thumbnail o ícono */}
@@ -45,14 +49,16 @@ export function YoutubeChannelCard({ channel, categoryNames = [] }: YoutubeChann
           </div>
         )}
 
-        <a
-          href={channel.channelUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-auto pt-2 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
-        >
-          Ir al canal <ExternalLink size={12} />
-        </a>
+        {!copyrightMode && (
+          <a
+            href={channel.channelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto pt-2 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
+          >
+            Ir al canal <ExternalLink size={12} />
+          </a>
+        )}
       </div>
     </article>
   )

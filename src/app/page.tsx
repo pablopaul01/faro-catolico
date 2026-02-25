@@ -1,11 +1,13 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
+import { fetchSettingsServer } from '@/services/settings.server'
 import { TABLE_NAMES, ROUTES } from '@/lib/constants'
 import { Hero } from '@/components/public/Hero'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { MovieGrid } from '@/components/public/movies/MovieGrid'
 import { BookGrid } from '@/components/public/books/BookGrid'
 import { SongCard } from '@/components/public/music/SongCard'
+import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Movie, Book, Song, MoviePlatform } from '@/types/app.types'
 
 const PREVIEW_LIMIT = 6
@@ -13,7 +15,8 @@ const PREVIEW_LIMIT = 6
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient()
 
-  const [moviesRes, booksRes, songsRes, platsRes, movieRatings, bookRatings, songRatings] = await Promise.all([
+  const [settings, moviesRes, booksRes, songsRes, platsRes, movieRatings, bookRatings, songRatings] = await Promise.all([
+    fetchSettingsServer(),
     supabase
       .from(TABLE_NAMES.MOVIES)
       .select(`*, ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
@@ -71,6 +74,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <Hero />
 
       {/* Sección películas */}

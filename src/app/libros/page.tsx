@@ -1,8 +1,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { fetchRatingsForContent } from '@/services/ratings.server'
+import { fetchSettingsServer } from '@/services/settings.server'
 import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
 import { BookFilterSection } from '@/components/public/books/BookFilterSection'
 import { SectionHeader } from '@/components/public/SectionHeader'
+import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Metadata } from 'next'
 import type { Book, BookCategory } from '@/types/app.types'
 
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
 export default async function LibrosPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [booksRes, catsRes, ratingsMap] = await Promise.all([
+  const [settings, booksRes, catsRes, ratingsMap] = await Promise.all([
+    fetchSettingsServer(),
     supabase
       .from(TABLE_NAMES.BOOKS)
       .select(`*, ${TABLE_NAMES.BOOK_CATEGORY_ITEMS}(category_id)`)
@@ -52,6 +55,7 @@ export default async function LibrosPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
+      <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <SectionHeader
         title="Libros"
         subtitle="Lectura seleccionada para el alma — espiritualidad, santos y formación"
