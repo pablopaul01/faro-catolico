@@ -36,6 +36,15 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
     ? description.slice(0, DESCRIPTION_LIMIT).trimEnd() + '…'
     : description
 
+  const handlePdfClick = () => {
+    // Móvil/tablet: los iframes no renderizan PDFs — abrir con el visor nativo del dispositivo
+    if (navigator.maxTouchPoints > 0) {
+      window.open(pdfUrl!, '_blank', 'noopener,noreferrer')
+    } else {
+      setShowPdf(true)
+    }
+  }
+
   const modal = mounted && showPdf && pdfUrl
     ? createPortal(
         <div className="fixed inset-0 z-9999 flex flex-col bg-black/95 animate-fade-in">
@@ -137,7 +146,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
             {!purchaseUrl && <span />}
             {pdfUrl && isSupabaseUrl(pdfUrl) ? (
               <button
-                onClick={() => setShowPdf(true)}
+                onClick={handlePdfClick}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
               >
                 <FileText size={14} />
