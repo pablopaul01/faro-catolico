@@ -35,7 +35,7 @@ export interface Movie {
   externalUrl:   string | null
   thumbnailUrl:  string | null
   year:          number | null
-  categoryId:    string | null
+  categoryIds:   string[]
   isPublished:   boolean
   sortOrder:     number
   createdAt:     string
@@ -51,7 +51,7 @@ export interface Book {
   purchaseUrl:  string | null
   pdfUrl:       string | null
   year:         number | null
-  categoryId:   string | null
+  categoryIds:  string[]
   isPublished:  boolean
   sortOrder:    number
   createdAt:    string
@@ -62,7 +62,7 @@ export interface Song {
   id:           string
   title:        string
   artist:       string
-  categoryId:   string | null
+  categoryIds:  string[]
   youtubeId:    string | null
   spotifyUrl:   string | null
   externalUrl:  string | null

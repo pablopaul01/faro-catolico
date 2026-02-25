@@ -13,7 +13,7 @@ export default async function EditSongPage({ params }: Props) {
   const supabase = await createSupabaseServerClient()
 
   const [{ data, error }, { data: catsData }] = await Promise.all([
-    supabase.from(TABLE_NAMES.SONGS).select('*').eq('id', id).single(),
+    supabase.from(TABLE_NAMES.SONGS).select(`*, ${TABLE_NAMES.SONG_CATEGORIES}(category_id)`).eq('id', id).single(),
     supabase.from(TABLE_NAMES.MUSIC_CATEGORIES).select('*').order('sort_order', { ascending: true }),
   ])
 
@@ -23,7 +23,7 @@ export default async function EditSongPage({ params }: Props) {
     id:           data.id,
     title:        data.title,
     artist:       data.artist,
-    categoryId:   data.category_id,
+    categoryIds:  (data.song_categories as { category_id: string }[] ?? []).map((r) => r.category_id),
     youtubeId:    data.youtube_id,
     spotifyUrl:   data.spotify_url,
     externalUrl:  data.external_url,

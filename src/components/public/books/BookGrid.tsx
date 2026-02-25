@@ -37,7 +37,7 @@ export const BookGrid = ({ books, ratingsMap, slider }: BookGridProps) => {
       {books.map((book, index) => (
         <div
           key={book.id}
-          className="animate-slide-up"
+          className="animate-slide-up h-full"
           style={{ animationDelay: `${index * 0.06}s` }}
         >
           <BookCard book={book} ratingStats={ratingsMap?.[book.id]} />

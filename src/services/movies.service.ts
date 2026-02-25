@@ -2,9 +2,10 @@ import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { TABLE_NAMES } from '@/lib/constants'
 import type { Movie, MovieFormPayload } from '@/types/app.types'
 
-// ─────────────────────────────────────────────
-// Adaptador: fila DB (snake_case) → tipo de dominio (camelCase)
-// ─────────────────────────────────────────────
+type MovieCatRow = { category_id: string }
+
+const MOVIE_SELECT = `*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id)`
+
 const adaptMovie = (row: Record<string, unknown>): Movie => ({
   id:           row.id            as string,
   title:        row.title         as string,
@@ -13,30 +14,24 @@ const adaptMovie = (row: Record<string, unknown>): Movie => ({
   externalUrl:  row.external_url  as string | null,
   thumbnailUrl: row.thumbnail_url as string | null,
   year:         row.year          as number | null,
-  categoryId:   row.category_id   as string | null,
+  categoryIds:  ((row.movie_category_items as MovieCatRow[] | null) ?? []).map((r) => r.category_id),
   isPublished:  row.is_published  as boolean,
   sortOrder:    row.sort_order    as number,
   createdAt:    row.created_at    as string,
   updatedAt:    row.updated_at    as string,
 })
 
-// ─────────────────────────────────────────────
-// Operaciones CRUD
-// ─────────────────────────────────────────────
-
-/** Obtiene todas las películas (para admin — incluye no publicadas) */
 export const fetchAllMovies = async (): Promise<Movie[]> => {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
     .from(TABLE_NAMES.MOVIES)
-    .select('*')
+    .select(MOVIE_SELECT)
     .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
   return data?.map(adaptMovie) ?? []
 }
 
-/** Crea una nueva película */
 export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
@@ -48,7 +43,6 @@ export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => 
       external_url:  payload.externalUrl  || null,
       thumbnail_url: payload.thumbnailUrl || null,
       year:          payload.year         ?? null,
-      category_id:   payload.categoryId   ?? null,
       is_published:  payload.isPublished,
       sort_order:    payload.sortOrder,
     })
@@ -56,10 +50,21 @@ export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => 
     .single()
 
   if (error) throw new Error(error.message)
-  return adaptMovie(data)
+
+  const categoryIds = payload.categoryIds ?? []
+  if (categoryIds.length > 0) {
+    const { error: catErr } = await supabase
+      .from(TABLE_NAMES.MOVIE_CATEGORY_ITEMS)
+      .insert(categoryIds.map((catId) => ({ movie_id: data.id, category_id: catId })))
+    if (catErr) throw new Error(catErr.message)
+  }
+
+  return adaptMovie({
+    ...data,
+    movie_category_items: categoryIds.map((catId) => ({ category_id: catId })),
+  })
 }
 
-/** Actualiza una película existente */
 export const updateMovie = async (
   id: string,
   payload: Partial<MovieFormPayload>
@@ -73,7 +78,6 @@ export const updateMovie = async (
   if (payload.externalUrl   !== undefined) updates.external_url  = payload.externalUrl || null
   if (payload.thumbnailUrl  !== undefined) updates.thumbnail_url = payload.thumbnailUrl || null
   if (payload.year          !== undefined) updates.year          = payload.year ?? null
-  if (payload.categoryId    !== undefined) updates.category_id   = payload.categoryId ?? null
   if (payload.isPublished   !== undefined) updates.is_published  = payload.isPublished
   if (payload.sortOrder     !== undefined) updates.sort_order    = payload.sortOrder
 
@@ -85,10 +89,25 @@ export const updateMovie = async (
     .single()
 
   if (error) throw new Error(error.message)
-  return adaptMovie(data)
+
+  if (payload.categoryIds !== undefined) {
+    await supabase.from(TABLE_NAMES.MOVIE_CATEGORY_ITEMS).delete().eq('movie_id', id)
+    if (payload.categoryIds.length > 0) {
+      const { error: catErr } = await supabase
+        .from(TABLE_NAMES.MOVIE_CATEGORY_ITEMS)
+        .insert(payload.categoryIds.map((catId) => ({ movie_id: id, category_id: catId })))
+      if (catErr) throw new Error(catErr.message)
+    }
+  }
+
+  const { data: catData } = await supabase
+    .from(TABLE_NAMES.MOVIE_CATEGORY_ITEMS)
+    .select('category_id')
+    .eq('movie_id', id)
+
+  return adaptMovie({ ...data, movie_category_items: catData ?? [] })
 }
 
-/** Elimina una película por ID */
 export const deleteMovie = async (id: string): Promise<void> => {
   const supabase = getSupabaseBrowserClient()
   const { error } = await supabase

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { Search } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { BookGrid } from './BookGrid'
 import { cn } from '@/lib/utils'
 import type { Book, BookCategory, RatingsMap } from '@/types/app.types'
@@ -9,6 +9,7 @@ import type { Book, BookCategory, RatingsMap } from '@/types/app.types'
 type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za'
 
 const DEBOUNCE_MS = 400
+const PER_PAGE_OPTIONS = [9, 18, 36]
 
 const sortBooks = (a: Book, b: Book, sort: SortKey): number => {
   switch (sort) {
@@ -32,6 +33,8 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
   const [inputQ,   setInputQ]   = useState('')
   const [q,        setQ]        = useState('')
   const [sort,     setSort]     = useState<SortKey>('recent')
+  const [page,     setPage]     = useState(1)
+  const [perPage,  setPerPage]  = useState(9)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
@@ -40,8 +43,10 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [inputQ])
 
+  useEffect(() => { setPage(1) }, [q, activeId, sort, perPage])
+
   const filtered = useMemo(() => {
-    let result = activeId === null ? books : books.filter((b) => b.categoryId === activeId)
+    let result = activeId === null ? books : books.filter((b) => b.categoryIds.includes(activeId))
     if (q) {
       const lq = q.toLowerCase()
       result = result.filter(
@@ -50,6 +55,24 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
     }
     return [...result].sort((a, b) => sortBooks(a, b, sort))
   }, [books, activeId, q, sort])
+
+  const totalPages = Math.ceil(filtered.length / perPage)
+  const paginated  = useMemo(
+    () => filtered.slice((page - 1) * perPage, page * perPage),
+    [filtered, page, perPage]
+  )
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | 'ellipsis')[] = []
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || Math.abs(i - page) <= 1) {
+        pages.push(i)
+      } else if (pages[pages.length - 1] !== 'ellipsis') {
+        pages.push('ellipsis')
+      }
+    }
+    return pages
+  }, [totalPages, page])
 
   return (
     <div>
@@ -97,7 +120,7 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
             </span>
           </button>
           {categories.map((cat) => {
-            const count = books.filter((b) => b.categoryId === cat.id).length
+            const count = books.filter((b) => b.categoryIds.includes(cat.id)).length
             return (
               <button
                 key={cat.id}
@@ -121,12 +144,72 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
         </div>
       )}
 
+      {/* Selector de cantidad por página */}
+      <div className="flex justify-end mb-4">
+        <div className="flex items-center gap-2 text-sm text-light/50">
+          <span>Por página:</span>
+          <select
+            value={perPage}
+            onChange={(e) => setPerPage(Number(e.target.value))}
+            className="px-2 py-1 rounded-sm bg-secondary border border-border text-light text-sm focus:outline-none focus:border-accent transition-colors"
+          >
+            {PER_PAGE_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </div>
+      </div>
+
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-light/30 border border-border rounded-card">
           <p>{q ? `Sin resultados para "${q}"` : 'No hay libros en esta categoría todavía.'}</p>
         </div>
       ) : (
-        <BookGrid books={filtered} ratingsMap={ratingsMap} />
+        <>
+          <BookGrid books={paginated} ratingsMap={ratingsMap} />
+
+          {/* Paginación */}
+          <div className="flex items-center justify-between gap-4 mt-8">
+            <span className="text-sm text-light/50">
+              {(page - 1) * perPage + 1}–{Math.min(page * perPage, filtered.length)} de {filtered.length}
+            </span>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="p-1.5 rounded-sm border border-border text-light/50 hover:text-light hover:border-accent/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                {pageNumbers.map((p, idx) =>
+                  p === 'ellipsis' ? (
+                    <span key={`e${idx}`} className="px-2 text-light/30 text-sm">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={cn(
+                        'w-8 h-8 rounded-sm text-sm transition-colors',
+                        p === page
+                          ? 'bg-accent text-primary font-semibold'
+                          : 'border border-border text-light/50 hover:text-light hover:border-accent/40'
+                      )}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="p-1.5 rounded-sm border border-border text-light/50 hover:text-light hover:border-accent/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   )

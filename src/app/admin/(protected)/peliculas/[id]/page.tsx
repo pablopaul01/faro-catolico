@@ -13,7 +13,7 @@ export default async function EditMoviePage({ params }: Props) {
   const supabase = await createSupabaseServerClient()
 
   const [movieRes, catsRes] = await Promise.all([
-    supabase.from(TABLE_NAMES.MOVIES).select('*').eq('id', id).single(),
+    supabase.from(TABLE_NAMES.MOVIES).select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id)`).eq('id', id).single(),
     supabase.from(TABLE_NAMES.MOVIE_CATEGORIES).select('*').order('sort_order', { ascending: true }),
   ])
 
@@ -28,7 +28,7 @@ export default async function EditMoviePage({ params }: Props) {
     externalUrl:  data.external_url,
     thumbnailUrl: data.thumbnail_url,
     year:         data.year,
-    categoryId:   data.category_id,
+    categoryIds:  (data.movie_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
     isPublished:  data.is_published,
     sortOrder:    data.sort_order,
     createdAt:    data.created_at,

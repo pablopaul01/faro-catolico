@@ -24,6 +24,8 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<MovieSchema>({
     resolver: zodResolver(movieSchema),
@@ -35,23 +37,34 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
           externalUrl:  movie.externalUrl  ?? '',
           thumbnailUrl: movie.thumbnailUrl ?? '',
           year:         movie.year         ?? undefined,
-          categoryId:   movie.categoryId   ?? undefined,
+          categoryIds:  movie.categoryIds,
           isPublished:  movie.isPublished,
           sortOrder:    movie.sortOrder,
         }
-      : { isPublished: false, sortOrder: 0 },
+      : { categoryIds: [], isPublished: false, sortOrder: 0 },
   })
+
+  const selectedCategoryIds = watch('categoryIds') ?? []
+
+  const toggleCategory = (catId: string) => {
+    setValue(
+      'categoryIds',
+      selectedCategoryIds.includes(catId)
+        ? selectedCategoryIds.filter((id) => id !== catId)
+        : [...selectedCategoryIds, catId]
+    )
+  }
 
   const onSubmit = async (data: MovieSchema) => {
     setServerError(null)
     try {
       const payload = {
         ...data,
+        categoryIds:  selectedCategoryIds,
         externalUrl:  data.externalUrl  || null,
         thumbnailUrl: data.thumbnailUrl || null,
         description:  data.description  || null,
         year:         data.year         ?? null,
-        categoryId:   data.categoryId   || null,
       }
 
       if (movie) {
@@ -93,22 +106,38 @@ export const MovieForm = ({ movie, categories }: MovieFormProps) => {
         />
       </FormField>
 
-      {/* Categoría */}
-      <FormField label="Categoría" error={errors.categoryId?.message}>
-        <select {...register('categoryId')} className={`${inputClass} cursor-pointer`}>
-          <option value="">Sin categoría</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
-        </select>
-      </FormField>
+      {/* Categorías (múltiples) */}
+      {categories.length > 0 && (
+        <FormField label="Categorías" error={errors.categoryIds?.message}>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {categories.map((cat) => (
+              <label
+                key={cat.id}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-sm transition-colors cursor-pointer ${
+                  selectedCategoryIds.includes(cat.id)
+                    ? 'bg-accent/20 border-accent text-accent'
+                    : 'border-border text-light/60 hover:border-accent/40 hover:text-light'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategoryIds.includes(cat.id)}
+                  onChange={() => toggleCategory(cat.id)}
+                  className="sr-only"
+                />
+                {cat.name}
+              </label>
+            ))}
+          </div>
+        </FormField>
+      )}
 
       {/* Año y sortOrder en fila */}
       <div className="grid grid-cols-2 gap-4">
-        <FormField label="Año" error={errors.year?.message}>
+        <FormField label="Año (opcional)" error={errors.year?.message}>
           <input
             type="number"
-            {...register('year', { valueAsNumber: true })}
+            {...register('year', { setValueAs: (v) => v === '' ? undefined : parseInt(v, 10) })}
             placeholder="2023"
             className={inputClass}
           />

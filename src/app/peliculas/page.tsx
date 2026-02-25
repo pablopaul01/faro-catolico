@@ -17,7 +17,7 @@ export default async function PeliculasPage() {
   const [moviesRes, catsRes, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.MOVIES)
-      .select('*')
+      .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id)`)
       .eq('is_published', true)
       .order('created_at', { ascending: false }),
     supabase
@@ -35,7 +35,7 @@ export default async function PeliculasPage() {
     externalUrl:  row.external_url,
     thumbnailUrl: row.thumbnail_url,
     year:         row.year,
-    categoryId:   row.category_id,
+    categoryIds:  (row.movie_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
     isPublished:  row.is_published,
     sortOrder:    row.sort_order,
     createdAt:    row.created_at,

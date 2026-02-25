@@ -20,7 +20,7 @@ export const movieSchema = z.object({
   externalUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   thumbnailUrl: z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   year:         z.number().int().min(1900).max(2100).nullable().optional(),
-  categoryId:   z.string().uuid().nullable().optional(),
+  categoryIds:  z.array(z.string().uuid()),
   // Sin .default() para compatibilidad con react-hook-form: los defaults van en useForm
   isPublished:  z.boolean(),
   sortOrder:    z.number().int().min(0),
@@ -39,7 +39,7 @@ export const bookSchema = z.object({
   purchaseUrl: z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   pdfUrl:      z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   year:        z.number().int().min(1000).max(2100).nullable().optional(),
-  categoryId:  z.string().uuid().nullable().optional(),
+  categoryIds: z.array(z.string().uuid()),
   isPublished: z.boolean(),
   sortOrder:   z.number().int().min(0),
 })
@@ -52,7 +52,7 @@ export type BookSchema = z.infer<typeof bookSchema>
 export const songSchema = z.object({
   title:        z.string().min(1, 'El título es obligatorio').max(200),
   artist:       z.string().min(1, 'El artista es obligatorio').max(200),
-  categoryId:   z.string().uuid().nullable().optional(),
+  categoryIds:  z.array(z.string().uuid()),
   youtubeId:    z.string().max(20).nullable().optional(),
   spotifyUrl:   z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   externalUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),

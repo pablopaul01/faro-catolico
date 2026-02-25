@@ -38,7 +38,7 @@ export const MovieGrid = ({ movies, ratingsMap, slider }: MovieGridProps) => {
       {movies.map((movie, index) => (
         <div
           key={movie.id}
-          className="animate-slide-up"
+          className="animate-slide-up h-full"
           style={{ animationDelay: `${index * 0.06}s` }}
         >
           <MovieCard movie={movie} ratingStats={ratingsMap?.[movie.id]} />

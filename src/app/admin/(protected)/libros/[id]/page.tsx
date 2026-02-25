@@ -13,7 +13,7 @@ export default async function EditBookPage({ params }: Props) {
   const supabase = await createSupabaseServerClient()
 
   const [bookRes, catsRes] = await Promise.all([
-    supabase.from(TABLE_NAMES.BOOKS).select('*').eq('id', id).single(),
+    supabase.from(TABLE_NAMES.BOOKS).select(`*, ${TABLE_NAMES.BOOK_CATEGORY_ITEMS}(category_id)`).eq('id', id).single(),
     supabase.from(TABLE_NAMES.BOOK_CATEGORIES).select('*').order('sort_order', { ascending: true }),
   ])
 
@@ -29,7 +29,7 @@ export default async function EditBookPage({ params }: Props) {
     purchaseUrl: data.purchase_url,
     pdfUrl:      data.pdf_url,
     year:        data.year,
-    categoryId:  data.category_id,
+    categoryIds: (data.book_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
     isPublished: data.is_published,
     sortOrder:   data.sort_order,
     createdAt:   data.created_at,

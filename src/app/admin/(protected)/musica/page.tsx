@@ -34,7 +34,7 @@ export default function AdminMusicPage() {
       )
     }
     if (filterCatId) {
-      result = result.filter((s) => s.categoryId === filterCatId)
+      result = result.filter((s) => s.categoryIds.includes(filterCatId))
     }
     return result
   }, [songs, search, filterCatId])
@@ -48,13 +48,20 @@ export default function AdminMusicPage() {
     { key: 'title',  label: 'Título' },
     { key: 'artist', label: 'Artista' },
     {
-      key: 'categoryId',
-      label: 'Categoría',
-      render: (s) => (
-        <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
-          {s.categoryId ? (catMap[s.categoryId] ?? '—') : <span className="text-light/30">Sin categoría</span>}
-        </span>
-      ),
+      key: 'categoryIds',
+      label: 'Categorías',
+      render: (s) =>
+        s.categoryIds.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {s.categoryIds.map((catId) => (
+              <span key={catId} className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                {catMap[catId] ?? catId}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-light/30 text-xs">Sin categoría</span>
+        ),
     },
   ]
 

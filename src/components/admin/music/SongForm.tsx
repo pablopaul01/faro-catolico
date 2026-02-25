@@ -24,6 +24,8 @@ export const SongForm = ({ song, categories = [] }: SongFormProps) => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SongSchema>({
     resolver: zodResolver(songSchema),
@@ -31,7 +33,7 @@ export const SongForm = ({ song, categories = [] }: SongFormProps) => {
       ? {
           title:        song.title,
           artist:       song.artist,
-          categoryId:   song.categoryId   ?? '',
+          categoryIds:  song.categoryIds,
           youtubeId:    song.youtubeId    ?? '',
           spotifyUrl:   song.spotifyUrl   ?? '',
           externalUrl:  song.externalUrl  ?? '',
@@ -40,15 +42,26 @@ export const SongForm = ({ song, categories = [] }: SongFormProps) => {
           isPublished:  song.isPublished,
           sortOrder:    song.sortOrder,
         }
-      : { categoryId: '', isPublished: false, sortOrder: 0 },
+      : { categoryIds: [], isPublished: false, sortOrder: 0 },
   })
+
+  const selectedCategoryIds = watch('categoryIds') ?? []
+
+  const toggleCategory = (catId: string) => {
+    setValue(
+      'categoryIds',
+      selectedCategoryIds.includes(catId)
+        ? selectedCategoryIds.filter((id) => id !== catId)
+        : [...selectedCategoryIds, catId]
+    )
+  }
 
   const onSubmit = async (data: SongSchema) => {
     setServerError(null)
     try {
       const payload = {
         ...data,
-        categoryId:   data.categoryId   || null,
+        categoryIds:  selectedCategoryIds,
         youtubeId:    data.youtubeId    || null,
         spotifyUrl:   data.spotifyUrl   || null,
         externalUrl:  data.externalUrl  || null,
@@ -80,17 +93,31 @@ export const SongForm = ({ song, categories = [] }: SongFormProps) => {
         </FormField>
       </div>
 
-      {/* Categoría dinámica */}
-      <FormField label="Categoría" error={errors.categoryId?.message}>
-        <select {...register('categoryId')} className={inputClass}>
-          <option value="">Sin categoría</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-      </FormField>
+      {/* Categorías (múltiples) */}
+      {categories.length > 0 && (
+        <FormField label="Categorías" error={errors.categoryIds?.message}>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {categories.map((cat) => (
+              <label
+                key={cat.id}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-sm transition-colors cursor-pointer ${
+                  selectedCategoryIds.includes(cat.id)
+                    ? 'bg-accent/20 border-accent text-accent'
+                    : 'border-border text-light/60 hover:border-accent/40 hover:text-light'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategoryIds.includes(cat.id)}
+                  onChange={() => toggleCategory(cat.id)}
+                  className="sr-only"
+                />
+                {cat.name}
+              </label>
+            ))}
+          </div>
+        </FormField>
+      )}
 
       {/* ID YouTube y duración */}
       <div className="grid grid-cols-2 gap-4">
@@ -101,10 +128,10 @@ export const SongForm = ({ song, categories = [] }: SongFormProps) => {
         >
           <input {...register('youtubeId')} placeholder="dQw4w9WgXcQ" className={inputClass} />
         </FormField>
-        <FormField label="Duración (segundos)" error={errors.durationSec?.message}>
+        <FormField label="Duración en segundos (opcional)" error={errors.durationSec?.message}>
           <input
             type="number"
-            {...register('durationSec', { valueAsNumber: true })}
+            {...register('durationSec', { setValueAs: (v) => v === '' ? undefined : parseInt(v, 10) })}
             placeholder="245"
             className={inputClass}
           />

@@ -28,6 +28,7 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
   const {
     register,
     handleSubmit,
+    watch,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<BookSchema>({
@@ -41,12 +42,23 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
           purchaseUrl: book.purchaseUrl  ?? '',
           pdfUrl:      book.pdfUrl       ?? '',
           year:        book.year         ?? undefined,
-          categoryId:  book.categoryId   ?? undefined,
+          categoryIds: book.categoryIds,
           isPublished: book.isPublished,
           sortOrder:   book.sortOrder,
         }
-      : { isPublished: false, sortOrder: 0 },
+      : { categoryIds: [], isPublished: false, sortOrder: 0 },
   })
+
+  const selectedCategoryIds = watch('categoryIds') ?? []
+
+  const toggleCategory = (catId: string) => {
+    setValue(
+      'categoryIds',
+      selectedCategoryIds.includes(catId)
+        ? selectedCategoryIds.filter((id) => id !== catId)
+        : [...selectedCategoryIds, catId]
+    )
+  }
 
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -69,12 +81,12 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
     try {
       const payload = {
         ...data,
+        categoryIds: selectedCategoryIds,
         description: data.description || null,
         coverUrl:    data.coverUrl    || null,
         purchaseUrl: data.purchaseUrl || null,
         pdfUrl:      data.pdfUrl      || null,
         year:        data.year        ?? null,
-        categoryId:  data.categoryId  || null,
       }
 
       if (book) {
@@ -110,11 +122,37 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
         />
       </FormField>
 
+      {/* Categorías (múltiples) */}
+      {categories.length > 0 && (
+        <FormField label="Categorías" error={errors.categoryIds?.message}>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {categories.map((cat) => (
+              <label
+                key={cat.id}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-sm transition-colors cursor-pointer ${
+                  selectedCategoryIds.includes(cat.id)
+                    ? 'bg-accent/20 border-accent text-accent'
+                    : 'border-border text-light/60 hover:border-accent/40 hover:text-light'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategoryIds.includes(cat.id)}
+                  onChange={() => toggleCategory(cat.id)}
+                  className="sr-only"
+                />
+                {cat.name}
+              </label>
+            ))}
+          </div>
+        </FormField>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
-        <FormField label="Año" error={errors.year?.message}>
+        <FormField label="Año (opcional)" error={errors.year?.message}>
           <input
             type="number"
-            {...register('year', { valueAsNumber: true })}
+            {...register('year', { setValueAs: (v) => v === '' ? undefined : parseInt(v, 10) })}
             placeholder="2023"
             className={inputClass}
           />
@@ -127,16 +165,6 @@ export const BookForm = ({ book, categories }: BookFormProps) => {
           />
         </FormField>
       </div>
-
-      {/* Categoría */}
-      <FormField label="Categoría" error={errors.categoryId?.message}>
-        <select {...register('categoryId')} className={`${inputClass} cursor-pointer`}>
-          <option value="">Sin categoría</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
-        </select>
-      </FormField>
 
       <FormField label="URL de portada (imagen)" error={errors.coverUrl?.message}>
         <input {...register('coverUrl')} placeholder="https://..." className={inputClass} />

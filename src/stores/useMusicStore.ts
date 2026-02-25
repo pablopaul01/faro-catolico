@@ -39,4 +39,4 @@ export const useMusicStore = create<MusicState>()(
 
 /** Selector: canciones filtradas por categoryId */
 export const selectSongsByCategory = (songs: Song[], categoryId: string) =>
-  songs.filter((s) => s.categoryId === categoryId)
+  songs.filter((s) => s.categoryIds.includes(categoryId))

@@ -34,7 +34,7 @@ export default function AdminBooksPage() {
       )
     }
     if (filterCatId) {
-      result = result.filter((b) => b.categoryId === filterCatId)
+      result = result.filter((b) => b.categoryIds.includes(filterCatId))
     }
     return result
   }, [books, search, filterCatId])
@@ -48,13 +48,20 @@ export default function AdminBooksPage() {
     { key: 'title',  label: 'Título' },
     { key: 'author', label: 'Autor' },
     {
-      key: 'categoryId',
-      label: 'Categoría',
-      render: (b) => (
-        <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
-          {b.categoryId ? (catMap[b.categoryId] ?? '—') : <span className="text-light/30">Sin categoría</span>}
-        </span>
-      ),
+      key: 'categoryIds',
+      label: 'Categorías',
+      render: (b) =>
+        b.categoryIds.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {b.categoryIds.map((catId) => (
+              <span key={catId} className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                {catMap[catId] ?? catId}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-light/30 text-xs">Sin categoría</span>
+        ),
     },
     {
       key: 'year',

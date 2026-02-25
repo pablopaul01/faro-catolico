@@ -17,7 +17,7 @@ export default async function LibrosPage() {
   const [booksRes, catsRes, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.BOOKS)
-      .select('*')
+      .select(`*, ${TABLE_NAMES.BOOK_CATEGORY_ITEMS}(category_id)`)
       .eq('is_published', true)
       .order('created_at', { ascending: false }),
     supabase
@@ -36,7 +36,7 @@ export default async function LibrosPage() {
     purchaseUrl: row.purchase_url,
     pdfUrl:      row.pdf_url,
     year:        row.year,
-    categoryId:  row.category_id,
+    categoryIds: (row.book_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
     isPublished: row.is_published,
     sortOrder:   row.sort_order,
     createdAt:   row.created_at,

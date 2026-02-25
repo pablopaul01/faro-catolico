@@ -79,7 +79,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
 
   return (
     <>
-      <article className="bg-card rounded-card overflow-hidden flex flex-col sm:flex-row gap-4 p-4 transition-all duration-300 hover:gold-glow group">
+      <article className="bg-card rounded-card overflow-hidden flex flex-col sm:flex-row gap-4 p-4 h-full transition-all duration-300 hover:gold-glow group">
         {/* Portada */}
         <div className="shrink-0 mx-auto sm:mx-0">
           <div className="relative w-24 h-36 rounded-sm overflow-hidden">

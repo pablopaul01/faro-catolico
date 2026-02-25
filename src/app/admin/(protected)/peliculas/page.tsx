@@ -32,7 +32,7 @@ export default function AdminMoviesPage() {
       result = result.filter((m) => m.title.toLowerCase().includes(q))
     }
     if (filterCatId) {
-      result = result.filter((m) => m.categoryId === filterCatId)
+      result = result.filter((m) => m.categoryIds.includes(filterCatId))
     }
     return result
   }, [movies, search, filterCatId])
@@ -46,13 +46,20 @@ export default function AdminMoviesPage() {
   const columns: TableColumn<Movie>[] = [
     { key: 'title', label: 'Título' },
     {
-      key: 'categoryId',
-      label: 'Categoría',
-      render: (m) => (
-        <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
-          {m.categoryId ? (catMap[m.categoryId] ?? '—') : <span className="text-light/30">Sin categoría</span>}
-        </span>
-      ),
+      key: 'categoryIds',
+      label: 'Categorías',
+      render: (m) =>
+        m.categoryIds.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {m.categoryIds.map((catId) => (
+              <span key={catId} className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                {catMap[catId] ?? catId}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-light/30 text-xs">Sin categoría</span>
+        ),
     },
     {
       key: 'year',

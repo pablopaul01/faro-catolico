@@ -17,7 +17,7 @@ export default async function MusicaPage() {
   const [{ data: songsData }, { data: catsData }, ratingsMap] = await Promise.all([
     supabase
       .from(TABLE_NAMES.SONGS)
-      .select('*')
+      .select(`*, ${TABLE_NAMES.SONG_CATEGORIES}(category_id)`)
       .eq('is_published', true)
       .order('created_at', { ascending: false }),
     supabase
@@ -31,7 +31,7 @@ export default async function MusicaPage() {
     id:           row.id,
     title:        row.title,
     artist:       row.artist,
-    categoryId:   row.category_id,
+    categoryIds:  (row.song_categories as { category_id: string }[] ?? []).map((r) => r.category_id),
     youtubeId:    row.youtube_id,
     spotifyUrl:   row.spotify_url,
     externalUrl:  row.external_url,
