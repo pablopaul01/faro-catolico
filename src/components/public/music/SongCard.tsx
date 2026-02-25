@@ -35,7 +35,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
   return (
     <article className="bg-card rounded-card overflow-hidden transition-all duration-300 hover:gold-glow group">
       {/* Fila principal */}
-      <div className="p-4 flex items-center gap-4">
+      <div className="p-4 flex items-start gap-4">
         {/* Miniatura o ícono */}
         <div className="shrink-0 w-12 h-12 rounded-sm overflow-hidden bg-primary flex items-center justify-center">
           {thumbnailUrl ? (
@@ -53,10 +53,10 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
           )}
         </div>
 
-        {/* Info */}
+        {/* Info + controles apilados */}
         <div className="flex-1 min-w-0">
-          <p className="text-light text-sm font-medium truncate">{title}</p>
-          <p className="text-light/40 text-xs truncate">{artist}</p>
+          <p className="text-light text-sm font-medium leading-snug">{title}</p>
+          <p className="text-light/40 text-xs mt-0.5">{artist}</p>
           <div className="mt-1">
             <StarRating
               contentType="cancion"
@@ -65,68 +65,66 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
               ratingCount={ratingStats?.ratingCount}
             />
           </div>
-        </div>
 
-        {/* Controles */}
-        <div className="flex items-center gap-2 shrink-0">
-          {durationSec && (
-            <span className="text-light/30 text-xs flex items-center gap-1">
-              <Clock size={11} />
-              {formatDuration(durationSec)}
-            </span>
-          )}
+          {/* Controles debajo de la info */}
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            {durationSec && (
+              <span className="text-light/30 text-xs flex items-center gap-1">
+                <Clock size={11} />
+                {formatDuration(durationSec)}
+              </span>
+            )}
 
-          {/* Botón reproducir inline */}
-          {!copyrightMode && hasPlayer && (
-            <button
-              onClick={() => setShowPlayer((v) => !v)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
-                showPlayer
-                  ? 'bg-accent text-primary'
-                  : 'border border-accent/40 text-accent hover:bg-accent/10'
-              )}
-              title={showPlayer ? 'Cerrar reproductor' : 'Reproducir aquí'}
-            >
-              {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
-              {showPlayer ? 'Cerrar' : 'Reproducir'}
-            </button>
-          )}
+            {!copyrightMode && hasPlayer && (
+              <button
+                onClick={() => setShowPlayer((v) => !v)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
+                  showPlayer
+                    ? 'bg-accent text-primary'
+                    : 'border border-accent/40 text-accent hover:bg-accent/10'
+                )}
+                title={showPlayer ? 'Cerrar reproductor' : 'Reproducir aquí'}
+              >
+                {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
+                {showPlayer ? 'Cerrar' : 'Reproducir'}
+              </button>
+            )}
 
-          {/* Links externos */}
-          {!copyrightMode && youtubeId && (
-            <a
-              href={`https://www.youtube.com/watch?v=${youtubeId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 text-light/30 hover:text-red-400 transition-colors"
-              title="Ver en YouTube"
-            >
-              <ExternalLink size={14} />
-            </a>
-          )}
-          {!copyrightMode && spotifyUrl && (
-            <a
-              href={spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
-              title="Abrir en Spotify"
-            >
-              <ExternalLink size={14} />
-            </a>
-          )}
-          {!copyrightMode && !youtubeId && !spotifyUrl && externalUrl && (
-            <a
-              href={externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 text-light/30 hover:text-accent transition-colors"
-              title="Escuchar"
-            >
-              <ExternalLink size={14} />
-            </a>
-          )}
+            {!copyrightMode && youtubeId && (
+              <a
+                href={`https://www.youtube.com/watch?v=${youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-light/30 hover:text-red-400 transition-colors"
+                title="Ver en YouTube"
+              >
+                <ExternalLink size={14} />
+              </a>
+            )}
+            {!copyrightMode && spotifyUrl && (
+              <a
+                href={spotifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
+                title="Abrir en Spotify"
+              >
+                <ExternalLink size={14} />
+              </a>
+            )}
+            {!copyrightMode && !youtubeId && !spotifyUrl && externalUrl && (
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-light/30 hover:text-accent transition-colors"
+                title="Escuchar"
+              >
+                <ExternalLink size={14} />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 

@@ -48,9 +48,9 @@ export const PlaylistCard = ({ playlist, categoryNames = [] }: PlaylistCardProps
           )}
         </div>
 
-        {/* Info */}
+        {/* Info + controles apilados */}
         <div className="flex-1 min-w-0">
-          <p className="text-light text-sm font-display font-medium truncate">{title}</p>
+          <p className="text-light text-sm font-display font-medium leading-snug">{title}</p>
 
           {description && (
             <p className="text-light/40 text-xs leading-relaxed mt-1">{displayText}</p>
@@ -66,37 +66,37 @@ export const PlaylistCard = ({ playlist, categoryNames = [] }: PlaylistCardProps
               ))}
             </div>
           )}
-        </div>
 
-        {/* Controles */}
-        {!copyrightMode && (
-          <div className="flex items-center gap-2 shrink-0">
-            {embedUrl && (
-              <button
-                onClick={() => setShowPlayer((v) => !v)}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
-                  showPlayer
-                    ? 'bg-accent text-primary'
-                    : 'border border-accent/40 text-accent hover:bg-accent/10'
-                )}
-                title={showPlayer ? 'Cerrar reproductor' : 'Abrir reproductor'}
+          {/* Controles debajo */}
+          {!copyrightMode && (
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+              {embedUrl && (
+                <button
+                  onClick={() => setShowPlayer((v) => !v)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium transition-colors',
+                    showPlayer
+                      ? 'bg-accent text-primary'
+                      : 'border border-accent/40 text-accent hover:bg-accent/10'
+                  )}
+                  title={showPlayer ? 'Cerrar reproductor' : 'Abrir reproductor'}
+                >
+                  {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
+                  {showPlayer ? 'Cerrar' : 'Reproducir'}
+                </button>
+              )}
+              <a
+                href={spotifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
+                title="Abrir en Spotify"
               >
-                {showPlayer ? <ChevronUp size={13} /> : <Play size={13} />}
-                {showPlayer ? 'Cerrar' : 'Reproducir'}
-              </button>
-            )}
-            <a
-              href={spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 text-light/30 hover:text-green-400 transition-colors"
-              title="Abrir en Spotify"
-            >
-              <ExternalLink size={14} />
-            </a>
-          </div>
-        )}
+                <ExternalLink size={14} />
+              </a>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Player expandible */}
