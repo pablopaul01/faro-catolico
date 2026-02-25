@@ -26,6 +26,7 @@ export default function AdminLoginPage() {
       return
     }
 
+    router.refresh()
     router.replace(ROUTES.ADMIN)
   }
 
