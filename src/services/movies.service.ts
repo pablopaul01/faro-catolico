@@ -8,12 +8,13 @@ type MoviePlatformRow = { platform_id: string }
 const MOVIE_SELECT = `*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`
 
 const adaptMovie = (row: Record<string, unknown>): Movie => ({
-  id:           row.id            as string,
-  title:        row.title         as string,
-  description:  row.description   as string | null,
-  youtubeId:    row.youtube_id    as string | null,
-  externalUrl:  row.external_url  as string | null,
-  thumbnailUrl: row.thumbnail_url as string | null,
+  id:            row.id              as string,
+  title:         row.title           as string,
+  description:   row.description     as string | null,
+  youtubeId:     row.youtube_id      as string | null,
+  dailymotionId: row.dailymotion_id  as string | null,
+  externalUrl:   row.external_url    as string | null,
+  thumbnailUrl:  row.thumbnail_url   as string | null,
   year:         row.year          as number | null,
   categoryIds:  ((row.movie_category_items  as MovieCatRow[]      | null) ?? []).map((r) => r.category_id),
   platformIds:  ((row.movie_platform_items  as MoviePlatformRow[] | null) ?? []).map((r) => r.platform_id),
@@ -39,14 +40,15 @@ export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => 
   const { data, error } = await supabase
     .from(TABLE_NAMES.MOVIES)
     .insert({
-      title:         payload.title,
-      description:   payload.description  || null,
-      youtube_id:    payload.youtubeId    || null,
-      external_url:  payload.externalUrl  || null,
-      thumbnail_url: payload.thumbnailUrl || null,
-      year:          payload.year         ?? null,
-      is_published:  payload.isPublished,
-      sort_order:    payload.sortOrder,
+      title:          payload.title,
+      description:    payload.description    || null,
+      youtube_id:     payload.youtubeId      || null,
+      dailymotion_id: payload.dailymotionId  || null,
+      external_url:   payload.externalUrl    || null,
+      thumbnail_url:  payload.thumbnailUrl   || null,
+      year:           payload.year           ?? null,
+      is_published:   payload.isPublished,
+      sort_order:     payload.sortOrder,
     })
     .select()
     .single()
@@ -83,11 +85,12 @@ export const updateMovie = async (
   const supabase = getSupabaseBrowserClient()
 
   const updates: Record<string, unknown> = {}
-  if (payload.title         !== undefined) updates.title         = payload.title
-  if (payload.description   !== undefined) updates.description   = payload.description || null
-  if (payload.youtubeId     !== undefined) updates.youtube_id    = payload.youtubeId || null
-  if (payload.externalUrl   !== undefined) updates.external_url  = payload.externalUrl || null
-  if (payload.thumbnailUrl  !== undefined) updates.thumbnail_url = payload.thumbnailUrl || null
+  if (payload.title          !== undefined) updates.title          = payload.title
+  if (payload.description    !== undefined) updates.description    = payload.description || null
+  if (payload.youtubeId      !== undefined) updates.youtube_id     = payload.youtubeId || null
+  if (payload.dailymotionId  !== undefined) updates.dailymotion_id = payload.dailymotionId || null
+  if (payload.externalUrl    !== undefined) updates.external_url   = payload.externalUrl || null
+  if (payload.thumbnailUrl   !== undefined) updates.thumbnail_url  = payload.thumbnailUrl || null
   if (payload.year          !== undefined) updates.year          = payload.year ?? null
   if (payload.isPublished   !== undefined) updates.is_published  = payload.isPublished
   if (payload.sortOrder     !== undefined) updates.sort_order    = payload.sortOrder

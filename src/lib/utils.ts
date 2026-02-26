@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE } from '@/lib/constants'
+import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE } from '@/lib/constants'
 
 /** Combina clases de Tailwind evitando conflictos */
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
@@ -12,6 +12,29 @@ export const getYouTubeEmbedUrl = (youtubeId: string) =>
 /** Obtiene la thumbnail de YouTube en máxima calidad disponible */
 export const getYouTubeThumbnail = (youtubeId: string) =>
   `${YOUTUBE_THUMBNAIL_BASE}/${youtubeId}/maxresdefault.jpg`
+
+/** Construye la URL de embed de Dailymotion */
+export const getDailymotionEmbedUrl = (id: string) =>
+  `${DAILYMOTION_EMBED_BASE}/${id}?autoplay=1&ui-logo=0`
+
+/** Obtiene la thumbnail de Dailymotion */
+export const getDailymotionThumbnail = (id: string) =>
+  `${DAILYMOTION_THUMBNAIL_BASE}/${id}`
+
+/** Extrae el ID de Dailymotion de una URL o devuelve el string si ya es un ID */
+export const extractDailymotionId = (input: string): string => {
+  try {
+    const url = new URL(input)
+    if (url.hostname.includes('dailymotion.com')) {
+      // /video/x9jm09m  o  /embed/video/x9jm09m
+      const match = url.pathname.match(/\/video\/([a-z0-9]+)/i)
+      if (match) return match[1]
+    }
+  } catch {
+    // No es URL válida — asumir que ya es un ID
+  }
+  return input.trim()
+}
 
 /** Formatea segundos como "MM:SS" */
 export const formatDuration = (seconds: number): string => {

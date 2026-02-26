@@ -33,15 +33,16 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
     resolver: zodResolver(movieSchema),
     defaultValues: movie
       ? {
-          title:        movie.title,
-          description:  movie.description  ?? undefined,
-          youtubeId:    movie.youtubeId    ?? '',
-          externalUrl:  movie.externalUrl  ?? '',
-          thumbnailUrl: movie.thumbnailUrl ?? '',
-          year:         movie.year         ?? undefined,
-          categoryIds:  movie.categoryIds,
-          isPublished:  movie.isPublished,
-          sortOrder:    movie.sortOrder,
+          title:         movie.title,
+          description:   movie.description   ?? undefined,
+          youtubeId:     movie.youtubeId     ?? '',
+          dailymotionId: movie.dailymotionId ?? '',
+          externalUrl:   movie.externalUrl   ?? '',
+          thumbnailUrl:  movie.thumbnailUrl  ?? '',
+          year:          movie.year          ?? undefined,
+          categoryIds:   movie.categoryIds,
+          isPublished:   movie.isPublished,
+          sortOrder:     movie.sortOrder,
         }
       : { categoryIds: [], isPublished: false, sortOrder: 0 },
   })
@@ -68,13 +69,14 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
     try {
       const payload = {
         ...data,
-        categoryIds:  selectedCategoryIds,
-        platformIds:  selectedPlatformIds,
-        youtubeId:    data.youtubeId    || null,
-        externalUrl:  data.externalUrl  || null,
-        thumbnailUrl: data.thumbnailUrl || null,
-        description:  data.description  || null,
-        year:         data.year         ?? null,
+        categoryIds:   selectedCategoryIds,
+        platformIds:   selectedPlatformIds,
+        youtubeId:     data.youtubeId     || null,
+        dailymotionId: data.dailymotionId || null,
+        externalUrl:   data.externalUrl   || null,
+        thumbnailUrl:  data.thumbnailUrl  || null,
+        description:   data.description   || null,
+        year:          data.year          ?? null,
       }
 
       if (movie) {
@@ -97,14 +99,23 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
         <input {...register('title')} placeholder="La historia de San Francisco" className={inputClass} />
       </FormField>
 
-      {/* ID de YouTube */}
-      <FormField
-        label="ID de YouTube (opcional)"
-        hint="Solo el ID, ej: dQw4w9WgXcQ (no la URL completa)"
-        error={errors.youtubeId?.message}
-      >
-        <input {...register('youtubeId')} placeholder="dQw4w9WgXcQ" className={inputClass} />
-      </FormField>
+      {/* IDs de video */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <FormField
+          label="ID de YouTube (opcional)"
+          hint="Solo el ID, ej: dQw4w9WgXcQ"
+          error={errors.youtubeId?.message}
+        >
+          <input {...register('youtubeId')} placeholder="dQw4w9WgXcQ" className={inputClass} />
+        </FormField>
+        <FormField
+          label="ID de Dailymotion (opcional)"
+          hint="Solo el ID, ej: x9jm09m"
+          error={errors.dailymotionId?.message}
+        >
+          <input {...register('dailymotionId')} placeholder="x9jm09m" className={inputClass} />
+        </FormField>
+      </div>
 
       {/* Descripción */}
       <FormField label="Descripción" error={errors.description?.message}>

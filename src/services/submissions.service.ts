@@ -4,15 +4,16 @@ import type { Submission } from '@/types/app.types'
 
 function adaptSubmission(row: Record<string, unknown>): Submission {
   return {
-    id:             row.id             as string,
-    type:           row.type           as Submission['type'],
-    title:          row.title          as string,
-    categoryIds:    (row.category_ids  as string[] | null) ?? [],
-    platformIds:    (row.platform_ids  as string[] | null) ?? [],
-    description:    row.description    as string | null,
-    year:           row.year           as number | null,
-    youtubeId:      row.youtube_id     as string | null,
-    externalUrl:    row.external_url   as string | null,
+    id:             row.id              as string,
+    type:           row.type            as Submission['type'],
+    title:          row.title           as string,
+    categoryIds:    (row.category_ids   as string[] | null) ?? [],
+    platformIds:    (row.platform_ids   as string[] | null) ?? [],
+    description:    row.description     as string | null,
+    year:           row.year            as number | null,
+    youtubeId:      row.youtube_id      as string | null,
+    dailymotionId:  row.dailymotion_id  as string | null,
+    externalUrl:    row.external_url    as string | null,
     thumbnailUrl:   row.thumbnail_url  as string | null,
     author:         row.author         as string | null,
     coverUrl:       row.cover_url      as string | null,
@@ -37,6 +38,7 @@ export async function createSubmission(payload: {
   description?:    string
   year?:           number
   youtubeId?:      string
+  dailymotionId?:  string
   externalUrl?:    string
   thumbnailUrl?:   string
   author?:         string
@@ -69,8 +71,9 @@ export async function createSubmission(payload: {
     notes:           payload.notes           || null,
   }
   // Columnas opcionales — solo se incluyen si existen en la DB (evita error PGRST204)
-  if (payload.categoryIds?.length) row.category_ids = payload.categoryIds
-  if (payload.platformIds?.length) row.platform_ids  = payload.platformIds
+  if (payload.categoryIds?.length)  row.category_ids   = payload.categoryIds
+  if (payload.platformIds?.length)  row.platform_ids   = payload.platformIds
+  if (payload.dailymotionId)        row.dailymotion_id = payload.dailymotionId
 
   const { error } = await supabase.from(TABLE_NAMES.SUBMISSIONS).insert(row)
   if (error) throw new Error(error.message)
@@ -91,14 +94,15 @@ export async function approveSubmission(sub: Submission): Promise<void> {
 
   if (sub.type === 'pelicula') {
     const { data: movie, error } = await supabase.from(TABLE_NAMES.MOVIES).insert({
-      title:         sub.title,
-      description:   sub.description,
-      year:          sub.year,
-      youtube_id:    sub.youtubeId   ?? '',
-      external_url:  sub.externalUrl,
-      thumbnail_url: sub.thumbnailUrl,
-      is_published:  true,
-      sort_order:    0,
+      title:          sub.title,
+      description:    sub.description,
+      year:           sub.year,
+      youtube_id:     sub.youtubeId      ?? '',
+      dailymotion_id: sub.dailymotionId  ?? null,
+      external_url:   sub.externalUrl,
+      thumbnail_url:  sub.thumbnailUrl,
+      is_published:   true,
+      sort_order:     0,
     }).select('id').single()
     if (error) throw new Error(error.message)
     if (sub.categoryIds.length > 0) {

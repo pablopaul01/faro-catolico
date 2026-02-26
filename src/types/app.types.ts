@@ -39,6 +39,7 @@ export interface Movie {
   title:         string
   description:   string | null
   youtubeId:     string | null
+  dailymotionId: string | null
   externalUrl:   string | null
   thumbnailUrl:  string | null
   year:          number | null
@@ -176,6 +177,7 @@ export interface Submission {
   description:    string | null
   year:           number | null
   youtubeId:      string | null
+  dailymotionId:  string | null
   externalUrl:    string | null
   thumbnailUrl:   string | null
   author:         string | null

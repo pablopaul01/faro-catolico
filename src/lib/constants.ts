@@ -66,8 +66,14 @@ export const SITE_URL         = 'https://farocatolico.netlify.app'
 // ─────────────────────────────────────────────
 // YouTube
 // ─────────────────────────────────────────────
-export const YOUTUBE_NOCOOKIE_BASE = 'https://www.youtube-nocookie.com/embed'
+export const YOUTUBE_NOCOOKIE_BASE  = 'https://www.youtube-nocookie.com/embed'
 export const YOUTUBE_THUMBNAIL_BASE = 'https://img.youtube.com/vi'
+
+// ─────────────────────────────────────────────
+// Dailymotion
+// ─────────────────────────────────────────────
+export const DAILYMOTION_EMBED_BASE     = 'https://www.dailymotion.com/embed/video'
+export const DAILYMOTION_THUMBNAIL_BASE = 'https://www.dailymotion.com/thumbnail/video'
 
 // ─────────────────────────────────────────────
 // Supabase Storage

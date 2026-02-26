@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle } from 'lucide-react'
 import { submissionSchema, type SubmissionSchema } from '@/lib/validations'
 import { createSubmission } from '@/services/submissions.service'
-import { cn } from '@/lib/utils'
+import { cn, extractDailymotionId } from '@/lib/utils'
 import type { MovieCategory, BookCategory, MusicCategory, MoviePlatform } from '@/types/app.types'
 
 const inputClass = 'w-full px-3 py-2.5 rounded-sm bg-primary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm'
@@ -108,6 +108,7 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
   }
 
   const onSubmit = async (data: SubmissionSchema) => {
+    const dmRaw = (data as SubmissionSchema & { dailymotionId?: string }).dailymotionId
     await createSubmission({
       type:           data.type,
       title:          data.title,
@@ -116,6 +117,7 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
       description:    data.description     || undefined,
       year:           typeof data.year === 'number' ? data.year : undefined,
       youtubeId:      data.youtubeId       || undefined,
+      dailymotionId:  dmRaw ? extractDailymotionId(dmRaw) : undefined,
       externalUrl:    data.externalUrl     || undefined,
       thumbnailUrl:   data.thumbnailUrl    || undefined,
       author:         data.author          || undefined,
@@ -189,9 +191,14 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
 
       {/* Campos por tipo */}
       {tipo === 'pelicula' && (
-        <Field label="ID de YouTube" hint="El código al final de la URL: youtube.com/watch?v=ESTE_CODIGO" error={errors.youtubeId?.message}>
-          <input {...register('youtubeId')} placeholder="Ej: dQw4w9WgXcQ" className={inputClass} />
-        </Field>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="ID de YouTube (opcional)" hint="El código al final de la URL: youtube.com/watch?v=ESTE_CODIGO" error={errors.youtubeId?.message}>
+            <input {...register('youtubeId')} placeholder="Ej: dQw4w9WgXcQ" className={inputClass} />
+          </Field>
+          <Field label="URL o ID de Dailymotion (opcional)" hint="Ej: https://www.dailymotion.com/video/x9jm09m">
+            <input {...register('dailymotionId' as keyof SubmissionSchema)} placeholder="Ej: x9jm09m" className={inputClass} />
+          </Field>
+        </div>
       )}
 
       {tipo === 'libro' && (

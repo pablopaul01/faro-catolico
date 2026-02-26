@@ -48,7 +48,7 @@ export default async function HomePage() {
 
   const movies: Movie[] = (moviesRes.data ?? []).map((row) => ({
     id: row.id, title: row.title, description: row.description,
-    youtubeId: row.youtube_id, externalUrl: row.external_url,
+    youtubeId: row.youtube_id, dailymotionId: row.dailymotion_id, externalUrl: row.external_url,
     thumbnailUrl: row.thumbnail_url, year: row.year, categoryIds: [],
     platformIds: (row.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
     isPublished: row.is_published, sortOrder: row.sort_order,

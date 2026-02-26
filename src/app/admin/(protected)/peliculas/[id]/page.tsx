@@ -26,19 +26,20 @@ export default async function EditMoviePage({ params }: Props) {
 
   const data = movieRes.data
   const movie: Movie = {
-    id:           data.id,
-    title:        data.title,
-    description:  data.description,
-    youtubeId:    data.youtube_id,
-    externalUrl:  data.external_url,
-    thumbnailUrl: data.thumbnail_url,
-    year:         data.year,
-    categoryIds:  (data.movie_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
-    platformIds:  (data.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
-    isPublished:  data.is_published,
-    sortOrder:    data.sort_order,
-    createdAt:    data.created_at,
-    updatedAt:    data.updated_at,
+    id:             data.id,
+    title:          data.title,
+    description:    data.description,
+    youtubeId:      data.youtube_id,
+    dailymotionId:  data.dailymotion_id,
+    externalUrl:    data.external_url,
+    thumbnailUrl:   data.thumbnail_url,
+    year:           data.year,
+    categoryIds:    (data.movie_category_items as { category_id: string }[] ?? []).map((r) => r.category_id),
+    platformIds:    (data.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
+    isPublished:    data.is_published,
+    sortOrder:      data.sort_order,
+    createdAt:      data.created_at,
+    updatedAt:      data.updated_at,
   }
 
   const categories: MovieCategory[] = (catsRes.data ?? []).map((row) => ({

@@ -14,16 +14,17 @@ export type CategorySchema = z.infer<typeof categorySchema>
 // Schema para películas
 // ─────────────────────────────────────────────
 export const movieSchema = z.object({
-  title:        z.string().min(1, 'El título es obligatorio').max(200),
-  description:  z.string().max(1000).nullable().optional(),
-  youtubeId:    z.string().max(20).optional().or(z.literal('')),
-  externalUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
-  thumbnailUrl: z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
-  year:         z.number().int().min(1900).max(2100).nullable().optional(),
-  categoryIds:  z.array(z.string().uuid()),
+  title:         z.string().min(1, 'El título es obligatorio').max(200),
+  description:   z.string().max(1000).nullable().optional(),
+  youtubeId:     z.string().max(20).optional().or(z.literal('')),
+  dailymotionId: z.string().max(20).optional().or(z.literal('')),
+  externalUrl:   z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
+  thumbnailUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
+  year:          z.number().int().min(1900).max(2100).nullable().optional(),
+  categoryIds:   z.array(z.string().uuid()),
   // Sin .default() para compatibilidad con react-hook-form: los defaults van en useForm
-  isPublished:  z.boolean(),
-  sortOrder:    z.number().int().min(0),
+  isPublished:   z.boolean(),
+  sortOrder:     z.number().int().min(0),
 })
 
 export type MovieSchema = z.infer<typeof movieSchema>
@@ -132,6 +133,7 @@ export const submissionSchema = z.object({
   description:    z.string().max(2000).optional(),
   year:           z.coerce.number().int().min(1900).max(2100).optional().or(z.literal('')),
   youtubeId:      z.string().max(30).optional(),
+  dailymotionId:  z.string().max(30).optional(),
   externalUrl:    z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
   thumbnailUrl:   z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
   author:         z.string().max(200).optional(),
