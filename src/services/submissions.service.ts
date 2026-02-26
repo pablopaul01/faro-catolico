@@ -50,11 +50,9 @@ export async function createSubmission(payload: {
   notes?:          string
 }): Promise<void> {
   const supabase = getSupabaseBrowserClient()
-  const { error } = await supabase.from(TABLE_NAMES.SUBMISSIONS).insert({
+  const row: Record<string, unknown> = {
     type:            payload.type,
     title:           payload.title,
-    category_ids:    payload.categoryIds?.length ? payload.categoryIds : null,
-    platform_ids:    payload.platformIds?.length ? payload.platformIds : null,
     description:     payload.description     || null,
     year:            payload.year            || null,
     youtube_id:      payload.youtubeId       || null,
@@ -69,7 +67,12 @@ export async function createSubmission(payload: {
     submitter_name:  payload.submitterName   || null,
     submitter_email: payload.submitterEmail  || null,
     notes:           payload.notes           || null,
-  })
+  }
+  // Columnas opcionales — solo se incluyen si existen en la DB (evita error PGRST204)
+  if (payload.categoryIds?.length) row.category_ids = payload.categoryIds
+  if (payload.platformIds?.length) row.platform_ids  = payload.platformIds
+
+  const { error } = await supabase.from(TABLE_NAMES.SUBMISSIONS).insert(row)
   if (error) throw new Error(error.message)
 }
 
