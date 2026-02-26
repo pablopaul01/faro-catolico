@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Cinzel, Inter } from 'next/font/google'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
 import './globals.css'
 
@@ -68,11 +66,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex flex-col min-h-screen">
-        <Navbar />
-        <div className="flex-1">
-          {children}
-        </div>
-        <Footer />
+        {children}
       </body>
     </html>
   )

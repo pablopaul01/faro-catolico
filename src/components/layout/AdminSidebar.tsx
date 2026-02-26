@@ -29,7 +29,12 @@ const navItems: { href: string; label: string; icon: typeof Film; sub: SubItem[]
   { href: ROUTES.ADMIN_SETTINGS,     label: 'Configuración', icon: Settings2, sub: [] },
 ]
 
-export const AdminSidebar = () => {
+interface AdminSidebarProps {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export const AdminSidebar = ({ isOpen = false, onClose }: AdminSidebarProps) => {
   const pathname = usePathname()
   const router   = useRouter()
 
@@ -39,24 +44,42 @@ export const AdminSidebar = () => {
     router.replace(ROUTES.ADMIN_LOGIN)
   }
 
+  const handleNavClick = () => {
+    onClose?.()
+  }
+
   return (
-    <aside className="w-60 flex-shrink-0 bg-secondary border-r border-border flex flex-col">
+    <aside
+      className={cn(
+        // Mobile: drawer fixed desde la izquierda con transición
+        'fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-secondary border-r border-border transition-transform duration-300 ease-in-out',
+        // Desktop: posición relativa dentro del flex layout, siempre visible
+        'lg:relative lg:w-60 lg:z-auto lg:translate-x-0 lg:shrink-0',
+        // Estado open/close (solo aplica en mobile)
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+      )}
+    >
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-border">
-        <Link href={ROUTES.HOME} className="font-display text-lg text-accent hover:text-accent/80 transition-colors">
+      <div className="px-6 py-5 border-b border-border shrink-0">
+        <Link
+          href={ROUTES.HOME}
+          onClick={handleNavClick}
+          className="font-display text-lg text-accent hover:text-accent/80 transition-colors"
+        >
           {SITE_NAME}
         </Link>
         <p className="text-xs text-light/40 mt-0.5">Panel de administración</p>
       </div>
 
       {/* Navegación */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navItems.map(({ href, label, icon: Icon, sub }) => {
           const isActive = pathname === href || (href !== ROUTES.ADMIN && pathname.startsWith(href) && sub.every((s) => !pathname.startsWith(s.href)))
           return (
             <div key={href}>
               <Link
                 href={href}
+                onClick={handleNavClick}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-150',
                   isActive
@@ -74,6 +97,7 @@ export const AdminSidebar = () => {
                   <Link
                     key={s.href}
                     href={s.href}
+                    onClick={handleNavClick}
                     className={cn(
                       'flex items-center gap-3 pl-9 pr-3 py-2 rounded-sm text-xs transition-all duration-150',
                       isSubActive
@@ -92,7 +116,7 @@ export const AdminSidebar = () => {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-border">
+      <div className="px-3 py-4 border-t border-border shrink-0">
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-sm text-sm text-light/50 hover:text-red-400 hover:bg-red-900/10 transition-all duration-150"
