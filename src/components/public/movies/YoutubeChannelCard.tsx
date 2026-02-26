@@ -1,6 +1,7 @@
 'use client'
 
 import { Youtube, ExternalLink } from 'lucide-react'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { YoutubeChannel } from '@/types/app.types'
 
@@ -49,12 +50,16 @@ export function YoutubeChannelCard({ channel, categoryNames = [] }: YoutubeChann
           </div>
         )}
 
+        <div className="mt-auto pt-1">
+          <ReportButton contentType="youtube_channel" contentId={channel.id} contentTitle={channel.name} />
+        </div>
+
         {!copyrightMode && (
           <a
             href={channel.channelUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-auto pt-2 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
+            className="pt-1 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
           >
             Ir al canal <ExternalLink size={12} />
           </a>

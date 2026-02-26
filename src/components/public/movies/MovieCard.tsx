@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { YoutubeEmbed } from './YoutubeEmbed'
 import { StarRating } from '@/components/public/StarRating'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Movie, MoviePlatform, RatingStats } from '@/types/app.types'
 
@@ -105,6 +106,9 @@ export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => 
             )}
           </>
         )}
+        <div className="mt-auto pt-1">
+          <ReportButton contentType="pelicula" contentId={movie.id} contentTitle={title} />
+        </div>
       </div>
     </article>
   )

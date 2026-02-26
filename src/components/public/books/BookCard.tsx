@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { ExternalLink, FileText, X, Download } from 'lucide-react'
 import { StarRating } from '@/components/public/StarRating'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Book, RatingStats } from '@/types/app.types'
 
@@ -132,6 +133,10 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
             avgRating={ratingStats?.avgRating}
             ratingCount={ratingStats?.ratingCount}
           />
+
+          <div className="mt-1">
+            <ReportButton contentType="libro" contentId={book.id} contentTitle={title} />
+          </div>
 
           {/* Links */}
           {!copyrightMode && (

@@ -6,19 +6,20 @@ import { MovieGrid } from './MovieGrid'
 import { cn } from '@/lib/utils'
 import type { Movie, MovieCategory, MoviePlatform, RatingsMap } from '@/types/app.types'
 
-type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za'
+type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za' | 'rating_desc'
 
 const DEBOUNCE_MS = 400
 const PER_PAGE_OPTIONS = [9, 18, 36]
 
-const sortMovies = (a: Movie, b: Movie, sort: SortKey): number => {
+const sortMovies = (a: Movie, b: Movie, sort: SortKey, ratingsMap?: RatingsMap): number => {
   switch (sort) {
-    case 'recent':    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    case 'oldest':    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    case 'year_desc': return (b.year ?? 0) - (a.year ?? 0)
-    case 'year_asc':  return (a.year ?? 0) - (b.year ?? 0)
-    case 'az':        return a.title.localeCompare(b.title, 'es')
-    case 'za':        return b.title.localeCompare(a.title, 'es')
+    case 'recent':      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    case 'oldest':      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    case 'year_desc':   return (b.year ?? 0) - (a.year ?? 0)
+    case 'year_asc':    return (a.year ?? 0) - (b.year ?? 0)
+    case 'az':          return a.title.localeCompare(b.title, 'es')
+    case 'za':          return b.title.localeCompare(a.title, 'es')
+    case 'rating_desc': return (ratingsMap?.[b.id]?.avgRating ?? 0) - (ratingsMap?.[a.id]?.avgRating ?? 0)
   }
 }
 
@@ -49,8 +50,8 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
   const filtered = useMemo(() => {
     let result = activeId === null ? movies : movies.filter((m) => m.categoryIds.includes(activeId))
     if (q) result = result.filter((m) => m.title.toLowerCase().includes(q.toLowerCase()))
-    return [...result].sort((a, b) => sortMovies(a, b, sort))
-  }, [movies, activeId, q, sort])
+    return [...result].sort((a, b) => sortMovies(a, b, sort, ratingsMap))
+  }, [movies, activeId, q, sort, ratingsMap])
 
   const totalPages = Math.ceil(filtered.length / perPage)
   const paginated  = useMemo(
@@ -95,6 +96,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
           <option value="year_asc">Fecha de la película (antiguo)</option>
           <option value="az">Nombre A → Z</option>
           <option value="za">Nombre Z → A</option>
+          <option value="rating_desc">Mejor valorada</option>
         </select>
       </div>
 

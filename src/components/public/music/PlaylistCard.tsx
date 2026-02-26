@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ExternalLink, Music2, ChevronUp, Play } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Playlist } from '@/types/app.types'
 
@@ -66,6 +67,10 @@ export const PlaylistCard = ({ playlist, categoryNames = [] }: PlaylistCardProps
               ))}
             </div>
           )}
+
+          <div className="mt-1">
+            <ReportButton contentType="playlist" contentId={playlist.id} contentTitle={title} />
+          </div>
 
           {/* Controles debajo */}
           {!copyrightMode && (

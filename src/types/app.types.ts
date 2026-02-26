@@ -168,6 +168,22 @@ export interface ContactMessage {
 }
 
 // ─────────────────────────────────────────────
+// Reportes de contenido roto
+// ─────────────────────────────────────────────
+export type ReportContentType = 'pelicula' | 'libro' | 'cancion' | 'playlist' | 'youtube_playlist' | 'youtube_channel'
+export type ReportStatus      = 'pendiente' | 'resuelto'
+
+export interface Report {
+  id:           string
+  contentType:  ReportContentType
+  contentId:    string
+  contentTitle: string
+  reason:       string
+  status:       ReportStatus
+  createdAt:    string
+}
+
+// ─────────────────────────────────────────────
 // Propuestas de contenido (submissions)
 // ─────────────────────────────────────────────
 export interface Submission {

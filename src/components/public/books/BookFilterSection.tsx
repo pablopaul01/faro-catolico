@@ -6,19 +6,20 @@ import { BookGrid } from './BookGrid'
 import { cn } from '@/lib/utils'
 import type { Book, BookCategory, RatingsMap } from '@/types/app.types'
 
-type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za'
+type SortKey = 'recent' | 'oldest' | 'year_desc' | 'year_asc' | 'az' | 'za' | 'rating_desc'
 
 const DEBOUNCE_MS = 400
 const PER_PAGE_OPTIONS = [9, 18, 36]
 
-const sortBooks = (a: Book, b: Book, sort: SortKey): number => {
+const sortBooks = (a: Book, b: Book, sort: SortKey, ratingsMap?: RatingsMap): number => {
   switch (sort) {
-    case 'recent':    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    case 'oldest':    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    case 'year_desc': return (b.year ?? 0) - (a.year ?? 0)
-    case 'year_asc':  return (a.year ?? 0) - (b.year ?? 0)
-    case 'az':        return a.title.localeCompare(b.title, 'es')
-    case 'za':        return b.title.localeCompare(a.title, 'es')
+    case 'recent':      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    case 'oldest':      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    case 'year_desc':   return (b.year ?? 0) - (a.year ?? 0)
+    case 'year_asc':    return (a.year ?? 0) - (b.year ?? 0)
+    case 'az':          return a.title.localeCompare(b.title, 'es')
+    case 'za':          return b.title.localeCompare(a.title, 'es')
+    case 'rating_desc': return (ratingsMap?.[b.id]?.avgRating ?? 0) - (ratingsMap?.[a.id]?.avgRating ?? 0)
   }
 }
 
@@ -53,8 +54,8 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
         (b) => b.title.toLowerCase().includes(lq) || b.author.toLowerCase().includes(lq)
       )
     }
-    return [...result].sort((a, b) => sortBooks(a, b, sort))
-  }, [books, activeId, q, sort])
+    return [...result].sort((a, b) => sortBooks(a, b, sort, ratingsMap))
+  }, [books, activeId, q, sort, ratingsMap])
 
   const totalPages = Math.ceil(filtered.length / perPage)
   const paginated  = useMemo(
@@ -99,6 +100,7 @@ export const BookFilterSection = ({ books, categories, ratingsMap }: BookFilterS
           <option value="year_asc">Fecha del libro (antiguo)</option>
           <option value="az">Nombre A → Z</option>
           <option value="za">Nombre Z → A</option>
+          <option value="rating_desc">Mejor valorada</option>
         </select>
       </div>
 

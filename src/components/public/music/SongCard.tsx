@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ExternalLink, Music2, Clock, Play, ChevronUp } from 'lucide-react'
 import { formatDuration, getYouTubeEmbedUrl, cn } from '@/lib/utils'
 import { StarRating } from '@/components/public/StarRating'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Song, RatingStats } from '@/types/app.types'
 
@@ -68,6 +69,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
 
           {/* Controles debajo de la info */}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <ReportButton contentType="cancion" contentId={song.id} contentTitle={title} />
             {durationSec && (
               <span className="text-light/30 text-xs flex items-center gap-1">
                 <Clock size={11} />

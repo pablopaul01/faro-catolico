@@ -6,17 +6,18 @@ import { SongCard } from './SongCard'
 import { cn } from '@/lib/utils'
 import type { Song, MusicCategory, RatingsMap } from '@/types/app.types'
 
-type SortKey = 'recent' | 'oldest' | 'az' | 'za'
+type SortKey = 'recent' | 'oldest' | 'az' | 'za' | 'rating_desc'
 
 const DEBOUNCE_MS = 400
 const PER_PAGE_OPTIONS = [9, 18, 36]
 
-const sortSongs = (a: Song, b: Song, sort: SortKey): number => {
+const sortSongs = (a: Song, b: Song, sort: SortKey, ratingsMap?: RatingsMap): number => {
   switch (sort) {
-    case 'recent':  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    case 'oldest':  return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    case 'az':      return a.title.localeCompare(b.title, 'es')
-    case 'za':      return b.title.localeCompare(a.title, 'es')
+    case 'recent':      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    case 'oldest':      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    case 'az':          return a.title.localeCompare(b.title, 'es')
+    case 'za':          return b.title.localeCompare(a.title, 'es')
+    case 'rating_desc': return (ratingsMap?.[b.id]?.avgRating ?? 0) - (ratingsMap?.[a.id]?.avgRating ?? 0)
   }
 }
 
@@ -53,8 +54,8 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
         (s) => s.title.toLowerCase().includes(lq) || s.artist.toLowerCase().includes(lq)
       )
     }
-    return [...result].sort((a, b) => sortSongs(a, b, sort))
-  }, [songs, activeCategoryId, q, sort])
+    return [...result].sort((a, b) => sortSongs(a, b, sort, ratingsMap))
+  }, [songs, activeCategoryId, q, sort, ratingsMap])
 
   const totalPages = Math.ceil(filtered.length / perPage)
   const paginated  = useMemo(
@@ -97,6 +98,7 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
           <option value="oldest">Subidas más antiguas</option>
           <option value="az">Nombre A → Z</option>
           <option value="za">Nombre Z → A</option>
+          <option value="rating_desc">Mejor valorada</option>
         </select>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink, PlaySquare, ChevronDown, ChevronUp } from 'lucide-react'
+import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { YoutubePlaylist } from '@/types/app.types'
 
@@ -65,8 +66,12 @@ export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePla
           </div>
         )}
 
+        <div className="mt-auto pt-1">
+          <ReportButton contentType="youtube_playlist" contentId={playlist.id} contentTitle={playlist.title} />
+        </div>
+
         {!copyrightMode && (
-          <div className="mt-auto pt-2 flex items-center gap-3">
+          <div className="pt-2 flex items-center gap-3">
             <button
               onClick={() => setExpanded((v) => !v)}
               className="flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors font-medium"
