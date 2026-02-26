@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Cinzel, Inter } from 'next/font/google'
+import Script from 'next/script'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
 import './globals.css'
 
@@ -67,6 +68,11 @@ export default function RootLayout({
     >
       <body className="flex flex-col min-h-screen">
         {children}
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="58cf83ae-1a96-4045-b994-5ceec589978b"
+        />
       </body>
     </html>
   )
