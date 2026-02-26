@@ -13,7 +13,8 @@ export const metadata: Metadata = {
   description: 'Canciones católicas organizadas por momento: oración, estudio, reunión y fiesta. Música para crecer en la fe.',
 }
 
-export default async function MusicaPage() {
+export default async function MusicaPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const { tab } = await searchParams
   const supabase = await createSupabaseServerClient()
 
   const [settings, { data: songsData }, { data: catsData }, { data: playlistsData }, ratingsMap] = await Promise.all([
@@ -78,7 +79,7 @@ export default async function MusicaPage() {
         title="Música"
         subtitle="Canciones y playlists para cada momento del día y del corazón"
       />
-      <MusicPageTabs songs={songs} playlists={playlists} categories={categories} ratingsMap={ratingsMap} />
+      <MusicPageTabs songs={songs} playlists={playlists} categories={categories} ratingsMap={ratingsMap} defaultTab={tab} />
     </main>
   )
 }

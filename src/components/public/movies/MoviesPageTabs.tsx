@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MovieFilterSection } from './MovieFilterSection'
 import { YoutubePlaylistsTab } from './YoutubePlaylistsTab'
 import { YoutubeChannelsTab } from './YoutubeChannelsTab'
@@ -16,6 +16,7 @@ interface MoviesPageTabsProps {
   categories:       MovieCategory[]
   ratingsMap?:      RatingsMap
   platformsMap?:    Record<string, MoviePlatform>
+  defaultTab?:      string
 }
 
 export function MoviesPageTabs({
@@ -25,8 +26,13 @@ export function MoviesPageTabs({
   categories,
   ratingsMap,
   platformsMap,
+  defaultTab,
 }: MoviesPageTabsProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('peliculas')
+  const validTabs: Tab[] = ['peliculas', 'playlists', 'canales']
+  const toTab = (t?: string): Tab => validTabs.includes(t as Tab) ? (t as Tab) : 'peliculas'
+  const [activeTab, setActiveTab] = useState<Tab>(() => toTab(defaultTab))
+
+  useEffect(() => { setActiveTab(toTab(defaultTab)) }, [defaultTab])
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: 'peliculas', label: 'Películas',  count: movies.length },

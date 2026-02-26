@@ -13,7 +13,8 @@ export const metadata: Metadata = {
   description: 'Películas católicas y aptas para la familia: vidas de santos, documentales de fe y films de valores.',
 }
 
-export default async function PeliculasPage() {
+export default async function PeliculasPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const { tab } = await searchParams
   const supabase = await createSupabaseServerClient()
 
   const [settings, moviesRes, catsRes, platsRes, ratingsMap, ytPlRes, ytChRes] = await Promise.all([
@@ -113,6 +114,7 @@ export default async function PeliculasPage() {
         categories={categories}
         ratingsMap={ratingsMap}
         platformsMap={platformsMap}
+        defaultTab={tab}
       />
     </main>
   )

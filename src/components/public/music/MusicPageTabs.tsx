@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MusicSection } from './MusicSection'
 import { PlaylistsTab } from './PlaylistsTab'
 import { cn } from '@/lib/utils'
@@ -11,12 +11,17 @@ interface MusicPageTabsProps {
   playlists:   Playlist[]
   categories:  MusicCategory[]
   ratingsMap?: RatingsMap
+  defaultTab?: string
 }
 
 type Tab = 'canciones' | 'playlists'
 
-export const MusicPageTabs = ({ songs, playlists, categories, ratingsMap }: MusicPageTabsProps) => {
-  const [activeTab, setActiveTab] = useState<Tab>('canciones')
+export const MusicPageTabs = ({ songs, playlists, categories, ratingsMap, defaultTab }: MusicPageTabsProps) => {
+  const validTabs: Tab[] = ['canciones', 'playlists']
+  const toTab = (t?: string): Tab => validTabs.includes(t as Tab) ? (t as Tab) : 'canciones'
+  const [activeTab, setActiveTab] = useState<Tab>(() => toTab(defaultTab))
+
+  useEffect(() => { setActiveTab(toTab(defaultTab)) }, [defaultTab])
 
   return (
     <div>
