@@ -56,7 +56,7 @@ export const Hero = () => {
         className={`text-light/50 max-w-md text-sm sm:text-base leading-relaxed mb-10 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
         style={{ animationDelay: '0.3s' }}
       >
-        Contenido para crecer en la fe: películas, libros y música
+        Contenido para crecer en la fe: videos, películas, libros y música
         seleccionados con amor.
       </p>
 
@@ -69,7 +69,7 @@ export const Hero = () => {
           href={ROUTES.MOVIES}
           className="px-7 py-3 bg-accent text-primary font-semibold rounded-sm hover:bg-accent/90 transition-all duration-200 hover:scale-[1.02]"
         >
-          Ver películas
+          Ver videos y películas
         </Link>
         <Link
           href={ROUTES.MUSIC}

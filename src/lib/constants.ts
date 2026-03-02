@@ -25,6 +25,7 @@ export const ROUTES = {
   ADMIN_SETTINGS:          '/admin/configuracion',
   ADMIN_REPORTS:           '/admin/reportes',
   SEARCH:                  '/buscar',
+  AVISO_LEGAL:             '/aviso-legal',
   AUTH_CALLBACK:           '/auth/callback',
 } as const
 
@@ -61,8 +62,8 @@ export const TABLE_NAMES = {
 // Metadatos del sitio
 // ─────────────────────────────────────────────
 export const SITE_NAME        = 'Faro Católico'
-export const SITE_TAGLINE     = 'Películas, libros y música para crecer en gracia'
-export const SITE_DESCRIPTION = 'Una plataforma de contenido para católicos: películas, libros y música seleccionados para el crecimiento espiritual.'
+export const SITE_TAGLINE     = 'Videos, películas, libros y música para crecer en gracia'
+export const SITE_DESCRIPTION = 'Una plataforma de contenido para católicos: videos, películas, libros y música seleccionados para el crecimiento espiritual.'
 export const SITE_URL         = 'https://farocatolico.netlify.app'
 
 // ─────────────────────────────────────────────

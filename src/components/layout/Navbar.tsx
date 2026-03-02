@@ -22,7 +22,7 @@ interface NavLink {
 const navLinks: NavLink[] = [
   {
     href:  ROUTES.MOVIES,
-    label: 'Películas',
+    label: 'Videos y Películas',
     children: [
       { href: ROUTES.MOVIES,                    label: 'Películas'        },
       { href: `${ROUTES.MOVIES}?tab=playlists`, label: 'Playlists YouTube' },

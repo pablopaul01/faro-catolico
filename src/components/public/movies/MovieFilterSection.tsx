@@ -31,13 +31,19 @@ interface MovieFilterSectionProps {
 }
 
 export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMap }: MovieFilterSectionProps) => {
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const [inputQ,   setInputQ]   = useState('')
-  const [q,        setQ]        = useState('')
-  const [sort,     setSort]     = useState<SortKey>('recent')
-  const [page,     setPage]     = useState(1)
-  const [perPage,  setPerPage]  = useState(9)
+  const [categoryId,  setCategoryId]  = useState('')
+  const [platformId,  setPlatformId]  = useState('')
+  const [inputQ,      setInputQ]      = useState('')
+  const [q,           setQ]           = useState('')
+  const [sort,        setSort]        = useState<SortKey>('recent')
+  const [page,        setPage]        = useState(1)
+  const [perPage,     setPerPage]     = useState(9)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  const platforms = useMemo(
+    () => Object.values(platformsMap ?? {}).sort((a, b) => a.sortOrder - b.sortOrder),
+    [platformsMap]
+  )
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -45,13 +51,14 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [inputQ])
 
-  useEffect(() => { setPage(1) }, [q, activeId, sort, perPage])
+  useEffect(() => { setPage(1) }, [q, categoryId, platformId, sort, perPage])
 
   const filtered = useMemo(() => {
-    let result = activeId === null ? movies : movies.filter((m) => m.categoryIds.includes(activeId))
+    let result = categoryId ? movies.filter((m) => m.categoryIds.includes(categoryId)) : movies
+    if (platformId) result = result.filter((m) => m.platformIds.includes(platformId))
     if (q) result = result.filter((m) => m.title.toLowerCase().includes(q.toLowerCase()))
     return [...result].sort((a, b) => sortMovies(a, b, sort, ratingsMap))
-  }, [movies, activeId, q, sort, ratingsMap])
+  }, [movies, categoryId, platformId, q, sort, ratingsMap])
 
   const totalPages = Math.ceil(filtered.length / perPage)
   const paginated  = useMemo(
@@ -71,10 +78,12 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
     return pages
   }, [totalPages, page])
 
+  const selectCls = 'px-3 py-2.5 rounded-sm bg-secondary border border-border text-light text-sm focus:outline-none focus:border-accent transition-colors'
+
   return (
     <div>
-      {/* Búsqueda + ordenar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      {/* Fila 1: búsqueda + ordenar */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-light/30 pointer-events-none" />
           <input
@@ -88,7 +97,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="px-3 py-2.5 rounded-sm bg-secondary border border-border text-light text-sm focus:outline-none focus:border-accent transition-colors"
+          className={selectCls}
         >
           <option value="recent">Subidos recientemente</option>
           <option value="oldest">Subidos más antiguos</option>
@@ -100,47 +109,34 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
         </select>
       </div>
 
-      {/* Tabs de categorías */}
-      {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          <button
-            onClick={() => setActiveId(null)}
-            className={cn(
-              'px-4 py-2 rounded-sm text-sm transition-all duration-200',
-              activeId === null
-                ? 'bg-accent text-primary font-semibold'
-                : 'border border-border text-light/50 hover:border-accent/40 hover:text-light'
-            )}
+      {/* Fila 2: categoría + plataforma */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        {categories.length > 0 && (
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            className={cn(selectCls, 'flex-1')}
           >
-            Todos
-            <span className={cn('ml-2 text-xs', activeId === null ? 'text-primary/70' : 'text-light/30')}>
-              {movies.length}
-            </span>
-          </button>
-          {categories.map((cat) => {
-            const count = movies.filter((m) => m.categoryIds.includes(cat.id)).length
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveId(cat.id)}
-                className={cn(
-                  'px-4 py-2 rounded-sm text-sm transition-all duration-200',
-                  activeId === cat.id
-                    ? 'bg-accent text-primary font-semibold'
-                    : 'border border-border text-light/50 hover:border-accent/40 hover:text-light'
-                )}
-              >
-                {cat.name}
-                {count > 0 && (
-                  <span className={cn('ml-2 text-xs', activeId === cat.id ? 'text-primary/70' : 'text-light/30')}>
-                    {count}
-                  </span>
-                )}
-              </button>
-            )
-          })}
-        </div>
-      )}
+            <option value="">Todas las categorías</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+        )}
+
+        {platforms.length > 0 && (
+          <select
+            value={platformId}
+            onChange={(e) => setPlatformId(e.target.value)}
+            className={cn(selectCls, 'flex-1')}
+          >
+            <option value="">Todas las plataformas</option>
+            {platforms.map((plat) => (
+              <option key={plat.id} value={plat.id}>{plat.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
 
       {/* Selector de cantidad por página */}
       <div className="flex justify-end mb-4">
@@ -158,7 +154,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
 
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-light/30 border border-border rounded-card">
-          <p>{q ? `Sin resultados para "${q}"` : 'No hay películas en esta categoría todavía.'}</p>
+          <p>{q ? `Sin resultados para "${q}"` : 'No hay películas con esos filtros.'}</p>
         </div>
       ) : (
         <>

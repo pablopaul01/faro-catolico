@@ -9,8 +9,8 @@ import type { Metadata } from 'next'
 import type { Movie, MovieCategory, MoviePlatform, YoutubePlaylist, YoutubeChannel } from '@/types/app.types'
 
 export const metadata: Metadata = {
-  title:       `Películas recomendadas — ${SITE_NAME}`,
-  description: 'Películas católicas y aptas para la familia: vidas de santos, documentales de fe y films de valores.',
+  title:       `Videos y Películas — ${SITE_NAME}`,
+  description: 'Videos, películas y canales católicos para toda la familia: vidas de santos, documentales de fe, playlists de YouTube y más.',
 }
 
 export default async function PeliculasPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
@@ -104,7 +104,7 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-24">
       <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <SectionHeader
-        title="Películas"
+        title="Videos y Películas"
         subtitle="Vidas de santos, documentales, playlists y canales para toda la familia"
       />
       <MoviesPageTabs

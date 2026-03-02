@@ -71,9 +71,14 @@ export const Footer = () => (
             </span>
           </a>
         </p>
-        <Link href={ROUTES.ADMIN} className="text-light/20 text-xs hover:text-light/40 transition-colors">
-          Admin
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href={ROUTES.AVISO_LEGAL} className="text-light/20 text-xs hover:text-light/40 transition-colors">
+            Aviso legal
+          </Link>
+          <Link href={ROUTES.ADMIN} className="text-light/20 text-xs hover:text-light/40 transition-colors">
+            Admin
+          </Link>
+        </div>
       </div>
     </div>
   </footer>
