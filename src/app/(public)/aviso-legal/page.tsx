@@ -10,17 +10,16 @@ export default function AvisoLegalPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-14 pb-24">
       <h1 className="font-display text-4xl text-light mb-2">Aviso legal</h1>
-      <p className="text-light/40 text-sm mb-10">Última actualización: 2025</p>
+      <p className="text-light/40 text-sm mb-10">Última actualización: marzo 2026</p>
 
       <div className="space-y-10 text-light/70 text-sm leading-relaxed">
 
         <section>
           <h2 className="font-display text-xl text-light mb-3">Propósito del sitio</h2>
           <p>
-            <strong className="text-light">{SITE_NAME}</strong> es un proyecto sin fines de lucro creado por el
-            movimiento <strong className="text-light">Lazos de Amor Mariano</strong> con el único objetivo de
-            facilitar el acceso a contenido católico de calidad: videos, películas, libros y música seleccionados
-            para el crecimiento espiritual de las familias.
+            <strong className="text-light">{SITE_NAME}</strong> es un proyecto personal sin fines de lucro con el
+            único objetivo de facilitar el acceso a contenido católico de calidad: videos, películas, libros y música
+            seleccionados para el crecimiento espiritual de las familias.
           </p>
           <p className="mt-3">
             Este sitio funciona como un <em>directorio de recursos</em>. No aloja ni distribuye contenido
@@ -66,8 +65,7 @@ export default function AvisoLegalPage() {
         <section>
           <h2 className="font-display text-xl text-light mb-3">Valoraciones y reseñas</h2>
           <p>
-            Las valoraciones de estrellas reflejan la opinión de los visitantes del sitio y no representan
-            necesariamente la postura oficial del movimiento Lazos de Amor Mariano.
+            Las valoraciones de estrellas reflejan únicamente la opinión de los visitantes del sitio.
           </p>
         </section>
 
