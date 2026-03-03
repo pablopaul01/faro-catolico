@@ -1,12 +1,12 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { fetchRatingsForContent } from '@/services/ratings.server'
-import { fetchSettingsServer } from '@/services/settings.server'
-import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
+import { fetchBooksPageData, fetchSettingsPublic, fetchRatingsPublic } from '@/lib/data-cache'
+import { SITE_NAME } from '@/lib/constants'
 import { BookFilterSection } from '@/components/public/books/BookFilterSection'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Metadata } from 'next'
 import type { Book, BookCategory } from '@/types/app.types'
+
+export const revalidate = 3600 // ISR: revalida cada 1 hora desde CDN
 
 export const metadata: Metadata = {
   title:       `Libros recomendados — ${SITE_NAME}`,
@@ -14,23 +14,13 @@ export const metadata: Metadata = {
 }
 
 export default async function LibrosPage() {
-  const supabase = await createSupabaseServerClient()
-
-  const [settings, booksRes, catsRes, ratingsMap] = await Promise.all([
-    fetchSettingsServer(),
-    supabase
-      .from(TABLE_NAMES.BOOKS)
-      .select(`*, ${TABLE_NAMES.BOOK_CATEGORY_ITEMS}(category_id)`)
-      .eq('is_published', true)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from(TABLE_NAMES.BOOK_CATEGORIES)
-      .select('*')
-      .order('sort_order', { ascending: true }),
-    fetchRatingsForContent('libro'),
+  const [{ books: booksRaw, categories: catsRaw }, settings, ratingsMap] = await Promise.all([
+    fetchBooksPageData(),
+    fetchSettingsPublic(),
+    fetchRatingsPublic('libro'),
   ])
 
-  const books: Book[] = (booksRes.data ?? []).map((row) => ({
+  const books: Book[] = booksRaw.map((row) => ({
     id:          row.id,
     title:       row.title,
     author:      row.author,
@@ -46,7 +36,7 @@ export default async function LibrosPage() {
     updatedAt:   row.updated_at,
   }))
 
-  const categories: BookCategory[] = (catsRes.data ?? []).map((row) => ({
+  const categories: BookCategory[] = catsRaw.map((row) => ({
     id:        row.id,
     name:      row.name,
     sortOrder: row.sort_order,

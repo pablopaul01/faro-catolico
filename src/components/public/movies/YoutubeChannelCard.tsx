@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Youtube, ExternalLink } from 'lucide-react'
 import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -18,10 +19,12 @@ export function YoutubeChannelCard({ channel, categoryNames = [] }: YoutubeChann
       <div className="h-24 bg-primary/60 flex items-end justify-center shrink-0 relative">
         <div className="absolute -bottom-8 w-16 h-16 rounded-full border-2 border-border overflow-hidden bg-primary flex items-center justify-center shadow-md">
           {channel.thumbnailUrl ? (
-            <img
+            <Image
               src={channel.thumbnailUrl}
               alt={channel.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="64px"
             />
           ) : (
             <span className="font-display text-2xl text-accent/60 select-none">

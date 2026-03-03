@@ -1,7 +1,5 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { fetchRatingsForContent } from '@/services/ratings.server'
-import { fetchSettingsServer } from '@/services/settings.server'
-import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
+import { fetchMoviesPageData, fetchSettingsPublic, fetchRatingsPublic } from '@/lib/data-cache'
+import { SITE_NAME } from '@/lib/constants'
 import { MoviesPageTabs } from '@/components/public/movies/MoviesPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { SettingsInitializer } from '@/components/SettingsInitializer'
@@ -15,37 +13,15 @@ export const metadata: Metadata = {
 
 export default async function PeliculasPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab } = await searchParams
-  const supabase = await createSupabaseServerClient()
 
-  const [settings, moviesRes, catsRes, platsRes, ratingsMap, ytPlRes, ytChRes] = await Promise.all([
-    fetchSettingsServer(),
-    supabase
-      .from(TABLE_NAMES.MOVIES)
-      .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
-      .eq('is_published', true)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from(TABLE_NAMES.MOVIE_CATEGORIES)
-      .select('*')
-      .order('sort_order', { ascending: true }),
-    supabase
-      .from(TABLE_NAMES.MOVIE_PLATFORMS)
-      .select('*')
-      .order('sort_order', { ascending: true }),
-    fetchRatingsForContent('pelicula'),
-    supabase
-      .from(TABLE_NAMES.YOUTUBE_PLAYLISTS)
-      .select(`*, ${TABLE_NAMES.YOUTUBE_PLAYLIST_CATEGORY_ITEMS}(category_id)`)
-      .eq('is_published', true)
-      .order('sort_order', { ascending: true }),
-    supabase
-      .from(TABLE_NAMES.YOUTUBE_CHANNELS)
-      .select(`*, ${TABLE_NAMES.YOUTUBE_CHANNEL_CATEGORY_ITEMS}(category_id)`)
-      .eq('is_published', true)
-      .order('sort_order', { ascending: true }),
+  const [{ movies: moviesRaw, categories: catsRaw, platforms: platsRaw, youtubePlaylists: ytPlRaw, youtubeChannels: ytChRaw },
+         settings, ratingsMap] = await Promise.all([
+    fetchMoviesPageData(),
+    fetchSettingsPublic(),
+    fetchRatingsPublic('pelicula'),
   ])
 
-  const movies: Movie[] = (moviesRes.data ?? []).map((row) => ({
+  const movies: Movie[] = moviesRaw.map((row) => ({
     id:             row.id,
     title:          row.title,
     description:    row.description,
@@ -62,7 +38,7 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
     updatedAt:      row.updated_at,
   }))
 
-  const categories: MovieCategory[] = (catsRes.data ?? []).map((row) => ({
+  const categories: MovieCategory[] = catsRaw.map((row) => ({
     id:        row.id,
     name:      row.name,
     sortOrder: row.sort_order,
@@ -70,11 +46,11 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
   }))
 
   const platformsMap: Record<string, MoviePlatform> = {}
-  for (const row of platsRes.data ?? []) {
+  for (const row of platsRaw) {
     platformsMap[row.id] = { id: row.id, name: row.name, sortOrder: row.sort_order, createdAt: row.created_at }
   }
 
-  const youtubePlaylists: YoutubePlaylist[] = (ytPlRes.data ?? []).map((row) => ({
+  const youtubePlaylists: YoutubePlaylist[] = ytPlRaw.map((row) => ({
     id:            row.id,
     title:         row.title,
     description:   row.description,
@@ -87,7 +63,7 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
     updatedAt:     row.updated_at,
   }))
 
-  const youtubeChannels: YoutubeChannel[] = (ytChRes.data ?? []).map((row) => ({
+  const youtubeChannels: YoutubeChannel[] = ytChRaw.map((row) => ({
     id:           row.id,
     name:         row.name,
     description:  row.description,
