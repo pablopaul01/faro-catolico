@@ -129,9 +129,15 @@ export default async function HomePage() {
               viewAllHref={`${ROUTES.MOVIES}?tab=playlists`}
               viewAllLabel="Ver todas"
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {youtubePlaylists.map((pl) => (
-                <YoutubePlaylistCard key={pl.id} playlist={pl} />
+            <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+              {youtubePlaylists.map((pl, index) => (
+                <div
+                  key={pl.id}
+                  className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
+                  style={{ animationDelay: `${index * 0.06}s` }}
+                >
+                  <YoutubePlaylistCard playlist={pl} />
+                </div>
               ))}
             </div>
           </section>
@@ -149,9 +155,15 @@ export default async function HomePage() {
               viewAllHref={`${ROUTES.MOVIES}?tab=canales`}
               viewAllLabel="Ver todos"
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {youtubeChannels.map((ch) => (
-                <YoutubeChannelCard key={ch.id} channel={ch} />
+            <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+              {youtubeChannels.map((ch, index) => (
+                <div
+                  key={ch.id}
+                  className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
+                  style={{ animationDelay: `${index * 0.06}s` }}
+                >
+                  <YoutubeChannelCard channel={ch} />
+                </div>
               ))}
             </div>
           </section>
