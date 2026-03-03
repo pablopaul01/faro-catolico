@@ -1,7 +1,5 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { fetchRatingsForContent } from '@/services/ratings.server'
-import { fetchSettingsServer } from '@/services/settings.server'
-import { TABLE_NAMES, SITE_NAME } from '@/lib/constants'
+import { fetchMusicPageData, fetchSettingsPublic, fetchRatingsPublic } from '@/lib/data-cache'
+import { SITE_NAME } from '@/lib/constants'
 import { MusicPageTabs } from '@/components/public/music/MusicPageTabs'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { SettingsInitializer } from '@/components/SettingsInitializer'
@@ -15,28 +13,14 @@ export const metadata: Metadata = {
 
 export default async function MusicaPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab } = await searchParams
-  const supabase = await createSupabaseServerClient()
 
-  const [settings, { data: songsData }, { data: catsData }, { data: playlistsData }, ratingsMap] = await Promise.all([
-    fetchSettingsServer(),
-    supabase
-      .from(TABLE_NAMES.SONGS)
-      .select(`*, ${TABLE_NAMES.SONG_CATEGORIES}(category_id)`)
-      .eq('is_published', true)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from(TABLE_NAMES.MUSIC_CATEGORIES)
-      .select('*')
-      .order('sort_order', { ascending: true }),
-    supabase
-      .from(TABLE_NAMES.PLAYLISTS)
-      .select(`*, ${TABLE_NAMES.PLAYLIST_CATEGORY_ITEMS}(category_id)`)
-      .eq('is_published', true)
-      .order('created_at', { ascending: false }),
-    fetchRatingsForContent('cancion'),
+  const [{ songs: songsRaw, categories: catsRaw, playlists: plRaw }, settings, ratingsMap] = await Promise.all([
+    fetchMusicPageData(),
+    fetchSettingsPublic(),
+    fetchRatingsPublic('cancion'),
   ])
 
-  const songs: Song[] = (songsData ?? []).map((row) => ({
+  const songs: Song[] = songsRaw.map((row) => ({
     id:           row.id,
     title:        row.title,
     artist:       row.artist,
@@ -52,14 +36,14 @@ export default async function MusicaPage({ searchParams }: { searchParams: Promi
     updatedAt:    row.updated_at,
   }))
 
-  const categories: MusicCategory[] = (catsData ?? []).map((row) => ({
+  const categories: MusicCategory[] = catsRaw.map((row) => ({
     id:        row.id,
     name:      row.name,
     sortOrder: row.sort_order,
     createdAt: row.created_at,
   }))
 
-  const playlists: Playlist[] = (playlistsData ?? []).map((row) => ({
+  const playlists: Playlist[] = plRaw.map((row) => ({
     id:           row.id,
     title:        row.title,
     description:  row.description,

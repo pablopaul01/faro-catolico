@@ -14,7 +14,7 @@ interface BookCardProps {
   ratingStats?: RatingStats
 }
 
-const COVER_PLACEHOLDER = 'https://placehold.co/200x300/1B263B/D4AF37?text=Libro'
+const COVER_PLACEHOLDER = '/book-placeholder.svg'
 const DESCRIPTION_LIMIT = 120
 
 const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')

@@ -24,7 +24,7 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl }: 
       <div className="relative w-full aspect-video rounded-card overflow-hidden bg-secondary flex items-center justify-center">
         {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover" />
+          <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
         ) : (
           <div className="flex flex-col items-center gap-2 text-light/20">
             <Play size={32} />
@@ -68,6 +68,8 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl }: 
         src={thumbnail}
         alt={title}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
         onError={(e) => {
           if (!hasDailymotion) {
             ;(e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`

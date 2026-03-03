@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ExternalLink, PlaySquare, ChevronDown, ChevronUp } from 'lucide-react'
 import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -35,10 +36,12 @@ export function YoutubePlaylistCard({ playlist, categoryNames = [] }: YoutubePla
       ) : (
         <div className="aspect-video w-full overflow-hidden shrink-0 relative">
           {playlist.thumbnailUrl ? (
-            <img
+            <Image
               src={playlist.thumbnailUrl}
               alt={playlist.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-primary/60">
