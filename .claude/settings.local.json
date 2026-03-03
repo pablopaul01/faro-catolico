@@ -12,7 +12,8 @@
       "WebFetch(domain:github.com)",
       "Bash(npx add-skill addyosmani/web-quality-skills)",
       "Bash(where npx)",
-      "Bash(npx skills add addyosmani/web-quality-skills)"
+      "Bash(npx skills add addyosmani/web-quality-skills)",
+      "Bash(pnpm run build:*)"
     ]
   }
 }
