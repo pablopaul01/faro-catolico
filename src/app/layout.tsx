@@ -50,10 +50,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images:      ['/og-image.png'],
   },
-  icons: {
-    icon:  '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
 }
 
 export const viewport: Viewport = {
