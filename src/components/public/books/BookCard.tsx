@@ -21,9 +21,10 @@ const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')
 
 export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const { title, author, description, coverUrl, year, purchaseUrl, pdfUrl } = book
-  const [expanded,  setExpanded]  = useState(false)
-  const [showPdf,   setShowPdf]   = useState(false)
-  const [mounted,   setMounted]   = useState(false)
+  const [expanded,    setExpanded]    = useState(false)
+  const [showPdf,     setShowPdf]     = useState(false)
+  const [mounted,     setMounted]     = useState(false)
+  const [pdfLoading,  setPdfLoading]  = useState(false)
   const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   useEffect(() => { setMounted(true) }, [])
@@ -39,15 +40,13 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
     ? description.slice(0, DESCRIPTION_LIMIT).trimEnd() + '…'
     : description
 
-  // En móvil los iframes no renderizan PDFs nativos — Google Docs Viewer los convierte a HTML
-  const isMobile = () => typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
-
+  // Google Docs Viewer para todos los dispositivos y URLs:
+  // - En móvil los iframes no renderizan PDFs nativos
+  // - URLs externas pueden bloquear embedding vía X-Frame-Options
   const getPdfSrc = (url: string) =>
-    isMobile()
-      ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
-      : url
+    `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
 
-  const handlePdfClick = () => setShowPdf(true)
+  const handlePdfClick = () => { setPdfLoading(true); setShowPdf(true) }
 
   const modal = mounted && showPdf && pdfUrl
     ? createPortal(
@@ -79,12 +78,22 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
             </div>
           </div>
 
-          {/* Iframe PDF — Google Docs Viewer en móvil para compatibilidad cross-device */}
-          <iframe
-            src={getPdfSrc(pdfUrl!)}
-            title={`PDF: ${title}`}
-            className="flex-1 w-full border-0"
-          />
+          {/* Contenedor con altura explícita — flex-1 solo no garantiza altura en móvil */}
+          <div className="relative flex-1 min-h-0">
+            {pdfLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 z-10">
+                <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                <span className="text-light/50 text-xs">Cargando PDF...</span>
+              </div>
+            )}
+            <iframe
+              key={pdfUrl}
+              src={getPdfSrc(pdfUrl!)}
+              title={`PDF: ${title}`}
+              className="absolute inset-0 w-full h-full border-0"
+              onLoad={() => setPdfLoading(false)}
+            />
+          </div>
         </div>,
         document.body
       )
@@ -153,7 +162,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
                 </a>
               )}
               {!purchaseUrl && <span />}
-              {pdfUrl && isSupabaseUrl(pdfUrl) ? (
+              {pdfUrl && (
                 <button
                   onClick={handlePdfClick}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
@@ -161,17 +170,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
                   <FileText size={14} />
                   Leer PDF
                 </button>
-              ) : pdfUrl ? (
-                <a
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
-                >
-                  <FileText size={14} />
-                  PDF gratis
-                </a>
-              ) : null}
+              )}
             </div>
           )}
         </div>
