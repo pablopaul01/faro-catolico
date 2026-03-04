@@ -37,6 +37,7 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
           description:   movie.description   ?? undefined,
           youtubeId:     movie.youtubeId     ?? '',
           dailymotionId: movie.dailymotionId ?? '',
+          okId:          movie.okId          ?? '',
           externalUrl:   movie.externalUrl   ?? '',
           thumbnailUrl:  movie.thumbnailUrl  ?? '',
           year:          movie.year          ?? undefined,
@@ -73,6 +74,7 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
         platformIds:   selectedPlatformIds,
         youtubeId:     data.youtubeId     || null,
         dailymotionId: data.dailymotionId || null,
+        okId:          data.okId          || null,
         externalUrl:   data.externalUrl   || null,
         thumbnailUrl:  data.thumbnailUrl  || null,
         description:   data.description   || null,
@@ -114,6 +116,13 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
           error={errors.dailymotionId?.message}
         >
           <input {...register('dailymotionId')} placeholder="x9jm09m" className={inputClass} />
+        </FormField>
+        <FormField
+          label="ID de OK.ru (opcional)"
+          hint="Solo el ID numérico, ej: 1457452747325"
+          error={errors.okId?.message}
+        >
+          <input {...register('okId')} placeholder="1457452747325" className={inputClass} />
         </FormField>
       </div>
 

@@ -18,7 +18,7 @@ interface MovieCardProps {
 }
 
 export const MovieCard = ({ movie, ratingStats, platforms, priority }: MovieCardProps) => {
-  const { title, description, youtubeId, dailymotionId, externalUrl, year, thumbnailUrl } = movie
+  const { title, description, youtubeId, dailymotionId, okId, externalUrl, year, thumbnailUrl } = movie
   const [expanded, setExpanded] = useState(false)
   const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
@@ -32,7 +32,7 @@ export const MovieCard = ({ movie, ratingStats, platforms, priority }: MovieCard
       {/* Embed / thumbnail */}
       {!copyrightMode && (
         <div className="flex-shrink-0">
-          <YoutubeEmbed youtubeId={youtubeId} dailymotionId={dailymotionId} title={title} thumbnailUrl={thumbnailUrl} priority={priority} />
+          <YoutubeEmbed youtubeId={youtubeId} dailymotionId={dailymotionId} okId={okId} title={title} thumbnailUrl={thumbnailUrl} priority={priority} />
         </div>
       )}
 
@@ -67,7 +67,7 @@ export const MovieCard = ({ movie, ratingStats, platforms, priority }: MovieCard
         />
 
         {/* Sin medio disponible */}
-        {!youtubeId && !dailymotionId && !externalUrl ? (
+        {!youtubeId && !dailymotionId && !okId && !externalUrl ? (
           <div className="mt-auto pt-2">
             <p className="text-light/40 text-xs italic leading-relaxed">
               Esta sugerencia no tiene un medio gratuito para verla
