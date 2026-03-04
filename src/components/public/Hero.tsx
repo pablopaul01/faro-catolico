@@ -19,25 +19,25 @@ export const Hero = () => {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(212,175,55,0.07) 0%, transparent 70%)',
+            'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(212,175,55,0.12) 0%, transparent 70%)',
         }}
       />
 
       {/* Logo */}
-      <div className={`mb-20 lg:mb-10 ${ready ? 'animate-fade-in' : 'opacity-0'}`}>
+      <div className={`mb-6 lg:mb-8 ${ready ? 'animate-fade-in' : 'opacity-0'}`}>
         <Image
           src="/fc-logo.png"
           alt={`Logo ${SITE_NAME}`}
           width={200}
           height={200}
-          className="drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+          className="drop-shadow-[0_0_30px_rgba(212,175,55,0.5)]"
           priority
         />
       </div>
 
       {/* Nombre del sitio */}
       <h1
-        className={`font-display text-5xl sm:text-6xl lg:text-7xl text-light mb-5 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
+        className={`font-display text-5xl sm:text-6xl lg:text-7xl text-light mb-4 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
         style={{ animationDelay: '0.1s' }}
       >
         {SITE_NAME}
@@ -45,25 +45,19 @@ export const Hero = () => {
 
       {/* Tagline */}
       <p
-        className={`text-lg sm:text-xl text-accent/80 font-display mb-4 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
+        className={`text-lg sm:text-xl text-accent/80 font-display mb-8 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
         style={{ animationDelay: '0.2s' }}
       >
         {SITE_TAGLINE}
       </p>
 
-      {/* Subtexto */}
-      <p
-        className={`text-light/50 max-w-md text-sm sm:text-base leading-relaxed mb-10 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
-        style={{ animationDelay: '0.3s' }}
-      >
-        Contenido para crecer en la fe: videos, películas, libros y música
-        seleccionados con amor.
-      </p>
+      {/* Buscador — acción primaria */}
+      <HeroSearch />
 
       {/* CTAs */}
       <div
         className={`flex flex-col sm:flex-row gap-3 ${ready ? 'animate-slide-up' : 'opacity-0'}`}
-        style={{ animationDelay: '0.4s' }}
+        style={{ animationDelay: '0.5s' }}
       >
         <Link
           href={ROUTES.MOVIES}
@@ -73,14 +67,11 @@ export const Hero = () => {
         </Link>
         <Link
           href={ROUTES.MUSIC}
-          className="px-7 py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-all duration-200"
+          className="px-7 py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-all duration-200 hover:scale-[1.02]"
         >
           Explorar música
         </Link>
       </div>
-
-      {/* Buscador */}
-      <HeroSearch />
 
       {/* Flecha de scroll */}
       <div

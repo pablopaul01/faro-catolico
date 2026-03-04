@@ -19,7 +19,7 @@ export function HeroSearch() {
     <form
       onSubmit={handleSubmit}
       className="w-full max-w-md animate-slide-up"
-      style={{ animationDelay: '0.45s' }}
+      style={{ animationDelay: '0.35s' }}
     >
       <div className="relative py-4">
         <Search
