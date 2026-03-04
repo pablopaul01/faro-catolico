@@ -23,6 +23,8 @@ interface BookCardProps {
 const COVER_PLACEHOLDER = '/book-placeholder.svg'
 const DESCRIPTION_LIMIT = 120
 
+const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')
+
 export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const { title, author, description, coverUrl, year, purchaseUrl, pdfUrl } = book
   const [expanded, setExpanded] = useState(false)
@@ -41,6 +43,15 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const displayText = isLong && !expanded
     ? description.slice(0, DESCRIPTION_LIMIT).trimEnd() + '…'
     : description
+
+  const handlePdfClick = () => {
+    if (!pdfUrl) return
+    if (isSupabaseUrl(pdfUrl)) {
+      setShowPdf(true)
+    } else {
+      window.open(pdfUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
 
   const modal = mounted && showPdf && pdfUrl
     ? createPortal(
@@ -119,7 +130,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
               {!purchaseUrl && <span />}
               {pdfUrl && (
                 <button
-                  onClick={() => setShowPdf(true)}
+                  onClick={handlePdfClick}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-accent/10 border border-accent/40 text-sm font-medium text-accent hover:bg-accent/20 transition-colors"
                 >
                   <FileText size={14} />

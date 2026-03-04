@@ -3,14 +3,8 @@
 import { useState, useEffect } from 'react'
 import { ExternalLink, Download, X } from 'lucide-react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
-
-const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')
-const getPdfFile = (url: string) =>
-  isSupabaseUrl(url) ? url : `/api/pdf-proxy?url=${encodeURIComponent(url)}`
 
 interface BookPdfViewerProps {
   pdfUrl:  string
@@ -33,7 +27,7 @@ export function BookPdfViewer({ pdfUrl, title, author, onClose }: BookPdfViewerP
   }, [])
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col bg-black/95 animate-fade-in">
+    <div className="fixed inset-0 z-9999 flex flex-col bg-black/95 animate-fade-in">
       {/* Barra superior */}
       <div className="flex items-center justify-between gap-2 px-4 py-3 bg-secondary border-b border-border shrink-0">
         <div className="min-w-0">
@@ -87,7 +81,7 @@ export function BookPdfViewer({ pdfUrl, title, author, onClose }: BookPdfViewerP
         ) : (
           <Document
             key={pdfUrl}
-            file={getPdfFile(pdfUrl)}
+            file={pdfUrl}
             onLoadSuccess={({ numPages }) => { setNumPages(numPages); setPdfLoading(false) }}
             onLoadError={() => { setPdfError(true); setPdfLoading(false) }}
             loading={null}
