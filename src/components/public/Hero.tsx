@@ -87,7 +87,7 @@ export const Hero = () => {
         className={`absolute bottom-8 left-1/2 -translate-x-1/2 ${ready ? 'animate-fade-in' : 'opacity-0'}`}
         style={{ animationDelay: '0.8s' }}
       >
-        <ChevronDown size={20} className="text-light/20 animate-bounce" />
+        <ChevronDown size={20} className="text-light/20 animate-float-down" />
       </div>
     </section>
   )

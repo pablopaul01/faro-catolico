@@ -34,7 +34,7 @@ export const SongCard = ({ song, ratingStats }: SongCardProps) => {
   const hasPlayer    = !!(spotifyEmbed || youtubeId)
 
   return (
-    <article className="bg-card rounded-card overflow-hidden transition-all duration-300 hover:gold-glow group">
+    <article className="bg-card rounded-card overflow-hidden transition-all duration-300 hover:gold-glow hover:-translate-y-0.5 group">
       {/* Fila principal */}
       <div className="p-4 flex items-start gap-4">
         {/* Miniatura o ícono */}

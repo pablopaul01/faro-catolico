@@ -10,6 +10,7 @@ import { YoutubePlaylistCard } from '@/components/public/movies/YoutubePlaylistC
 import { YoutubeChannelCard } from '@/components/public/movies/YoutubeChannelCard'
 import { PlaylistCard } from '@/components/public/music/PlaylistCard'
 import { SettingsInitializer } from '@/components/SettingsInitializer'
+import { FadeInWhenVisible } from '@/components/public/FadeInWhenVisible'
 import type { Movie, Book, Song, MoviePlatform, YoutubePlaylist, YoutubeChannel, Playlist } from '@/types/app.types'
 
 
@@ -37,6 +38,10 @@ const Divider = () => (
   <div className="max-w-6xl mx-auto px-4 sm:px-6">
     <div className="h-px bg-border" />
   </div>
+)
+
+const SectionBg = ({ children, alt }: { children: React.ReactNode; alt?: boolean }) => (
+  <div className={alt ? 'w-full bg-secondary' : undefined}>{children}</div>
 )
 
 export default async function HomePage() {
@@ -108,7 +113,7 @@ export default async function HomePage() {
       <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <Hero />
 
-      {/* Películas */}
+      {/* Películas — bg-primary (default) */}
       <section id="peliculas" className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <SectionHeader
           title="Películas"
@@ -119,10 +124,9 @@ export default async function HomePage() {
         <MovieGrid movies={movies} ratingsMap={movieRatings} platformsMap={platformsMap} slider />
       </section>
 
-      {/* YouTube Playlists */}
+      {/* YouTube Playlists — bg-secondary */}
       {youtubePlaylists.length > 0 && (
-        <>
-          <Divider />
+        <SectionBg alt>
           <section id="playlists-youtube" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
             <SectionHeader
               title="Playlists de YouTube"
@@ -132,62 +136,57 @@ export default async function HomePage() {
             />
             <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
               {youtubePlaylists.map((pl, index) => (
-                <div
+                <FadeInWhenVisible
                   key={pl.id}
-                  className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
-                  style={{ animationDelay: `${index * 0.06}s` }}
+                  index={index}
+                  className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none"
                 >
                   <YoutubePlaylistCard playlist={pl} />
-                </div>
+                </FadeInWhenVisible>
               ))}
             </div>
           </section>
-        </>
+        </SectionBg>
       )}
 
-      {/* Canales de YouTube */}
+      {/* Canales de YouTube — bg-primary */}
       {youtubeChannels.length > 0 && (
-        <>
-          <Divider />
-          <section id="canales-youtube" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-            <SectionHeader
-              title="Canales de YouTube"
-              subtitle="Creadores católicos recomendados para el crecimiento espiritual"
-              viewAllHref={`${ROUTES.MOVIES}?tab=canales`}
-              viewAllLabel="Ver todos"
-            />
-            <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
-              {youtubeChannels.map((ch, index) => (
-                <div
-                  key={ch.id}
-                  className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
-                  style={{ animationDelay: `${index * 0.06}s` }}
-                >
-                  <YoutubeChannelCard channel={ch} />
-                </div>
-              ))}
-            </div>
-          </section>
-        </>
+        <section id="canales-youtube" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+          <SectionHeader
+            title="Canales de YouTube"
+            subtitle="Creadores católicos recomendados para el crecimiento espiritual"
+            viewAllHref={`${ROUTES.MOVIES}?tab=canales`}
+            viewAllLabel="Ver todos"
+          />
+          <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+            {youtubeChannels.map((ch, index) => (
+              <FadeInWhenVisible
+                key={ch.id}
+                index={index}
+                className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none"
+              >
+                <YoutubeChannelCard channel={ch} />
+              </FadeInWhenVisible>
+            ))}
+          </div>
+        </section>
       )}
 
-      <Divider />
+      {/* Libros — bg-secondary */}
+      <SectionBg alt>
+        <section id="libros" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+          <SectionHeader
+            title="Libros"
+            subtitle="Lectura seleccionada para el crecimiento espiritual"
+            viewAllHref={ROUTES.BOOKS}
+            viewAllLabel="Ver todos"
+          />
+          <BookGrid books={books} ratingsMap={bookRatings} slider />
+        </section>
+      </SectionBg>
 
-      {/* Libros */}
-      <section id="libros" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <SectionHeader
-          title="Libros"
-          subtitle="Lectura seleccionada para el crecimiento espiritual"
-          viewAllHref={ROUTES.BOOKS}
-          viewAllLabel="Ver todos"
-        />
-        <BookGrid books={books} ratingsMap={bookRatings} slider />
-      </section>
-
-      <Divider />
-
-      {/* Música — canciones */}
-      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pt-10">
+      {/* Música — canciones — bg-primary */}
+      <section id="musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
         <SectionHeader
           title="Música"
           subtitle="Canciones para cada momento del corazón"
@@ -201,10 +200,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Playlists de música */}
-      {musicPlaylists.length > 0 && (
-        <>
-          <Divider />
+      {/* Playlists de música — bg-secondary */}
+      {musicPlaylists.length > 0 ? (
+        <SectionBg alt>
           <section id="playlists-musica" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pb-24">
             <SectionHeader
               title="Playlists de Música"
@@ -218,11 +216,8 @@ export default async function HomePage() {
               ))}
             </div>
           </section>
-        </>
-      )}
-
-      {/* Padding bottom si no hay playlists de música */}
-      {musicPlaylists.length === 0 && (
+        </SectionBg>
+      ) : (
         <div className="pb-24" />
       )}
     </>
