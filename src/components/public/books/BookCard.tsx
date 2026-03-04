@@ -39,14 +39,15 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
     ? description.slice(0, DESCRIPTION_LIMIT).trimEnd() + '…'
     : description
 
-  const handlePdfClick = () => {
-    // Móvil/tablet: los iframes no renderizan PDFs — abrir con el visor nativo del dispositivo
-    if (navigator.maxTouchPoints > 0) {
-      window.open(pdfUrl!, '_blank', 'noopener,noreferrer')
-    } else {
-      setShowPdf(true)
-    }
-  }
+  // En móvil los iframes no renderizan PDFs nativos — Google Docs Viewer los convierte a HTML
+  const isMobile = () => typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+
+  const getPdfSrc = (url: string) =>
+    isMobile()
+      ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+      : url
+
+  const handlePdfClick = () => setShowPdf(true)
 
   const modal = mounted && showPdf && pdfUrl
     ? createPortal(
@@ -78,9 +79,9 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
             </div>
           </div>
 
-          {/* Iframe PDF */}
+          {/* Iframe PDF — Google Docs Viewer en móvil para compatibilidad cross-device */}
           <iframe
-            src={pdfUrl}
+            src={getPdfSrc(pdfUrl!)}
             title={`PDF: ${title}`}
             className="flex-1 w-full border-0"
           />
