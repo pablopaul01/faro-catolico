@@ -9,9 +9,10 @@ interface VideoEmbedProps {
   dailymotionId?: string | null
   title:          string
   thumbnailUrl?:  string | null
+  priority?:      boolean
 }
 
-export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl }: VideoEmbedProps) => {
+export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
 
   // Prioridad: YouTube > Dailymotion
@@ -74,8 +75,9 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl }: 
         src={thumbnail}
         alt={title}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover/card:scale-105"
-        loading="lazy"
-        decoding="async"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        decoding={priority ? 'sync' : 'async'}
         onError={(e) => {
           if (!hasDailymotion) {
             ;(e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`

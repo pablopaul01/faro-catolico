@@ -62,6 +62,12 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       className={`${cinzel.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="dns-prefetch" href="https://img.youtube.com" />
+        <link rel="preconnect" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+      </head>
       <body className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-1">

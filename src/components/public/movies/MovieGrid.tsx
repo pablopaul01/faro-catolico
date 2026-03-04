@@ -35,6 +35,7 @@ export const MovieGrid = ({ movies, ratingsMap, platformsMap, slider }: MovieGri
               movie={movie}
               ratingStats={ratingsMap?.[movie.id]}
               platforms={platformsMap ? movie.platformIds.map((pid) => platformsMap[pid]).filter(Boolean) : undefined}
+              priority={index === 0}
             />
           </FadeInWhenVisible>
         ))}
@@ -50,6 +51,7 @@ export const MovieGrid = ({ movies, ratingsMap, platformsMap, slider }: MovieGri
             movie={movie}
             ratingStats={ratingsMap?.[movie.id]}
             platforms={platformsMap ? movie.platformIds.map((pid) => platformsMap[pid]).filter(Boolean) : undefined}
+            priority={index === 0}
           />
         </FadeInWhenVisible>
       ))}
