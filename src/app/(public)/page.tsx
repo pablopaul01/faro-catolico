@@ -12,7 +12,8 @@ import { PlaylistCard } from '@/components/public/music/PlaylistCard'
 import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Movie, Book, Song, MoviePlatform, YoutubePlaylist, YoutubeChannel, Playlist } from '@/types/app.types'
 
-export const revalidate = 3600 // ISR: revalida cada 1 hora desde CDN
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title:       SITE_NAME,

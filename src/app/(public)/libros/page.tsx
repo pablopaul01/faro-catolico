@@ -6,7 +6,8 @@ import { SettingsInitializer } from '@/components/SettingsInitializer'
 import type { Metadata } from 'next'
 import type { Book, BookCategory } from '@/types/app.types'
 
-export const revalidate = 3600 // ISR: revalida cada 1 hora desde CDN
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title:       `Libros recomendados — ${SITE_NAME}`,
