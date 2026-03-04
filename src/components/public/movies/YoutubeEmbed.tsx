@@ -2,22 +2,24 @@
 
 import { useState } from 'react'
 import { Play, Film } from 'lucide-react'
-import { getYouTubeEmbedUrl, getYouTubeThumbnail, getDailymotionEmbedUrl, getDailymotionThumbnail } from '@/lib/utils'
+import { getYouTubeEmbedUrl, getYouTubeThumbnail, getDailymotionEmbedUrl, getDailymotionThumbnail, getOkEmbedUrl } from '@/lib/utils'
 
 interface VideoEmbedProps {
   youtubeId:      string | null
   dailymotionId?: string | null
+  okId?:          string | null
   title:          string
   thumbnailUrl?:  string | null
   priority?:      boolean
 }
 
-export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
+export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
 
-  // Prioridad: YouTube > Dailymotion
-  const hasDailymotion = !!dailymotionId && !youtubeId
-  const hasVideo       = !!youtubeId || !!dailymotionId
+  // Prioridad: YouTube > Dailymotion > OK.ru
+  const activeOk          = !!okId && !youtubeId && !dailymotionId
+  const activeDailymotion = !!dailymotionId && !youtubeId
+  const hasVideo          = !!youtubeId || !!dailymotionId || !!okId
 
   // Sin video: mostrar imagen estática o placeholder
   if (!hasVideo) {
@@ -42,12 +44,14 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl, pr
     )
   }
 
-  const embedUrl = hasDailymotion
-    ? getDailymotionEmbedUrl(dailymotionId!)
-    : `${getYouTubeEmbedUrl(youtubeId!)}&autoplay=1`
+  const embedUrl = activeOk
+    ? getOkEmbedUrl(okId!)
+    : activeDailymotion
+      ? getDailymotionEmbedUrl(dailymotionId!)
+      : `${getYouTubeEmbedUrl(youtubeId!)}&autoplay=1`
 
   const thumbnail = thumbnailUrl
-    ?? (hasDailymotion ? getDailymotionThumbnail(dailymotionId!) : getYouTubeThumbnail(youtubeId!))
+    ?? (activeDailymotion ? getDailymotionThumbnail(dailymotionId!) : activeOk ? null : getYouTubeThumbnail(youtubeId!))
 
   if (isPlaying) {
     return (
@@ -70,29 +74,47 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, title, thumbnailUrl, pr
       className="relative w-full aspect-video rounded-card overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       aria-label={`Reproducir: ${title}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={thumbnail}
-        alt={title}
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover/card:scale-105"
-        loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'auto'}
-        decoding={priority ? 'sync' : 'async'}
-        onError={(e) => {
-          if (!hasDailymotion) {
-            ;(e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
-          }
-        }}
-      />
+      {thumbnail ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover/card:scale-105"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
+            decoding={priority ? 'sync' : 'async'}
+            onError={(e) => {
+              if (!activeDailymotion && !activeOk) {
+                ;(e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
+              }
+            }}
+          />
+        </>
+      ) : (
+        <div className="w-full h-full bg-secondary flex items-center justify-center">
+          <Film size={32} className="text-light/20" />
+        </div>
+      )}
       <div className="absolute inset-0 bg-primary/40 group-hover:bg-primary/25 group-hover/card:bg-primary/25 transition-colors duration-300" />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-16 h-16 rounded-full bg-accent/90 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover/card:scale-110 transition-transform duration-200">
           <Play size={24} className="text-primary ml-1" fill="currentColor" />
         </div>
       </div>
-      {hasDailymotion && (
+      {youtubeId && !activeDailymotion && !activeOk && (
+        <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-red-600/80 text-white backdrop-blur-sm">
+          YouTube
+        </span>
+      )}
+      {activeDailymotion && (
         <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-blue-600/80 text-white backdrop-blur-sm">
           Dailymotion
+        </span>
+      )}
+      {activeOk && (
+        <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-orange-600/80 text-white backdrop-blur-sm">
+          OK.ru
         </span>
       )}
     </button>

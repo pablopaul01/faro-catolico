@@ -12,14 +12,18 @@ export interface TableColumn<T> {
 }
 
 interface DataTableProps<T extends { id: string; isPublished: boolean }> {
-  columns:         TableColumn<T>[]
-  data:            T[]
-  isLoading:       boolean
-  createHref:      string
-  onDelete:        (id: string) => Promise<void>
-  onTogglePublish: (id: string, current: boolean) => Promise<void>
-  editHref:        (id: string) => string
-  entityLabel:     string
+  columns:          TableColumn<T>[]
+  data:             T[]
+  isLoading:        boolean
+  createHref:       string
+  onDelete:         (id: string) => Promise<void>
+  onTogglePublish:  (id: string, current: boolean) => Promise<void>
+  editHref:         (id: string) => string
+  entityLabel:      string
+  defaultPage?:     number
+  defaultPageSize?: number
+  onPageChange?:    (page: number) => void
+  onPageSizeChange?:(size: number) => void
 }
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
@@ -33,12 +37,16 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
   onTogglePublish,
   editHref,
   entityLabel,
+  defaultPage     = 1,
+  defaultPageSize = 10,
+  onPageChange,
+  onPageSizeChange,
 }: DataTableProps<T>) => {
   const [deletingId, setDeletingId]  = useState<string | null>(null)
   const [togglingId, setTogglingId]  = useState<string | null>(null)
   const [confirmId,  setConfirmId]   = useState<string | null>(null)
-  const [page,       setPage]        = useState(1)
-  const [pageSize,   setPageSize]    = useState(10)
+  const [page,       setPage]        = useState(defaultPage)
+  const [pageSize,   setPageSize]    = useState(defaultPageSize)
 
   const handleDelete = async (id: string) => {
     setDeletingId(id)
@@ -59,9 +67,16 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
     }
   }
 
+  const handlePageChange = (p: number) => {
+    setPage(p)
+    onPageChange?.(p)
+  }
+
   const handlePageSizeChange = (size: number) => {
     setPageSize(size)
     setPage(1)
+    onPageSizeChange?.(size)
+    onPageChange?.(1)
   }
 
   if (isLoading) {
@@ -132,7 +147,7 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
         </span>
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
             className="p-1.5 rounded-sm text-light/40 hover:text-light hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label="Página anterior"
@@ -155,7 +170,7 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
               ) : (
                 <button
                   key={p}
-                  onClick={() => setPage(p as number)}
+                  onClick={() => handlePageChange(p as number)}
                   className={cn(
                     'w-7 h-7 rounded-sm text-xs font-medium transition-colors',
                     currentPage === p
@@ -168,7 +183,7 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
               )
             )}
           <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
             className="p-1.5 rounded-sm text-light/40 hover:text-light hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label="Página siguiente"

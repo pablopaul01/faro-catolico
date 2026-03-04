@@ -79,6 +79,11 @@ export const DAILYMOTION_EMBED_BASE     = 'https://www.dailymotion.com/embed/vid
 export const DAILYMOTION_THUMBNAIL_BASE = 'https://www.dailymotion.com/thumbnail/video'
 
 // ─────────────────────────────────────────────
+// OK.ru (Odnoklassniki)
+// ─────────────────────────────────────────────
+export const OKRU_EMBED_BASE = 'https://ok.ru/videoembed'
+
+// ─────────────────────────────────────────────
 // Supabase Storage
 // ─────────────────────────────────────────────
 export const STORAGE_BUCKETS = {

@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE } from '@/lib/constants'
+import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE, OKRU_EMBED_BASE } from '@/lib/constants'
 
 /** Combina clases de Tailwind evitando conflictos */
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
@@ -28,6 +28,24 @@ export const extractDailymotionId = (input: string): string => {
     if (url.hostname.includes('dailymotion.com')) {
       // /video/x9jm09m  o  /embed/video/x9jm09m
       const match = url.pathname.match(/\/video\/([a-z0-9]+)/i)
+      if (match) return match[1]
+    }
+  } catch {
+    // No es URL válida — asumir que ya es un ID
+  }
+  return input.trim()
+}
+
+/** Construye la URL de embed de OK.ru */
+export const getOkEmbedUrl = (okId: string) =>
+  `${OKRU_EMBED_BASE}/${okId}?autoplay=1`
+
+/** Extrae el ID numérico de OK.ru de una URL o devuelve el string si ya es un ID */
+export const extractOkId = (input: string): string => {
+  try {
+    const url = new URL(input)
+    if (url.hostname.includes('ok.ru')) {
+      const match = url.pathname.match(/\/video\/(\d+)/)
       if (match) return match[1]
     }
   } catch {

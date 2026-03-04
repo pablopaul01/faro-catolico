@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Search } from 'lucide-react'
 import { DataTable, type TableColumn } from '@/components/admin/DataTable'
 import { fetchAllSongs, deleteSong, updateSong } from '@/services/music.service'
@@ -11,11 +11,12 @@ import { ROUTES } from '@/lib/constants'
 import type { Song } from '@/types/app.types'
 
 export default function AdminMusicPage() {
-  const { songs, isLoading, setSongs, setLoading, setError, removeSong, updateSong: updateInStore } = useMusicStore()
+  const {
+    songs, isLoading, setSongs, setLoading, setError, removeSong, updateSong: updateInStore,
+    listSearch, listFilterCatId, listPage, listPageSize,
+    setListSearch, setListFilterCatId, setListPage, setListPageSize,
+  } = useMusicStore()
   const { categories, setCategories } = useMusicCategoriesStore()
-
-  const [search,      setSearch]      = useState('')
-  const [filterCatId, setFilterCatId] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -27,17 +28,17 @@ export default function AdminMusicPage() {
 
   const filtered = useMemo(() => {
     let result = songs
-    if (search.trim()) {
-      const q = search.toLowerCase()
+    if (listSearch.trim()) {
+      const q = listSearch.toLowerCase()
       result = result.filter((s) =>
         s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q)
       )
     }
-    if (filterCatId) {
-      result = result.filter((s) => s.categoryIds.includes(filterCatId))
+    if (listFilterCatId) {
+      result = result.filter((s) => s.categoryIds.includes(listFilterCatId))
     }
     return result
-  }, [songs, search, filterCatId])
+  }, [songs, listSearch, listFilterCatId])
 
   const catMap = useMemo(
     () => Object.fromEntries(categories.map((c) => [c.id, c.name])),
@@ -87,15 +88,15 @@ export default function AdminMusicPage() {
           <input
             type="text"
             placeholder="Buscar por título o artista..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={listSearch}
+            onChange={(e) => setListSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-sm bg-secondary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm"
           />
         </div>
         {categories.length > 0 && (
           <select
-            value={filterCatId}
-            onChange={(e) => setFilterCatId(e.target.value)}
+            value={listFilterCatId}
+            onChange={(e) => setListFilterCatId(e.target.value)}
             className="px-4 py-2.5 rounded-sm bg-secondary border border-border text-light focus:outline-none focus:border-accent transition-colors text-sm cursor-pointer"
           >
             <option value="">Todas las categorías</option>
@@ -115,6 +116,10 @@ export default function AdminMusicPage() {
         onTogglePublish={handleTogglePublish}
         editHref={(id) => `${ROUTES.ADMIN_MUSIC}/${id}`}
         entityLabel="canción"
+        defaultPage={listPage}
+        defaultPageSize={listPageSize}
+        onPageChange={setListPage}
+        onPageSizeChange={setListPageSize}
       />
     </div>
   )
