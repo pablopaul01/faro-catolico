@@ -3,6 +3,7 @@ import { Cinzel, Inter } from 'next/font/google'
 import Script from 'next/script'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { ScrollToTop } from '@/components/ScrollToTop'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
 import '../globals.css'
 
@@ -69,6 +70,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
       </head>
       <body className="flex flex-col min-h-screen">
+        <ScrollToTop />
         <Navbar />
         <div className="flex-1">
           {children}
