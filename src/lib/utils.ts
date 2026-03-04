@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE, OKRU_EMBED_BASE } from '@/lib/constants'
+import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE, OKRU_EMBED_BASE, VIMEO_EMBED_BASE } from '@/lib/constants'
 
 /** Combina clases de Tailwind evitando conflictos */
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
@@ -46,6 +46,24 @@ export const extractOkId = (input: string): string => {
     const url = new URL(input)
     if (url.hostname.includes('ok.ru')) {
       const match = url.pathname.match(/\/video\/(\d+)/)
+      if (match) return match[1]
+    }
+  } catch {
+    // No es URL válida — asumir que ya es un ID
+  }
+  return input.trim()
+}
+
+/** Construye la URL de embed de Vimeo */
+export const getVimeoEmbedUrl = (vimeoId: string) =>
+  `${VIMEO_EMBED_BASE}/${vimeoId}?autoplay=1&color=D4AF37`
+
+/** Extrae el ID numérico de Vimeo de una URL o devuelve el string si ya es un ID */
+export const extractVimeoId = (input: string): string => {
+  try {
+    const url = new URL(input)
+    if (url.hostname.includes('vimeo.com')) {
+      const match = url.pathname.match(/\/(\d+)/)
       if (match) return match[1]
     }
   } catch {

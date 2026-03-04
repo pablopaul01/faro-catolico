@@ -38,6 +38,7 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
           youtubeId:     movie.youtubeId     ?? '',
           dailymotionId: movie.dailymotionId ?? '',
           okId:          movie.okId          ?? '',
+          vimeoId:       movie.vimeoId       ?? '',
           externalUrl:   movie.externalUrl   ?? '',
           thumbnailUrl:  movie.thumbnailUrl  ?? '',
           year:          movie.year          ?? undefined,
@@ -75,6 +76,7 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
         youtubeId:     data.youtubeId     || null,
         dailymotionId: data.dailymotionId || null,
         okId:          data.okId          || null,
+        vimeoId:       data.vimeoId       || null,
         externalUrl:   data.externalUrl   || null,
         thumbnailUrl:  data.thumbnailUrl  || null,
         description:   data.description   || null,
@@ -123,6 +125,13 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
           error={errors.okId?.message}
         >
           <input {...register('okId')} placeholder="1457452747325" className={inputClass} />
+        </FormField>
+        <FormField
+          label="ID de Vimeo (opcional)"
+          hint="Solo el ID numérico, ej: 265564899"
+          error={errors.vimeoId?.message}
+        >
+          <input {...register('vimeoId')} placeholder="265564899" className={inputClass} />
         </FormField>
       </div>
 

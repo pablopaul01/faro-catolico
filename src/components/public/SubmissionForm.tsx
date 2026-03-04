@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle } from 'lucide-react'
 import { submissionSchema, type SubmissionSchema } from '@/lib/validations'
 import { createSubmission } from '@/services/submissions.service'
-import { cn, extractDailymotionId } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import type { MovieCategory, BookCategory, MusicCategory, MoviePlatform } from '@/types/app.types'
 
 const inputClass = 'w-full px-3 py-2.5 rounded-sm bg-primary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm'
@@ -108,7 +108,6 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
   }
 
   const onSubmit = async (data: SubmissionSchema) => {
-    const dmRaw = (data as SubmissionSchema & { dailymotionId?: string }).dailymotionId
     await createSubmission({
       type:           data.type,
       title:          data.title,
@@ -117,7 +116,6 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
       description:    data.description     || undefined,
       year:           typeof data.year === 'number' ? data.year : undefined,
       youtubeId:      data.youtubeId       || undefined,
-      dailymotionId:  dmRaw ? extractDailymotionId(dmRaw) : undefined,
       externalUrl:    data.externalUrl     || undefined,
       thumbnailUrl:   data.thumbnailUrl    || undefined,
       author:         data.author          || undefined,
@@ -189,17 +187,6 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
         />
       </Field>
 
-      {/* Campos por tipo */}
-      {tipo === 'pelicula' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="ID de YouTube (opcional)" hint="El código al final de la URL: youtube.com/watch?v=ESTE_CODIGO" error={errors.youtubeId?.message}>
-            <input {...register('youtubeId')} placeholder="Ej: dQw4w9WgXcQ" className={inputClass} />
-          </Field>
-          <Field label="URL o ID de Dailymotion (opcional)" hint="Ej: https://www.dailymotion.com/video/x9jm09m">
-            <input {...register('dailymotionId' as keyof SubmissionSchema)} placeholder="Ej: x9jm09m" className={inputClass} />
-          </Field>
-        </div>
-      )}
 
       {tipo === 'libro' && (
         <>
@@ -291,8 +278,16 @@ export function SubmissionForm({ movieCategories, bookCategories, musicCategorie
         />
       </Field>
 
-      <Field label="URL externa (opcional)" hint="Link a la plataforma donde se puede ver/leer/escuchar" error={errors.externalUrl?.message}>
-        <input {...register('externalUrl')} placeholder="https://..." className={inputClass} />
+      <Field
+        label={tipo === 'pelicula' ? 'Link del video (opcional)' : 'URL externa (opcional)'}
+        hint={tipo === 'pelicula' ? 'YouTube, Vimeo, Dailymotion, OK.ru, o cualquier plataforma' : 'Link a la plataforma donde se puede ver/leer/escuchar'}
+        error={errors.externalUrl?.message}
+      >
+        <input
+          {...register('externalUrl')}
+          placeholder={tipo === 'pelicula' ? 'https://www.youtube.com/watch?v=...' : 'https://...'}
+          className={inputClass}
+        />
       </Field>
 
       {/* Sección del remitente */}
