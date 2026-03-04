@@ -66,7 +66,7 @@ export const Footer = () => (
             className="font-bold text-sm"
             aria-label="JPS — Desarrollador"
           >
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent/70 to-accent/40 transition-all duration-500">
               {'<JPS />'}
             </span>
           </a>

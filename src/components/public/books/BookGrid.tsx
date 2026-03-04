@@ -1,4 +1,7 @@
+import { BookOpen } from 'lucide-react'
 import { BookCard } from './BookCard'
+import { FadeInWhenVisible } from '@/components/public/FadeInWhenVisible'
+import { EmptyState } from '@/components/public/EmptyState'
 import type { Book, RatingsMap } from '@/types/app.types'
 
 interface BookGridProps {
@@ -10,9 +13,11 @@ interface BookGridProps {
 export const BookGrid = ({ books, ratingsMap, slider }: BookGridProps) => {
   if (books.length === 0) {
     return (
-      <div className="text-center py-20 text-light/30">
-        <p>No hay libros disponibles por el momento.</p>
-      </div>
+      <EmptyState
+        icon={BookOpen}
+        title="No hay libros disponibles por el momento."
+        subtitle="Volvé pronto, estamos agregando contenido."
+      />
     )
   }
 
@@ -20,13 +25,13 @@ export const BookGrid = ({ books, ratingsMap, slider }: BookGridProps) => {
     return (
       <div className="no-scrollbar flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:overflow-visible">
         {books.map((book, index) => (
-          <div
+          <FadeInWhenVisible
             key={book.id}
-            className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none animate-slide-up"
-            style={{ animationDelay: `${index * 0.06}s` }}
+            index={index}
+            className="w-[78vw] max-w-xs shrink-0 snap-start sm:w-auto sm:max-w-none"
           >
             <BookCard book={book} ratingStats={ratingsMap?.[book.id]} />
-          </div>
+          </FadeInWhenVisible>
         ))}
       </div>
     )
@@ -35,13 +40,9 @@ export const BookGrid = ({ books, ratingsMap, slider }: BookGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {books.map((book, index) => (
-        <div
-          key={book.id}
-          className="animate-slide-up h-full"
-          style={{ animationDelay: `${index * 0.06}s` }}
-        >
+        <FadeInWhenVisible key={book.id} index={index} className="h-full">
           <BookCard book={book} ratingStats={ratingsMap?.[book.id]} />
-        </div>
+        </FadeInWhenVisible>
       ))}
     </div>
   )

@@ -14,9 +14,10 @@ interface MovieCardProps {
   movie:        Movie
   ratingStats?: RatingStats
   platforms?:   MoviePlatform[]
+  priority?:    boolean
 }
 
-export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => {
+export const MovieCard = ({ movie, ratingStats, platforms, priority }: MovieCardProps) => {
   const { title, description, youtubeId, dailymotionId, externalUrl, year, thumbnailUrl } = movie
   const [expanded, setExpanded] = useState(false)
   const copyrightMode = useSettingsStore((s) => s.copyrightMode)
@@ -27,11 +28,11 @@ export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => 
     : description
 
   return (
-    <article className="bg-card rounded-card overflow-hidden flex flex-col h-full group transition-all duration-300 hover:gold-glow hover:-translate-y-1">
+    <article className="bg-card rounded-card overflow-hidden flex flex-col h-full group/card transition-all duration-300 hover:gold-glow hover:-translate-y-1">
       {/* Embed / thumbnail */}
       {!copyrightMode && (
         <div className="flex-shrink-0">
-          <YoutubeEmbed youtubeId={youtubeId} dailymotionId={dailymotionId} title={title} thumbnailUrl={thumbnailUrl} />
+          <YoutubeEmbed youtubeId={youtubeId} dailymotionId={dailymotionId} title={title} thumbnailUrl={thumbnailUrl} priority={priority} />
         </div>
       )}
 
