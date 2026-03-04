@@ -21,8 +21,9 @@ const COVER_PLACEHOLDER = '/book-placeholder.svg'
 const DESCRIPTION_LIMIT = 120
 
 const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')
-const getGoogleViewerSrc = (url: string) =>
-  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+// URLs externas se sirven a través del proxy para evitar CORS
+const getPdfFile = (url: string) =>
+  isSupabaseUrl(url) ? url : `/api/pdf-proxy?url=${encodeURIComponent(url)}`
 
 export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const { title, author, description, coverUrl, year, purchaseUrl, pdfUrl } = book
@@ -103,49 +104,36 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
                 <span className="text-light/50 text-xs">Cargando PDF...</span>
               </div>
             )}
-            {isSupabaseUrl(pdfUrl!) ? (
-              // react-pdf para URLs propias (sin CORS)
-              pdfError ? (
-                <div className="flex flex-col items-center justify-center gap-4 p-8 text-center flex-1">
-                  <p className="text-light/50 text-sm">No se pudo cargar el PDF.</p>
-                  <a
-                    href={pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-colors"
-                  >
-                    Abrir en nueva pestaña <ExternalLink size={13} />
-                  </a>
-                </div>
-              ) : (
-                <Document
-                  file={pdfUrl}
-                  onLoadSuccess={({ numPages }) => { setNumPages(numPages); setPdfLoading(false) }}
-                  onLoadError={() => { setPdfError(true); setPdfLoading(false) }}
-                  loading={null}
+            {pdfError ? (
+              <div className="flex flex-col items-center justify-center gap-4 p-8 text-center flex-1">
+                <p className="text-light/50 text-sm">No se pudo cargar el PDF.</p>
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-colors"
                 >
-                  {Array.from({ length: numPages }, (_, i) => (
-                    <Page
-                      key={i + 1}
-                      pageNumber={i + 1}
-                      width={containerWidth ? Math.min(containerWidth - 32, 900) : undefined}
-                      renderAnnotationLayer={false}
-                      renderTextLayer={false}
-                      className="mb-2"
-                    />
-                  ))}
-                </Document>
-              )
+                  Abrir en nueva pestaña <ExternalLink size={13} />
+                </a>
+              </div>
             ) : (
-              // Google Docs Viewer para URLs externas (evita CORS)
-              <iframe
-                key={pdfUrl}
-                src={getGoogleViewerSrc(pdfUrl!)}
-                title={`PDF: ${title}`}
-                className="w-full flex-1 border-0"
-                style={{ minHeight: '100%' }}
-                onLoad={() => setPdfLoading(false)}
-              />
+              <Document
+                file={getPdfFile(pdfUrl!)}
+                onLoadSuccess={({ numPages }) => { setNumPages(numPages); setPdfLoading(false) }}
+                onLoadError={() => { setPdfError(true); setPdfLoading(false) }}
+                loading={null}
+              >
+                {Array.from({ length: numPages }, (_, i) => (
+                  <Page
+                    key={i + 1}
+                    pageNumber={i + 1}
+                    width={containerWidth ? Math.min(containerWidth - 32, 900) : undefined}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                    className="mb-2"
+                  />
+                ))}
+              </Document>
             )}
           </div>
         </div>,
