@@ -154,7 +154,7 @@ export default async function HomePage() {
         <section id="canales-youtube" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
           <SectionHeader
             title="Canales de YouTube"
-            subtitle="Creadores católicos recomendados para el crecimiento espiritual"
+            subtitle="Canales sugeridos para la familia y los niños"
             viewAllHref={`${ROUTES.MOVIES}?tab=canales`}
             viewAllLabel="Ver todos"
           />

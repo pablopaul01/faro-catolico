@@ -27,7 +27,7 @@ export const MovieCard = ({ movie, ratingStats, platforms }: MovieCardProps) => 
     : description
 
   return (
-    <article className="bg-card rounded-card overflow-hidden flex flex-col h-full group transition-all duration-300 hover:gold-glow hover:-translate-y-1">
+    <article className="bg-card rounded-card overflow-hidden flex flex-col h-full group/card transition-all duration-300 hover:gold-glow hover:-translate-y-1">
       {/* Embed / thumbnail */}
       {!copyrightMode && (
         <div className="flex-shrink-0">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { MovieGrid } from './MovieGrid'
 import { cn } from '@/lib/utils'
 import type { Movie, MovieCategory, MoviePlatform, RatingsMap } from '@/types/app.types'
@@ -33,6 +33,7 @@ interface MovieFilterSectionProps {
 export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMap }: MovieFilterSectionProps) => {
   const [categoryId,  setCategoryId]  = useState('')
   const [platformId,  setPlatformId]  = useState('')
+  const [onlyFree,    setOnlyFree]    = useState(false)
   const [inputQ,      setInputQ]      = useState('')
   const [q,           setQ]           = useState('')
   const [sort,        setSort]        = useState<SortKey>('recent')
@@ -51,14 +52,15 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [inputQ])
 
-  useEffect(() => { setPage(1) }, [q, categoryId, platformId, sort, perPage])
+  useEffect(() => { setPage(1) }, [q, categoryId, platformId, onlyFree, sort, perPage])
 
   const filtered = useMemo(() => {
     let result = categoryId ? movies.filter((m) => m.categoryIds.includes(categoryId)) : movies
     if (platformId) result = result.filter((m) => m.platformIds.includes(platformId))
+    if (onlyFree)   result = result.filter((m) => !!m.youtubeId || !!m.dailymotionId)
     if (q) result = result.filter((m) => m.title.toLowerCase().includes(q.toLowerCase()))
     return [...result].sort((a, b) => sortMovies(a, b, sort, ratingsMap))
-  }, [movies, categoryId, platformId, q, sort, ratingsMap])
+  }, [movies, categoryId, platformId, onlyFree, q, sort, ratingsMap])
 
   const totalPages = Math.ceil(filtered.length / perPage)
   const paginated  = useMemo(
@@ -94,6 +96,18 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
             className="w-full pl-9 pr-4 py-2.5 rounded-sm bg-secondary border border-border text-light placeholder-light/30 focus:outline-none focus:border-accent transition-colors text-sm"
           />
         </div>
+        <button
+          onClick={() => setOnlyFree((v) => !v)}
+          className={cn(
+            'flex items-center gap-2 px-3 py-2.5 rounded-sm border text-sm font-medium transition-colors whitespace-nowrap',
+            onlyFree
+              ? 'bg-accent/15 border-accent/60 text-accent'
+              : 'border-border text-light/50 hover:text-light hover:border-accent/30'
+          )}
+        >
+          <Play size={13} className={onlyFree ? 'fill-accent' : ''} />
+          Ver gratis
+        </button>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
