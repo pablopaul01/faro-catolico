@@ -118,6 +118,7 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
               </div>
             ) : (
               <Document
+                key={pdfUrl}
                 file={getPdfFile(pdfUrl!)}
                 onLoadSuccess={({ numPages }) => { setNumPages(numPages); setPdfLoading(false) }}
                 onLoadError={() => { setPdfError(true); setPdfLoading(false) }}
