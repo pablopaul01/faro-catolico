@@ -75,9 +75,9 @@ export const Footer = () => (
           <Link href={ROUTES.AVISO_LEGAL} className="text-light/20 text-xs hover:text-light/40 transition-colors">
             Aviso legal
           </Link>
-          <Link href={ROUTES.ADMIN} className="text-light/20 text-xs hover:text-light/40 transition-colors">
+          <a href={ROUTES.ADMIN} className="text-light/20 text-xs hover:text-light/40 transition-colors">
             Admin
-          </Link>
+          </a>
         </div>
       </div>
     </div>
