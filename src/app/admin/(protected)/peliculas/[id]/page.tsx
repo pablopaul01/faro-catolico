@@ -32,6 +32,7 @@ export default async function EditMoviePage({ params }: Props) {
     youtubeId:      data.youtube_id,
     dailymotionId:  data.dailymotion_id,
     okId:           data.ok_id,
+    vimeoId:        data.vimeo_id,
     externalUrl:    data.external_url,
     thumbnailUrl:   data.thumbnail_url,
     year:           data.year,

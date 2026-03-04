@@ -41,6 +41,7 @@ export interface Movie {
   youtubeId:     string | null
   dailymotionId: string | null
   okId:          string | null
+  vimeoId:       string | null
   externalUrl:   string | null
   thumbnailUrl:  string | null
   year:          number | null

@@ -19,6 +19,7 @@ export const movieSchema = z.object({
   youtubeId:     z.string().max(20).optional().or(z.literal('')),
   dailymotionId: z.string().max(20).optional().or(z.literal('')),
   okId:          z.string().max(30).optional().or(z.literal('')),
+  vimeoId:       z.string().max(20).optional().or(z.literal('')),
   externalUrl:   z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   thumbnailUrl:  z.string().url('Debe ser una URL válida').nullable().optional().or(z.literal('')),
   year:          z.number().int().min(1900).max(2100).nullable().optional(),

@@ -2,24 +2,26 @@
 
 import { useState } from 'react'
 import { Play, Film } from 'lucide-react'
-import { getYouTubeEmbedUrl, getYouTubeThumbnail, getDailymotionEmbedUrl, getDailymotionThumbnail, getOkEmbedUrl } from '@/lib/utils'
+import { getYouTubeEmbedUrl, getYouTubeThumbnail, getDailymotionEmbedUrl, getDailymotionThumbnail, getOkEmbedUrl, getVimeoEmbedUrl } from '@/lib/utils'
 
 interface VideoEmbedProps {
   youtubeId:      string | null
   dailymotionId?: string | null
   okId?:          string | null
+  vimeoId?:       string | null
   title:          string
   thumbnailUrl?:  string | null
   priority?:      boolean
 }
 
-export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
+export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, vimeoId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
 
-  // Prioridad: YouTube > Dailymotion > OK.ru
+  // Prioridad: YouTube > Dailymotion > OK.ru > Vimeo
+  const activeVimeo       = !!vimeoId && !youtubeId && !dailymotionId && !okId
   const activeOk          = !!okId && !youtubeId && !dailymotionId
   const activeDailymotion = !!dailymotionId && !youtubeId
-  const hasVideo          = !!youtubeId || !!dailymotionId || !!okId
+  const hasVideo          = !!youtubeId || !!dailymotionId || !!okId || !!vimeoId
 
   // Sin video: mostrar imagen estática o placeholder
   if (!hasVideo) {
@@ -44,14 +46,16 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, title, thumbnailU
     )
   }
 
-  const embedUrl = activeOk
-    ? getOkEmbedUrl(okId!)
-    : activeDailymotion
-      ? getDailymotionEmbedUrl(dailymotionId!)
-      : `${getYouTubeEmbedUrl(youtubeId!)}&autoplay=1`
+  const embedUrl = activeVimeo
+    ? getVimeoEmbedUrl(vimeoId!)
+    : activeOk
+      ? getOkEmbedUrl(okId!)
+      : activeDailymotion
+        ? getDailymotionEmbedUrl(dailymotionId!)
+        : `${getYouTubeEmbedUrl(youtubeId!)}&autoplay=1`
 
   const thumbnail = thumbnailUrl
-    ?? (activeDailymotion ? getDailymotionThumbnail(dailymotionId!) : activeOk ? null : getYouTubeThumbnail(youtubeId!))
+    ?? (activeDailymotion ? getDailymotionThumbnail(dailymotionId!) : (activeOk || activeVimeo) ? null : getYouTubeThumbnail(youtubeId!))
 
   if (isPlaying) {
     return (
@@ -85,7 +89,7 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, title, thumbnailU
             fetchPriority={priority ? 'high' : 'auto'}
             decoding={priority ? 'sync' : 'async'}
             onError={(e) => {
-              if (!activeDailymotion && !activeOk) {
+              if (!activeDailymotion && !activeOk && !activeVimeo) {
                 ;(e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
               }
             }}
@@ -115,6 +119,11 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, title, thumbnailU
       {activeOk && (
         <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-orange-600/80 text-white backdrop-blur-sm">
           OK.ru
+        </span>
+      )}
+      {activeVimeo && (
+        <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-cyan-600/80 text-white backdrop-blur-sm">
+          Vimeo
         </span>
       )}
     </button>

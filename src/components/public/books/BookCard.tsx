@@ -4,10 +4,13 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { ExternalLink, FileText, X, Download } from 'lucide-react'
+import { Document, Page, pdfjs } from 'react-pdf'
 import { StarRating } from '@/components/public/StarRating'
 import { ReportButton } from '@/components/public/ReportButton'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { Book, RatingStats } from '@/types/app.types'
+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface BookCardProps {
   book:         Book
@@ -18,21 +21,33 @@ const COVER_PLACEHOLDER = '/book-placeholder.svg'
 const DESCRIPTION_LIMIT = 120
 
 const isSupabaseUrl = (url: string) => url.includes('.supabase.co/storage/')
+const getGoogleViewerSrc = (url: string) =>
+  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
 
 export const BookCard = ({ book, ratingStats }: BookCardProps) => {
   const { title, author, description, coverUrl, year, purchaseUrl, pdfUrl } = book
-  const [expanded,    setExpanded]    = useState(false)
-  const [showPdf,     setShowPdf]     = useState(false)
-  const [mounted,     setMounted]     = useState(false)
-  const [pdfLoading,  setPdfLoading]  = useState(false)
+  const [expanded,       setExpanded]       = useState(false)
+  const [showPdf,        setShowPdf]        = useState(false)
+  const [mounted,        setMounted]        = useState(false)
+  const [pdfLoading,     setPdfLoading]     = useState(false)
+  const [numPages,       setNumPages]       = useState(0)
+  const [pdfError,       setPdfError]       = useState(false)
+  const [containerWidth, setContainerWidth] = useState<number | undefined>(undefined)
   const copyrightMode = useSettingsStore((s) => s.copyrightMode)
 
   useEffect(() => { setMounted(true) }, [])
 
-  // Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
     document.body.style.overflow = showPdf ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
+  }, [showPdf])
+
+  useEffect(() => {
+    if (!showPdf) return
+    const update = () => setContainerWidth(window.innerWidth)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
   }, [showPdf])
 
   const isLong = description && description.length > DESCRIPTION_LIMIT
@@ -40,24 +55,26 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
     ? description.slice(0, DESCRIPTION_LIMIT).trimEnd() + '…'
     : description
 
-  // Google Docs Viewer para todos los dispositivos y URLs:
-  // - En móvil los iframes no renderizan PDFs nativos
-  // - URLs externas pueden bloquear embedding vía X-Frame-Options
-  const getPdfSrc = (url: string) =>
-    `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
-
-  const handlePdfClick = () => { setPdfLoading(true); setShowPdf(true) }
+  const handlePdfClick = () => {
+    setPdfLoading(true)
+    setPdfError(false)
+    setNumPages(0)
+    setShowPdf(true)
+  }
 
   const modal = mounted && showPdf && pdfUrl
     ? createPortal(
         <div className="fixed inset-0 z-9999 flex flex-col bg-black/95 animate-fade-in">
           {/* Barra superior */}
-          <div className="flex items-center justify-between gap-4 px-4 py-3 bg-secondary border-b border-border shrink-0">
+          <div className="flex items-center justify-between gap-2 px-4 py-3 bg-secondary border-b border-border shrink-0">
             <div className="min-w-0">
               <p className="text-light font-display text-sm truncate">{title}</p>
               <p className="text-light/40 text-xs">{author}</p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
+              {numPages > 0 && (
+                <span className="text-xs text-light/40 tabular-nums mr-2">{numPages} págs.</span>
+              )}
               <a
                 href={pdfUrl}
                 target="_blank"
@@ -78,21 +95,58 @@ export const BookCard = ({ book, ratingStats }: BookCardProps) => {
             </div>
           </div>
 
-          {/* Contenedor con altura explícita — flex-1 solo no garantiza altura en móvil */}
-          <div className="relative flex-1 min-h-0">
+          {/* Contenido PDF */}
+          <div className="relative flex-1 min-h-0 overflow-y-auto flex flex-col items-center bg-neutral-900 py-4">
             {pdfLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 z-10">
                 <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
                 <span className="text-light/50 text-xs">Cargando PDF...</span>
               </div>
             )}
-            <iframe
-              key={pdfUrl}
-              src={getPdfSrc(pdfUrl!)}
-              title={`PDF: ${title}`}
-              className="absolute inset-0 w-full h-full border-0"
-              onLoad={() => setPdfLoading(false)}
-            />
+            {isSupabaseUrl(pdfUrl!) ? (
+              // react-pdf para URLs propias (sin CORS)
+              pdfError ? (
+                <div className="flex flex-col items-center justify-center gap-4 p-8 text-center flex-1">
+                  <p className="text-light/50 text-sm">No se pudo cargar el PDF.</p>
+                  <a
+                    href={pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-colors"
+                  >
+                    Abrir en nueva pestaña <ExternalLink size={13} />
+                  </a>
+                </div>
+              ) : (
+                <Document
+                  file={pdfUrl}
+                  onLoadSuccess={({ numPages }) => { setNumPages(numPages); setPdfLoading(false) }}
+                  onLoadError={() => { setPdfError(true); setPdfLoading(false) }}
+                  loading={null}
+                >
+                  {Array.from({ length: numPages }, (_, i) => (
+                    <Page
+                      key={i + 1}
+                      pageNumber={i + 1}
+                      width={containerWidth ? Math.min(containerWidth - 32, 900) : undefined}
+                      renderAnnotationLayer={false}
+                      renderTextLayer={false}
+                      className="mb-2"
+                    />
+                  ))}
+                </Document>
+              )
+            ) : (
+              // Google Docs Viewer para URLs externas (evita CORS)
+              <iframe
+                key={pdfUrl}
+                src={getGoogleViewerSrc(pdfUrl!)}
+                title={`PDF: ${title}`}
+                className="w-full flex-1 border-0"
+                style={{ minHeight: '100%' }}
+                onLoad={() => setPdfLoading(false)}
+              />
+            )}
           </div>
         </div>,
         document.body

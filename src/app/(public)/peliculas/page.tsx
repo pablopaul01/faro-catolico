@@ -28,6 +28,7 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
     youtubeId:      row.youtube_id,
     dailymotionId:  row.dailymotion_id,
     okId:           row.ok_id,
+    vimeoId:        row.vimeo_id,
     externalUrl:    row.external_url,
     thumbnailUrl:   row.thumbnail_url,
     year:           row.year,

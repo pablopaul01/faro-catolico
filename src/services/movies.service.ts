@@ -14,6 +14,7 @@ const adaptMovie = (row: Record<string, unknown>): Movie => ({
   youtubeId:     row.youtube_id      as string | null,
   dailymotionId: row.dailymotion_id  as string | null,
   okId:          row.ok_id           as string | null,
+  vimeoId:       row.vimeo_id        as string | null,
   externalUrl:   row.external_url    as string | null,
   thumbnailUrl:  row.thumbnail_url   as string | null,
   year:         row.year          as number | null,
@@ -46,6 +47,7 @@ export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => 
       youtube_id:     payload.youtubeId      || null,
       dailymotion_id: payload.dailymotionId  || null,
       ok_id:          payload.okId           || null,
+      vimeo_id:       payload.vimeoId        || null,
       external_url:   payload.externalUrl    || null,
       thumbnail_url:  payload.thumbnailUrl   || null,
       year:           payload.year           ?? null,
@@ -92,6 +94,7 @@ export const updateMovie = async (
   if (payload.youtubeId      !== undefined) updates.youtube_id     = payload.youtubeId || null
   if (payload.dailymotionId  !== undefined) updates.dailymotion_id = payload.dailymotionId || null
   if (payload.okId           !== undefined) updates.ok_id          = payload.okId || null
+  if (payload.vimeoId        !== undefined) updates.vimeo_id       = payload.vimeoId || null
   if (payload.externalUrl    !== undefined) updates.external_url   = payload.externalUrl || null
   if (payload.thumbnailUrl   !== undefined) updates.thumbnail_url  = payload.thumbnailUrl || null
   if (payload.year          !== undefined) updates.year          = payload.year ?? null
