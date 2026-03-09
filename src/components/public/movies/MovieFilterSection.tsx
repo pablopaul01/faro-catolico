@@ -56,7 +56,8 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
 
   const filtered = useMemo(() => {
     let result = categoryId ? movies.filter((m) => m.categoryIds.includes(categoryId)) : movies
-    if (platformId) result = result.filter((m) => m.platformIds.includes(platformId))
+    if (platformId === 'youtube') result = result.filter((m) => !!m.youtubeId)
+    else if (platformId) result = result.filter((m) => m.platformIds.includes(platformId))
     if (onlyFree)   result = result.filter((m) => !!m.youtubeId || !!m.dailymotionId)
     if (q) result = result.filter((m) => m.title.toLowerCase().includes(q.toLowerCase()))
     return [...result].sort((a, b) => sortMovies(a, b, sort, ratingsMap))
@@ -145,6 +146,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
             className={cn(selectCls, 'flex-1')}
           >
             <option value="">Todas las plataformas</option>
+            <option value="youtube">YouTube</option>
             {platforms.map((plat) => (
               <option key={plat.id} value={plat.id}>{plat.name}</option>
             ))}
