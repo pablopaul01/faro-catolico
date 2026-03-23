@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { Play, Film } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Play, Film, X, Menu } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { getYouTubeEmbedUrl, getYouTubeThumbnail, getDailymotionEmbedUrl, getDailymotionThumbnail, getOkEmbedUrl, getVimeoEmbedUrl } from '@/lib/utils'
 
 interface VideoEmbedProps {
@@ -16,6 +17,47 @@ interface VideoEmbedProps {
 
 export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, vimeoId, title, thumbnailUrl, priority }: VideoEmbedProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [showBar, setShowBar] = useState(false)
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => { setMounted(true) }, [])
+
+  useEffect(() => {
+    if (!isPlaying) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsPlaying(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isPlaying])
+
+  useEffect(() => {
+    if (!isPlaying) return
+    // Mostrar barra al abrir el video
+    setShowBar(true)
+    hideTimer.current = setTimeout(() => setShowBar(false), 3000)
+
+    const show = () => {
+      setShowBar(true)
+      if (hideTimer.current) clearTimeout(hideTimer.current)
+      hideTimer.current = setTimeout(() => setShowBar(false), 3000)
+    }
+    window.addEventListener('mousemove', show)
+    return () => {
+      window.removeEventListener('mousemove', show)
+      if (hideTimer.current) clearTimeout(hideTimer.current)
+    }
+  }, [isPlaying])
+
+  const triggerBar = () => {
+    setShowBar((v) => {
+      if (!v) {
+        if (hideTimer.current) clearTimeout(hideTimer.current)
+        hideTimer.current = setTimeout(() => setShowBar(false), 3000)
+        return true
+      }
+      return v
+    })
+  }
 
   // Prioridad: YouTube > Dailymotion > OK.ru > Vimeo
   const activeVimeo       = !!vimeoId && !youtubeId && !dailymotionId && !okId
@@ -57,22 +99,51 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, vimeoId, title, t
   const thumbnail = thumbnailUrl
     ?? (activeDailymotion ? getDailymotionThumbnail(dailymotionId!) : (activeOk || activeVimeo) ? null : getYouTubeThumbnail(youtubeId!))
 
-  if (isPlaying) {
-    return (
-      <div className="w-full aspect-video rounded-card overflow-hidden bg-black">
+  const overlay = isPlaying && mounted ? createPortal(
+    <div
+      className="fixed inset-0 z-50 bg-black"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Reproduciendo: ${title}`}
+    >
+      <div className={`flex items-center justify-between px-4 py-2 bg-primary/80 backdrop-blur-sm transition-opacity duration-300 absolute top-0 left-0 right-0 z-10 ${showBar ? 'opacity-100' : 'opacity-0'}`}>
+        <span className="font-display text-light text-sm truncate">{title}</span>
+        <button
+          onClick={() => setIsPlaying(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent/20 hover:bg-accent/40 text-light text-sm transition-colors"
+          aria-label="Minimizar video"
+        >
+          <X size={16} />
+          <span>Minimizar</span>
+        </button>
+      </div>
+      {/* Botón visible en mobile solo cuando la barra está oculta */}
+      {!showBar && (
+        <button
+          onTouchStart={triggerBar}
+          onClick={triggerBar}
+          className="absolute top-2 right-2 z-20 w-9 h-9 rounded-full bg-black/40 flex items-center justify-center md:hidden"
+          aria-label="Mostrar controles"
+        >
+          <Menu size={16} className="text-white/60" />
+        </button>
+      )}
+      <div className="absolute inset-0">
         <iframe
           src={embedUrl}
           title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
-          className="w-full h-full border-0"
-          loading="lazy"
+          className="absolute inset-0 w-full h-full border-0"
         />
       </div>
-    )
-  }
+    </div>,
+    document.body
+  ) : null
 
   return (
+    <>
+      {overlay}
     <button
       onClick={() => setIsPlaying(true)}
       className="relative w-full aspect-video rounded-card overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -127,5 +198,6 @@ export const YoutubeEmbed = ({ youtubeId, dailymotionId, okId, vimeoId, title, t
         </span>
       )}
     </button>
+    </>
   )
 }
