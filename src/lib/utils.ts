@@ -55,15 +55,21 @@ export const extractOkId = (input: string): string => {
 }
 
 /** Construye la URL de embed de Vimeo */
-export const getVimeoEmbedUrl = (vimeoId: string) =>
-  `${VIMEO_EMBED_BASE}/${vimeoId}?autoplay=1&color=D4AF37`
+export const getVimeoEmbedUrl = (vimeoId: string) => {
+  const hasHash = vimeoId.includes('/')
+  if (hasHash) {
+    const [id, hash] = vimeoId.split('/')
+    return `${VIMEO_EMBED_BASE}/${id}?h=${hash}&autoplay=1&color=D4AF37`
+  }
+  return `${VIMEO_EMBED_BASE}/${vimeoId}?autoplay=1&color=D4AF37`
+}
 
-/** Extrae el ID numérico de Vimeo de una URL o devuelve el string si ya es un ID */
+/** Extrae el ID/permalink de Vimeo de una URL o devuelve el string si ya es un ID */
 export const extractVimeoId = (input: string): string => {
   try {
     const url = new URL(input)
     if (url.hostname.includes('vimeo.com')) {
-      const match = url.pathname.match(/\/(\d+)/)
+      const match = url.pathname.match(/^\/(\d+(?:\/[a-zA-Z0-9]+)?)/)
       if (match) return match[1]
     }
   } catch {
