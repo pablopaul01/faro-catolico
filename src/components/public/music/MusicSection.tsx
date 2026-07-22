@@ -35,6 +35,7 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
   const [page,    setPage]    = useState(1)
   const [perPage, setPerPage] = useState(9)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const gridRef  = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -43,6 +44,7 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
   }, [inputQ])
 
   useEffect(() => { setPage(1) }, [q, activeCategoryId, sort, perPage])
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [page])
 
   const filtered = useMemo(() => {
     let result = activeCategoryId
@@ -164,7 +166,7 @@ export const MusicSection = ({ songs, categories, ratingsMap }: MusicSectionProp
         </div>
       ) : (
         <>
-          <div className="space-y-2">
+          <div ref={gridRef} className="space-y-2">
             {paginated.map((song, index) => (
               <div
                 key={song.id}

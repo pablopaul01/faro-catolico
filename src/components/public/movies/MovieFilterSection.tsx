@@ -40,6 +40,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
   const [page,        setPage]        = useState(1)
   const [perPage,     setPerPage]     = useState(9)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const gridRef  = useRef<HTMLDivElement>(null)
 
   const platforms = useMemo(
     () => Object.values(platformsMap ?? {}).sort((a, b) => a.sortOrder - b.sortOrder),
@@ -53,6 +54,7 @@ export const MovieFilterSection = ({ movies, categories, ratingsMap, platformsMa
   }, [inputQ])
 
   useEffect(() => { setPage(1) }, [q, categoryId, platformId, onlyFree, sort, perPage])
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [page])
 
   const filtered = useMemo(() => {
     let result = categoryId ? movies.filter((m) => m.categoryIds.includes(categoryId)) : movies
