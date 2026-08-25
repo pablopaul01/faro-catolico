@@ -8,6 +8,9 @@ const config: CapacitorConfig = {
   appName: 'Faro Católico',
   webDir: 'capacitor-shell',
   backgroundColor: '#0D1B2A',
+  android: {
+    appendUserAgent: ' FaroCatolicoApp/1.2.0',
+  },
   server: {
     url: DEV_URL ?? PRODUCTION_URL,
     cleartext: false,

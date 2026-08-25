@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ROUTES, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
+import { Download } from 'lucide-react'
+import { WebOnly } from './WebOnly'
+import { APP_DOWNLOAD, ROUTES, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
 
 const contentLinks = [
   { href: ROUTES.MOVIES, label: 'Películas' },
@@ -54,6 +56,19 @@ export const Footer = () => (
                 </Link>
               </li>
             ))}
+            <WebOnly>
+              <li>
+                <a
+                  href={APP_DOWNLOAD.DOWNLOADER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-accent/70 hover:text-accent transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" aria-hidden />
+                  Descargar app Android
+                </a>
+              </li>
+            </WebOnly>
           </ul>
         </div>
 

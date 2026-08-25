@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Download, MonitorSmartphone, Tv, ShieldCheck, RefreshCw } from 'lucide-react'
 import { SITE_NAME, APP_DOWNLOAD } from '@/lib/constants'
+import { WebOnly } from '@/components/layout/WebOnly'
 
 export const metadata: Metadata = {
   title:       `Descargar app — ${SITE_NAME}`,
@@ -24,7 +25,8 @@ const INSTALL_STEPS = [
 
 export default function AppDownloadPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-14 pb-24">
+    <WebOnly>
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-14 pb-24">
       <div className="text-center mb-12">
         <h1 className="font-display text-4xl text-light mb-3">App de {SITE_NAME}</h1>
         <p className="text-light/60 max-w-xl mx-auto">
@@ -118,6 +120,7 @@ export default function AppDownloadPage() {
           </p>
         </div>
       </section>
-    </main>
+      </main>
+    </WebOnly>
   )
 }

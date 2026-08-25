@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       {
         // URL corta para apps tipo Downloader en TV Box
         source:      '/apk',
-        destination: '/apps/faro-catolico-v1.1.apk',
+        destination: 'http://aftv.news/1398102',
         permanent:   false,
       },
     ]
@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
         source: '/apps/:file*.apk',
         headers: [
           { key: 'Content-Type',        value: 'application/vnd.android.package-archive' },
-          { key: 'Content-Disposition', value: 'attachment; filename="faro-catolico-v1.1.apk"' },
+          { key: 'Content-Disposition', value: 'attachment; filename="faro-catolico-v1.2.apk"' },
         ],
       },
     ]
