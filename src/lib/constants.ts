@@ -34,10 +34,10 @@ export const ROUTES = {
 // App Android (APK distribuido en el sitio)
 // ─────────────────────────────────────────────
 export const APP_DOWNLOAD = {
-  APK_PATH:  '/apps/faro-catolico-v1.0.apk',
-  VERSION:   '1.0.0',
+  APK_PATH:  '/apps/faro-catolico-v1.1.apk',
+  VERSION:   '1.1.0',
   MIN_ANDROID: 'Android 7.0 (API 24) o superior',
-  SIZE_MB:   '3.3 MB',
+  SIZE_MB:   '3.7 MB',
 } as const
 
 // ─────────────────────────────────────────────

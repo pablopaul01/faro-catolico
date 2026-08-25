@@ -69,6 +69,32 @@ export default function AppDownloadPage() {
         </ol>
       </section>
 
+      <section className="mb-12">
+        <h2 className="font-display text-2xl text-light mb-6">Cómo instalar en TV Box con Downloader</h2>
+        <p className="text-light/60 text-sm leading-relaxed mb-5">
+          Si tu TV Box tiene la app <strong className="text-light">Downloader</strong> (la clásica de Fire TV
+          y Android TV), podés instalar la app sin usar la computadora:
+        </p>
+        <ol className="space-y-3">
+          {[
+            'Abrí Downloader y permití el acceso a archivos si te lo pide',
+            'En la barra de dirección escribí: farocatolico.site/apk',
+            'Esperá la descarga (menos de 4 MB) y tocá "Instalar"',
+          ].map((step, index) => (
+            <li key={step} className="flex gap-4 items-start">
+              <span className="shrink-0 w-8 h-8 rounded-full gold-border text-accent flex items-center justify-center font-display text-sm">
+                {index + 1}
+              </span>
+              <p className="text-light/60 text-sm leading-relaxed pt-1.5">{step}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="text-light/40 text-xs mt-5">
+          Consejo: Downloader también soporta códigos cortos numéricos. Registrá el tuyo en
+          aftvnews.com/link apuntando a farocatolico.site/apk y compartilo con tu comunidad.
+        </p>
+      </section>
+
       <section className="grid sm:grid-cols-3 gap-4">
         <div className="bg-card rounded-card p-5">
           <Tv className="w-5 h-5 text-accent mb-3" aria-hidden />

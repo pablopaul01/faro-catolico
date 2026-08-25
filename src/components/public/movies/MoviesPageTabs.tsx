@@ -43,13 +43,13 @@ export function MoviesPageTabs({
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-border mb-8">
+      <div className="flex w-full gap-1 border-b border-border mb-8">
         {tabs.map(({ key, label, count }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={cn(
-              'px-4 py-2.5 text-sm font-medium transition-all duration-150 border-b-2 -mb-px',
+              'flex flex-1 min-w-0 items-center justify-center px-2 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 border-b-2 -mb-px',
               activeTab === key
                 ? 'border-accent text-accent'
                 : 'border-transparent text-light/50 hover:text-light'
@@ -58,7 +58,7 @@ export function MoviesPageTabs({
             {label}
             {count > 0 && (
               <span className={cn(
-                'ml-2 text-xs px-1.5 py-0.5 rounded-full',
+                'ml-1.5 sm:ml-2 text-xs px-1.5 py-0.5 rounded-full',
                 activeTab === key ? 'bg-accent/20 text-accent' : 'bg-white/5 text-light/30'
               )}>
                 {count}

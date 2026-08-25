@@ -54,6 +54,7 @@ export const viewport: Viewport = {
   colorScheme:  'dark',
   initialScale: 1,
   width:        'device-width',
+  viewportFit:  'cover',
 }
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {

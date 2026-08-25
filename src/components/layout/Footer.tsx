@@ -14,7 +14,10 @@ const communityLinks = [
 ] as const
 
 export const Footer = () => (
-  <footer className="border-t border-border bg-secondary mt-auto">
+  <footer
+    className="border-t border-border bg-secondary mt-auto"
+    style={{ paddingBottom: 'var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))' }}
+  >
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {/* Marca */}
