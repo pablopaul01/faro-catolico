@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       {
         // URL corta para apps tipo Downloader en TV Box
         source:      '/apk',
-        destination: 'http://aftv.news/1398102',
+        destination: '/apps/faro-catolico-v1.2.apk',
         permanent:   false,
       },
     ]
