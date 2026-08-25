@@ -134,3 +134,41 @@
     display: none;
   }
 }
+
+/* ─────────────────────────────────────────────
+   Navegación TV Box — foco visible para D-pad
+   El outline dorado solo aparece al navegar con
+   control remoto/teclado, no al tocar con el dedo.
+────────────────────────────────────────────── */
+@layer base {
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (ui-mode: tv) {
+    a:focus-visible,
+    button:focus-visible,
+    [role="button"]:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 4px solid var(--color-accent);
+      outline-offset: 4px;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+      transform: scale(1.04);
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    /* Scroll suave al elemento enfocado para que el D-pad
+       no pierda de vista las cards fuera de pantalla */
+    :focus-visible {
+      scroll-margin: 5rem;
+    }
+  }
+}
