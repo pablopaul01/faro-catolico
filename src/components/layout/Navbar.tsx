@@ -65,7 +65,10 @@ export const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-primary/90 backdrop-blur-md border-b border-border">
+    <header
+      className="sticky top-0 z-50 bg-primary/90 backdrop-blur-md border-b border-border"
+      style={{ paddingTop: 'var(--safe-area-inset-top, env(safe-area-inset-top, 0px))' }}
+    >
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link

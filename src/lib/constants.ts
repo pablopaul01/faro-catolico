@@ -26,7 +26,18 @@ export const ROUTES = {
   ADMIN_REPORTS:           '/admin/reportes',
   SEARCH:                  '/buscar',
   AVISO_LEGAL:             '/aviso-legal',
+  APP_DOWNLOAD:            '/app',
   AUTH_CALLBACK:           '/auth/callback',
+} as const
+
+// ─────────────────────────────────────────────
+// App Android (APK distribuido en el sitio)
+// ─────────────────────────────────────────────
+export const APP_DOWNLOAD = {
+  APK_PATH:  '/apps/faro-catolico-v1.1.apk',
+  VERSION:   '1.1.0',
+  MIN_ANDROID: 'Android 7.0 (API 24) o superior',
+  SIZE_MB:   '3.7 MB',
 } as const
 
 // ─────────────────────────────────────────────

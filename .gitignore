@@ -23,3 +23,13 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Android / Capacitor
+android/.gradle/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/capacitor.config.json
+*.keystore
+*.jks
+keystore.properties
+releases/

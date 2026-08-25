@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Faro Católico</string>
+    <string name="title_activity_main">Faro Católico</string>
+    <string name="package_name">site.farocatolico.app</string>
+    <string name="custom_url_scheme">site.farocatolico.app</string>
+</resources>
