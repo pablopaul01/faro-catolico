@@ -5,41 +5,37 @@ import { Capacitor } from '@capacitor/core'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+const catalogFromDetail = (pathname: string, base: string) => {
+  if (pathname === base) return '/app-home'
+  if (pathname.startsWith(`${base}/`)) return base
+  return null
+}
+
 export function AppBackHandler() {
   const pathname = usePathname()
   const router = useRouter()
 
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return
+    if (Capacitor.getPlatform() === 'web') return
 
-    const listener = App.addListener('backButton', ({ canGoBack }) => {
-      if (pathname.startsWith('/app-home/reproducir/')) {
-        router.replace(pathname.replace('/reproducir/pelicula/', '/peliculas/'))
+    void App.toggleBackButtonHandler({ enabled: true }).catch(() => undefined)
+
+    const listener = App.addListener('backButton', () => {
+      const playbackMatch = pathname.match(/^\/app-home\/reproducir\/pelicula\/([^/]+)$/)
+      if (playbackMatch) {
+        router.replace(`/app-home/peliculas/${playbackMatch[1]}`)
         return
       }
 
-      if (pathname.startsWith('/app-home/peliculas/')) {
-        router.replace('/app-home/peliculas')
-        return
-      }
+      const catalog =
+        catalogFromDetail(pathname, '/app-home/peliculas') ??
+        catalogFromDetail(pathname, '/app-home/libros') ??
+        catalogFromDetail(pathname, '/app-home/musica') ??
+        catalogFromDetail(pathname, '/app-home/playlists') ??
+        catalogFromDetail(pathname, '/app-home/canales')
 
-      if (pathname.startsWith('/app-home/libros/')) {
-        router.replace('/app-home/libros')
-        return
-      }
-
-      if (pathname.startsWith('/app-home/musica/')) {
-        router.replace('/app-home/musica')
-        return
-      }
-
-      if (pathname.startsWith('/app-home/playlists/')) {
-        router.replace('/app-home/playlists')
-        return
-      }
-
-      if (pathname.startsWith('/app-home/canales/')) {
-        router.replace('/app-home/canales')
+      if (catalog) {
+        router.replace(catalog)
         return
       }
 
@@ -48,7 +44,7 @@ export function AppBackHandler() {
         return
       }
 
-      if (!canGoBack) void App.exitApp()
+      void App.exitApp()
     })
 
     return () => {

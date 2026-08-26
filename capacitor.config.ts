@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
   webDir: 'capacitor-shell',
   backgroundColor: '#0D1B2A',
   android: {
-    appendUserAgent: ' FaroCatolicoApp/1.7.5',
+    appendUserAgent: ' FaroCatolicoApp/1.7.6',
   },
   server: {
     url: DEV_URL ?? PRODUCTION_URL,
@@ -26,9 +26,6 @@ const config: CapacitorConfig = {
     ],
   },
   plugins: {
-    App: {
-      disableBackButtonHandler: true,
-    },
     SystemBars: {
       insetsHandling: 'css',
       style: 'DARK',
