@@ -187,7 +187,7 @@ export const fetchMusicPageData = async () => {
   }
 }
 
-export type SearchContentType = 'pelicula' | 'libro' | 'cancion'
+export type SearchContentType = 'pelicula' | 'libro'
 
 export interface CatalogSearchItem {
   id:       string
@@ -203,7 +203,7 @@ export const fetchCatalogSearch = async (query: string, tipo?: string): Promise<
   const client  = sb()
   const pattern = `%${trimmed}%`
 
-  const [moviesRes, booksRes, songsRes] = await Promise.all([
+  const [moviesRes, booksRes] = await Promise.all([
     (!tipo || tipo === 'pelicula')
       ? client.from(TABLE_NAMES.MOVIES).select('id, title, description')
           .eq('is_published', true)
@@ -216,12 +216,6 @@ export const fetchCatalogSearch = async (query: string, tipo?: string): Promise<
           .or(`title.ilike.${pattern},author.ilike.${pattern}`)
           .limit(20)
       : Promise.resolve({ data: [] as { id: string; title: string; author: string | null }[] }),
-    (!tipo || tipo === 'cancion')
-      ? client.from(TABLE_NAMES.SONGS).select('id, title, artist')
-          .eq('is_published', true)
-          .or(`title.ilike.${pattern},artist.ilike.${pattern}`)
-          .limit(20)
-      : Promise.resolve({ data: [] as { id: string; title: string; artist: string | null }[] }),
   ])
 
   return [
@@ -230,9 +224,6 @@ export const fetchCatalogSearch = async (query: string, tipo?: string): Promise<
     })),
     ...(booksRes.data ?? []).map((row) => ({
       id: row.id, title: row.title, subtitle: row.author, tipo: 'libro' as const,
-    })),
-    ...(songsRes.data ?? []).map((row) => ({
-      id: row.id, title: row.title, subtitle: row.artist, tipo: 'cancion' as const,
     })),
   ]
 }

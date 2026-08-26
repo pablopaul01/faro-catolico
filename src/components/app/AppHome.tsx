@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { BookOpen, Film, Home, Menu, Music2, Play, Search, Video } from 'lucide-react'
+import { BookOpen, Film, Home, Menu, Music2, Play, Search, Sparkles, Video } from 'lucide-react'
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
@@ -11,10 +11,6 @@ import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } fro
 interface AppHomeProps {
   movies: Movie[]
   books: Book[]
-  songs: Song[]
-  youtubePlaylists: YoutubePlaylist[]
-  youtubeChannels: YoutubeChannel[]
-  playlists: Playlist[]
 }
 
 interface RailProps {
@@ -102,7 +98,7 @@ export function AppNavigation() {
     { href: '/app-home', label: 'Inicio', icon: Home },
     { href: '/app-home/peliculas', label: 'Videos', icon: Video },
     { href: '/app-home/libros', label: 'Libros', icon: BookOpen },
-    { href: '/app-home/musica', label: 'Música', icon: Music2 },
+    { href: APP_ROUTES.SUGGESTED, label: 'Sugeridos', icon: Sparkles },
     { href: APP_ROUTES.SEARCH, label: 'Buscar', icon: Search },
   ]
 
@@ -143,7 +139,7 @@ export function AppNavigation() {
   )
 }
 
-export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannels, playlists }: AppHomeProps) {
+export function AppHome({ movies, books }: AppHomeProps) {
   const [isTv, setIsTv] = useState(false)
   const firstCardRef = useRef<HTMLAnchorElement>(null)
 
@@ -170,7 +166,7 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-accent/80">Faro Católico</p>
             <h1 className="font-display text-4xl leading-tight text-light sm:text-6xl">Contenido para crecer en gracia</h1>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-light/60 sm:text-base">
-              Películas, videos, libros y música seleccionados para acompañar la fe de tu familia.
+              Películas, videos y libros seleccionados para acompañar la fe de tu familia.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
@@ -192,31 +188,6 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
           {books.length > 0 && (
             <AppRail id="libros" title="Libros para leer" href="/app-home/libros">
               {books.map((book) => <AppCard key={book.id} item={book} href={`/app-home/libros/${book.id}`} kind="book" />)}
-            </AppRail>
-          )}
-          {(youtubePlaylists.length > 0 || youtubeChannels.length > 0) && (
-            <div className="app-suggested">
-              <p className="app-suggested-label">Sugeridos</p>
-              {youtubePlaylists.length > 0 && (
-                <AppRail id="playlists" title="Playlists de YouTube" href="/app-home/playlists">
-                  {youtubePlaylists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists/${playlist.id}`} kind="playlist" />)}
-                </AppRail>
-              )}
-              {youtubeChannels.length > 0 && (
-                <AppRail id="canales" title="Canales de YouTube" href="/app-home/canales">
-                  {youtubeChannels.map((channel) => <AppCard key={channel.id} item={channel} href={`/app-home/canales/${channel.id}`} kind="channel" />)}
-                </AppRail>
-              )}
-            </div>
-          )}
-          {songs.length > 0 && (
-            <AppRail id="musica" title="Música para orar" href="/app-home/musica">
-              {songs.map((song) => <AppCard key={song.id} item={song} href={`/app-home/musica/${song.id}`} kind="music" />)}
-            </AppRail>
-          )}
-          {playlists.length > 0 && (
-            <AppRail id="playlists-musica" title="Playlists de música" href="/app-home/musica">
-              {playlists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists-musica/${playlist.id}`} kind="playlist" />)}
             </AppRail>
           )}
         </div>

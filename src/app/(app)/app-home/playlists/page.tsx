@@ -12,5 +12,5 @@ export default async function AppPlaylistsPage() {
     categoryIds: [], isPublished: row.is_published, sortOrder: row.sort_order,
     createdAt: row.created_at, updatedAt: row.updated_at,
   }))
-  return <AppCatalog title="Playlists sugeridas" subtitle="Colecciones de YouTube recomendadas. Se abren fuera del reproductor de la app." items={playlists} kind="playlist" getHref={(playlist) => `/app-home/playlists/${playlist.id}`} />
+  return <AppCatalog title="Playlists sugeridas" subtitle="Colecciones de YouTube recomendadas. Se abren fuera del reproductor de la app." backHref="/app-home/sugeridos" items={playlists} kind="playlist" getHref={(playlist) => `/app-home/playlists/${playlist.id}`} />
 }

@@ -12,7 +12,7 @@ export default async function AppChannelDetailsPage({ params }: { params: Promis
 
   return (
     <AppSuggestionDetails
-      backHref="/app-home/canales"
+      backHref="/app-home/sugeridos"
       backLabel="Volver a sugeridos"
       kindLabel="Sugerido · Canal"
       title={row.name}

@@ -36,8 +36,9 @@ export const APP_ROUTES = {
   MOVIES:    '/app-home/peliculas',
   BOOKS:     '/app-home/libros',
   MUSIC:     '/app-home/musica',
-  PLAYLISTS: '/app-home/playlists',
-  CHANNELS:  '/app-home/canales',
+  PLAYLISTS:   '/app-home/playlists',
+  CHANNELS:    '/app-home/canales',
+  SUGGESTED:   '/app-home/sugeridos',
 } as const
 
 export const appContentHref = (tipo: 'pelicula' | 'libro' | 'cancion', id: string) => {

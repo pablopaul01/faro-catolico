@@ -12,7 +12,7 @@ export default async function AppPlaylistDetailsPage({ params }: { params: Promi
 
   return (
     <AppSuggestionDetails
-      backHref="/app-home/playlists"
+      backHref="/app-home/sugeridos"
       backLabel="Volver a sugeridos"
       kindLabel="Sugerido · Playlist"
       title={row.title}

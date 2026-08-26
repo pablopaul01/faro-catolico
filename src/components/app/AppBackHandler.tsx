@@ -33,12 +33,19 @@ export function AppBackHandler() {
         return
       }
 
+      if (pathname.startsWith('/app-home/playlists') || pathname.startsWith('/app-home/canales')) {
+        router.replace('/app-home/sugeridos')
+        return
+      }
+
+      if (pathname === '/app-home/sugeridos') {
+        router.replace('/app-home')
+        return
+      }
+
       const catalog =
         catalogFromDetail(pathname, '/app-home/peliculas') ??
-        catalogFromDetail(pathname, '/app-home/libros') ??
-        catalogFromDetail(pathname, '/app-home/musica') ??
-        catalogFromDetail(pathname, '/app-home/playlists') ??
-        catalogFromDetail(pathname, '/app-home/canales')
+        catalogFromDetail(pathname, '/app-home/libros')
 
       if (catalog) {
         router.replace(catalog)

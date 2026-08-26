@@ -15,7 +15,6 @@ const TIPOS = [
   { value: '',         label: 'Todo' },
   { value: 'pelicula', label: 'Películas' },
   { value: 'libro',    label: 'Libros' },
-  { value: 'cancion',  label: 'Canciones' },
 ]
 
 const DEBOUNCE_MS = 400
@@ -63,7 +62,7 @@ export function AppSearchForm({ initialQ = '', initialTipo = '' }: AppSearchForm
           type="text"
           value={q}
           onChange={(event) => setQ(event.target.value)}
-          placeholder="Buscar películas, libros o canciones..."
+          placeholder="Buscar películas o libros..."
           autoFocus
           className="app-focus w-full rounded-sm border border-border bg-secondary py-2.5 pl-9 pr-4 text-sm text-light placeholder-light/30 transition-colors focus:border-accent focus:outline-none"
         />

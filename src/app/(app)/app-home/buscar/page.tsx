@@ -12,13 +12,11 @@ interface Props {
 const TYPE_LABELS: Record<string, string> = {
   pelicula: 'Película',
   libro:    'Libro',
-  cancion:  'Canción',
 }
 
 const TYPE_COLORS: Record<string, string> = {
   pelicula: 'bg-blue-900/40 text-blue-300 border-blue-700/40',
   libro:    'bg-emerald-900/40 text-emerald-300 border-emerald-700/40',
-  cancion:  'bg-purple-900/40 text-purple-300 border-purple-700/40',
 }
 
 export default async function AppSearchPage({ searchParams }: Props) {
@@ -31,7 +29,7 @@ export default async function AppSearchPage({ searchParams }: Props) {
       <div className="app-catalog-heading">
         <h1 className="font-display text-3xl text-light sm:text-5xl">Buscar</h1>
         <p className="mt-3 max-w-2xl text-sm text-light/55 sm:text-base">
-          Encontrá películas, libros y canciones sin salir de la aplicación.
+          Encontrá películas y libros sin salir de la aplicación.
         </p>
       </div>
 
