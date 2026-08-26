@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
   webDir: 'capacitor-shell',
   backgroundColor: '#0D1B2A',
   android: {
-    appendUserAgent: ' FaroCatolicoApp/1.7.6',
+    appendUserAgent: ' FaroCatolicoApp/1.7.7',
   },
   server: {
     url: DEV_URL ?? PRODUCTION_URL,
@@ -34,7 +34,7 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,
-      backgroundColor: '#111D2A',
+      backgroundColor: '#0D1B2A',
       splashFullScreen: true,
       splashImmersive: true,
       showSpinner: true,

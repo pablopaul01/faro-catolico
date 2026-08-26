@@ -4,6 +4,7 @@ import '../../app/globals.css'
 import { AppNavigation } from '@/components/app/AppHome'
 import { AppDpadNavigation } from '@/components/app/AppDpadNavigation'
 import { AppBackHandler } from '@/components/app/AppBackHandler'
+import { AppIntro } from '@/components/app/AppIntro'
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -35,6 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${cinzel.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-primary text-light">
+        <AppIntro />
         <AppNavigation />
         <AppDpadNavigation />
         <AppBackHandler />
