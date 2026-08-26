@@ -3,7 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BookOpen, Film, Home, Menu, Music2, Play, Search, Video } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import { APP_DOWNLOAD, ROUTES, SITE_NAME } from '@/lib/constants'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
 
@@ -56,12 +57,15 @@ export function AppCard({
   href: string
   kind: 'movie' | 'book' | 'music' | 'playlist' | 'channel'
 }) {
+  const [isOpening, setIsOpening] = useState(false)
   const title = getTitle(item)
   const mediaUrl = getMediaUrl(item)
   const isBook = kind === 'book'
 
   return (
-    <Link href={href} className={`app-card app-focus ${isBook ? 'app-card-book' : ''}`}>
+    <Link href={href} onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+      if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) setIsOpening(true)
+    }} className={`app-card app-focus ${isBook ? 'app-card-book' : ''}`} aria-label={isOpening ? `Abriendo ${title}` : title}>
       <div className="relative aspect-video overflow-hidden bg-secondary">
         {mediaUrl ? (
           <Image src={mediaUrl} alt="" fill sizes="(max-width: 640px) 42vw, 220px" className="object-cover transition-transform duration-300" />
@@ -78,7 +82,13 @@ export function AppCard({
         )}
       </div>
       <div className="p-3">
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
+        {isOpening ? (
+          <p className="flex items-center gap-2 text-sm font-medium text-accent" aria-live="polite">
+            <span className="app-loading-dot" aria-hidden /> Abriendo...
+          </p>
+        ) : (
+          <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
+        )}
         {'artist' in item && <p className="mt-1 truncate text-xs text-light/45">{item.artist}</p>}
         {'author' in item && <p className="mt-1 truncate text-xs text-accent/70">{item.author}</p>}
       </div>
@@ -87,6 +97,7 @@ export function AppCard({
 }
 
 export function AppNavigation() {
+  const pathname = usePathname()
   const links = [
     { href: '/app-home', label: 'Inicio', icon: Home },
     { href: '/app-home/peliculas', label: 'Videos', icon: Video },
@@ -94,6 +105,8 @@ export function AppNavigation() {
     { href: '/app-home/musica', label: 'Música', icon: Music2 },
     { href: ROUTES.SEARCH, label: 'Buscar', icon: Search },
   ]
+
+  if (pathname.startsWith('/app-home/reproducir/')) return null
 
   return (
     <>

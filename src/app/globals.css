@@ -242,9 +242,11 @@
 
 .app-playback {
   position: relative;
-  min-height: 100vh;
-  padding-top: 5rem;
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
   background: #000;
+  overflow: hidden;
 }
 
 .app-playback-frame {
@@ -272,6 +274,59 @@
   height: 100%;
   border: 0;
   background: #000;
+}
+
+.app-player-touch-catcher {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.app-player-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  padding: max(1rem, var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 1rem 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+}
+
+.app-player-controls-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.app-loading-screen {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: rgba(248, 249, 250, 0.65);
+  background: var(--color-primary);
+}
+
+.app-loading-mark,
+.app-loading-dot {
+  display: block;
+  border: 3px solid rgba(212, 175, 55, 0.25);
+  border-top-color: var(--color-accent);
+  border-radius: 9999px;
+  animation: appLoadingSpin 0.8s linear infinite;
+}
+
+.app-loading-mark { width: 2.5rem; height: 2.5rem; }
+.app-loading-dot { width: 0.8rem; height: 0.8rem; border-width: 2px; }
+
+@keyframes appLoadingSpin {
+  to { transform: rotate(360deg); }
 }
 
 .app-tv-only {
@@ -329,6 +384,18 @@
 
   .app-detail-media {
     min-height: 22rem;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 767px) {
+  .app-playback-frame {
+    height: auto;
+    min-height: 56.25vw;
+  }
+
+  .app-player-shell {
+    aspect-ratio: 16 / 9;
+    height: auto;
   }
 }
 

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, ExternalLink, Play } from 'lucide-react'
 import type { Book, Movie } from '@/types/app.types'
+import { AppLoadingLink } from './AppLoadingLink'
 
 export function AppMovieDetails({ movie }: { movie: Movie }) {
   const playable = Boolean(movie.youtubeId || movie.dailymotionId || movie.okId || movie.vimeoId)
@@ -17,7 +18,7 @@ export function AppMovieDetails({ movie }: { movie: Movie }) {
           <h1 className="mt-3 font-display text-3xl text-light sm:text-5xl">{movie.title}</h1>
           {movie.year && <p className="mt-3 text-sm text-light/45">{movie.year}</p>}
           {playable ? (
-            <Link href={`/app-home/reproducir/pelicula/${movie.id}`} className="app-focus mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90"><Play size={16} fill="currentColor" /> Reproducir</Link>
+            <AppLoadingLink href={`/app-home/reproducir/pelicula/${movie.id}`} loadingLabel="Abriendo reproducción..." className="app-focus mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90"><Play size={16} fill="currentColor" /> Reproducir</AppLoadingLink>
           ) : movie.externalUrl ? (
             <a href={movie.externalUrl} target="_blank" rel="noopener noreferrer" className="app-focus mt-5 inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent"><ExternalLink size={16} /> Ver en plataforma</a>
           ) : <p className="mt-5 text-sm italic text-light/45">Este contenido no tiene una reproducción gratuita disponible.</p>}
