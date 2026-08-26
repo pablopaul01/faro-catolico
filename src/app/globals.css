@@ -61,6 +61,7 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--app-header-offset);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -97,6 +98,10 @@
 /* ─────────────────────────────────────────────
    App shell — experiencia mobile y Android TV
 ────────────────────────────────────────────── */
+:root {
+  --app-header-offset: 5.25rem;
+}
+
 .app-shell {
   min-height: 100vh;
   overflow-x: hidden;
@@ -131,12 +136,17 @@
   overflow: hidden;
   padding: 3rem 0;
   background: linear-gradient(105deg, #0d1b2a 0%, #142940 60%, #1b263b 100%);
+  scroll-margin-top: var(--app-header-offset);
 }
 
 .app-hero-glow {
   position: absolute;
   inset: 0 0 0 35%;
   background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.18), transparent 62%);
+}
+
+.app-rail {
+  scroll-margin-top: var(--app-header-offset);
 }
 
 .app-rails {
@@ -241,6 +251,11 @@
   transform: scale(1.06);
   box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.45);
   z-index: 2;
+}
+
+.app-focus {
+  scroll-margin-top: var(--app-header-offset);
+  scroll-margin-bottom: 2rem;
 }
 
 .app-focus:focus-visible {
@@ -451,6 +466,10 @@
 }
 
 @media (min-width: 768px) {
+  :root {
+    --app-header-offset: 6rem;
+  }
+
   .app-header {
     height: 5rem;
     padding-right: 2rem;
@@ -526,6 +545,10 @@
 }
 
 @media (min-width: 1000px) and (hover: none) {
+  :root {
+    --app-header-offset: 6.75rem;
+  }
+
   .app-tv-only {
     display: block;
   }
@@ -650,10 +673,5 @@
       transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
     }
 
-    /* Scroll suave al elemento enfocado para que el D-pad
-       no pierda de vista las cards fuera de pantalla */
-    :focus-visible {
-      scroll-margin: 5rem;
-    }
   }
 }

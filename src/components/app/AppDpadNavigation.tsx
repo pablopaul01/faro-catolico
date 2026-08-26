@@ -3,14 +3,83 @@
 import { useEffect } from 'react'
 
 const FOCUSABLE_SELECTOR = '.app-focus:not([aria-disabled="true"])'
+const ROW_SELECTOR = '.app-header, .app-hero, .app-rail, .app-catalog-heading, .app-catalog-grid, .app-detail'
+const HORIZONTAL_GROUP_SELECTOR = '.app-rail-scroller, .app-hero, .app-header, .app-catalog-grid, .app-catalog-heading'
+const CHROME_SELECTOR = '.app-header, .app-bottom-nav'
 
-function getDistance(current: DOMRect, candidate: DOMRect, direction: string) {
+type Direction = 'left' | 'right' | 'up' | 'down'
+
+function isDisplayed(element: HTMLElement) {
+  return element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden'
+}
+
+function isChrome(element: HTMLElement) {
+  return Boolean(element.closest(CHROME_SELECTOR))
+}
+
+function getVisibleFocusables() {
+  return Array.from(document.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(isDisplayed)
+}
+
+function getFocusablesIn(container: ParentNode) {
+  return getVisibleFocusables().filter((element) => container.contains(element))
+}
+
+function getRow(element: HTMLElement) {
+  return element.closest<HTMLElement>(ROW_SELECTOR)
+}
+
+function sortByX(elements: HTMLElement[]) {
+  return [...elements].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left)
+}
+
+function horizontalOverlap(a: DOMRect, b: DOMRect) {
+  return Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left))
+}
+
+function closestByColumn(current: HTMLElement, candidates: HTMLElement[]) {
+  if (candidates.length === 0) return null
+
+  const currentRect = current.getBoundingClientRect()
+  const currentCenterX = currentRect.left + currentRect.width / 2
+
+  return [...candidates].sort((a, b) => {
+    const aRect = a.getBoundingClientRect()
+    const bRect = b.getBoundingClientRect()
+    const overlapDelta = horizontalOverlap(currentRect, bRect) - horizontalOverlap(currentRect, aRect)
+    if (overlapDelta !== 0) return overlapDelta
+
+    const aDx = Math.abs(aRect.left + aRect.width / 2 - currentCenterX)
+    const bDx = Math.abs(bRect.left + bRect.width / 2 - currentCenterX)
+    return aDx - bDx
+  })[0] ?? null
+}
+
+function pickInRow(row: HTMLElement, current: HTMLElement) {
+  const scroller = row.matches('.app-rail') ? row.querySelector('.app-rail-scroller') : null
+  const preferred = scroller ? getFocusablesIn(scroller) : getFocusablesIn(row)
+  return closestByColumn(current, preferred.length > 0 ? preferred : getFocusablesIn(row))
+}
+
+function collectRows() {
+  const rows: HTMLElement[] = []
+  const seen = new Set<HTMLElement>()
+
+  for (const element of getVisibleFocusables()) {
+    const row = getRow(element)
+    if (!row || seen.has(row)) continue
+    seen.add(row)
+    rows.push(row)
+  }
+
+  return rows
+}
+
+function getDistance(current: DOMRect, candidate: DOMRect, direction: Direction) {
   const currentCenterX = current.left + current.width / 2
   const currentCenterY = current.top + current.height / 2
-  const candidateCenterX = candidate.left + candidate.width / 2
-  const candidateCenterY = candidate.top + candidate.height / 2
-  const deltaX = candidateCenterX - currentCenterX
-  const deltaY = candidateCenterY - currentCenterY
+  const deltaX = candidate.left + candidate.width / 2 - currentCenterX
+  const deltaY = candidate.top + candidate.height / 2 - currentCenterY
 
   if (direction === 'left' && deltaX >= -1) return null
   if (direction === 'right' && deltaX <= 1) return null
@@ -22,11 +91,87 @@ function getDistance(current: DOMRect, candidate: DOMRect, direction: string) {
   return primary + secondary * 2.5
 }
 
+function pickSpatial(current: HTMLElement, pool: HTMLElement[], direction: Direction) {
+  const currentRect = current.getBoundingClientRect()
+  let best: HTMLElement | null = null
+  let bestScore = Infinity
+
+  for (const element of pool) {
+    if (element === current) continue
+    const score = getDistance(currentRect, element.getBoundingClientRect(), direction)
+    if (score === null || score >= bestScore) continue
+    bestScore = score
+    best = element
+  }
+
+  return best
+}
+
+function step(pool: HTMLElement[], current: HTMLElement, direction: 'left' | 'right') {
+  const index = pool.indexOf(current)
+  if (index < 0) return null
+  return pool[direction === 'right' ? index + 1 : index - 1] ?? null
+}
+
+function moveHorizontal(current: HTMLElement, direction: 'left' | 'right') {
+  const scroller = current.closest('.app-rail-scroller')
+  if (scroller) {
+    const rail = current.closest('.app-rail')
+    const cards = sortByX(getFocusablesIn(scroller))
+    const extras = rail ? getFocusablesIn(rail).filter((element) => !scroller.contains(element)) : []
+    return step([...cards, ...extras], current, direction)
+  }
+
+  const group = current.closest<HTMLElement>(HORIZONTAL_GROUP_SELECTOR)
+  const pool = sortByX(
+    group
+      ? getFocusablesIn(group)
+      : getVisibleFocusables().filter((element) => isChrome(element) === isChrome(current)),
+  )
+  return step(pool, current, direction)
+}
+
+function moveVertical(current: HTMLElement, direction: 'up' | 'down') {
+  const row = getRow(current)
+
+  if (row && !row.matches('.app-rail')) {
+    const within = pickSpatial(current, getFocusablesIn(row), direction)
+    if (within) return within
+  }
+
+  if (row?.matches('.app-rail') && !current.closest('.app-rail-scroller') && direction === 'down') {
+    const card = pickInRow(row, current)
+    if (card) return card
+  }
+
+  if (!row) {
+    const visible = getVisibleFocusables()
+    const content = visible.filter((element) => !isChrome(element))
+    return pickSpatial(current, content, direction)
+      ?? (direction === 'up' ? pickSpatial(current, visible.filter(isChrome), direction) : null)
+  }
+
+  const rows = collectRows()
+  const nextRow = rows[rows.indexOf(row) + (direction === 'up' ? -1 : 1)]
+  if (!nextRow) return null
+  return pickInRow(nextRow, current)
+}
+
+function reveal(element: HTMLElement) {
+  element.focus({ preventScroll: true })
+  const hero = element.closest<HTMLElement>('.app-hero')
+  if (hero) {
+    hero.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' })
+    return
+  }
+  element.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' })
+}
+
 export function AppDpadNavigation() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const direction = event.key.replace('Arrow', '').toLowerCase()
-      if (!['left', 'right', 'up', 'down'].includes(direction)) return
+      const key = event.key.replace('Arrow', '').toLowerCase()
+      if (!['left', 'right', 'up', 'down'].includes(key)) return
 
       const target = event.target as HTMLElement | null
       if (target?.matches('input, textarea, select, iframe')) return
@@ -34,19 +179,15 @@ export function AppDpadNavigation() {
       const current = document.activeElement as HTMLElement | null
       if (!current?.matches(FOCUSABLE_SELECTOR)) return
 
-      const currentRect = current.getBoundingClientRect()
-      const candidates = Array.from(document.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
-        .filter((element) => element !== current)
-        .map((element) => ({ element, distance: getDistance(currentRect, element.getBoundingClientRect(), direction) }))
-        .filter((candidate): candidate is { element: HTMLElement; distance: number } => candidate.distance !== null)
-        .sort((a, b) => a.distance - b.distance)
+      const direction = key as Direction
+      const next = direction === 'left' || direction === 'right'
+        ? moveHorizontal(current, direction)
+        : moveVertical(current, direction)
 
-      const next = candidates[0]?.element
       if (!next) return
 
       event.preventDefault()
-      next.focus({ preventScroll: true })
-      next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+      reveal(next)
     }
 
     document.addEventListener('keydown', handleKeyDown)

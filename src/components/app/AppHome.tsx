@@ -137,7 +137,7 @@ export function AppNavigation() {
           <Link href={APP_ROUTES.SEARCH} className="app-focus rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Buscar">
             <Search size={20} />
           </Link>
-          <button className="app-focus app-tv-only rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Abrir menú">
+          <button type="button" tabIndex={-1} className="app-tv-only rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Abrir menú">
             <Menu size={21} />
           </button>
         </div>
