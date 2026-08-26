@@ -175,7 +175,7 @@
   display: flex;
   gap: 0.875rem;
   overflow-x: auto;
-  padding: 0 1.25rem 0.75rem;
+  padding: 0.85rem 1.25rem 1rem;
   scroll-padding-inline: 1.25rem;
   scroll-snap-type: x mandatory;
 }
@@ -300,6 +300,11 @@
   gap: 1rem;
   max-width: 72rem;
   margin: 0 auto;
+  padding: 0.85rem 0 1rem;
+}
+
+.app-catalog-grid .app-card {
+  width: 100%;
 }
 
 .app-detail {
@@ -571,8 +576,7 @@
 
   .app-rail-scroller {
     gap: 1.5rem;
-    padding-right: 4rem;
-    padding-left: 4rem;
+    padding: 1.25rem 4rem 1.5rem;
   }
 
   .app-card {
@@ -580,12 +584,14 @@
   }
 
   .app-card-book {
-    width: 14rem;
+    width: 10rem;
   }
 
   .app-catalog-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: none;
+    padding: 1.25rem 0 1.5rem;
   }
 
   .app-catalog,

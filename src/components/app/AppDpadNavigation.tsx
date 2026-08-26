@@ -113,13 +113,59 @@ function step(pool: HTMLElement[], current: HTMLElement, direction: 'left' | 'ri
   return pool[direction === 'right' ? index + 1 : index - 1] ?? null
 }
 
+function groupGridRows(elements: HTMLElement[]) {
+  const sorted = [...elements].sort((a, b) => {
+    const aRect = a.getBoundingClientRect()
+    const bRect = b.getBoundingClientRect()
+    const dy = aRect.top - bRect.top
+    if (Math.abs(dy) > 24) return dy
+    return aRect.left - bRect.left
+  })
+
+  const rows: HTMLElement[][] = []
+
+  for (const element of sorted) {
+    const top = element.getBoundingClientRect().top
+    const last = rows.at(-1)
+    if (!last || Math.abs(top - last[0].getBoundingClientRect().top) > 24) {
+      rows.push([element])
+      continue
+    }
+    last.push(element)
+  }
+
+  return rows
+}
+
+function moveInGrid(current: HTMLElement, grid: HTMLElement, direction: Direction) {
+  const rows = groupGridRows(getFocusablesIn(grid))
+  const rowIndex = rows.findIndex((row) => row.includes(current))
+  if (rowIndex < 0) return null
+
+  const colIndex = rows[rowIndex].indexOf(current)
+
+  if (direction === 'left' || direction === 'right') {
+    return rows[rowIndex][colIndex + (direction === 'right' ? 1 : -1)] ?? null
+  }
+
+  const nextRow = rows[rowIndex + (direction === 'down' ? 1 : -1)]
+  if (!nextRow) return null
+  return nextRow[Math.min(colIndex, nextRow.length - 1)] ?? null
+}
+
+function getRailSeeAll(rail: HTMLElement) {
+  const scroller = rail.querySelector('.app-rail-scroller')
+  if (!scroller) return null
+  return getFocusablesIn(rail).find((element) => !scroller.contains(element)) ?? null
+}
+
 function moveHorizontal(current: HTMLElement, direction: 'left' | 'right') {
+  const grid = current.closest<HTMLElement>('.app-catalog-grid')
+  if (grid) return moveInGrid(current, grid, direction)
+
   const scroller = current.closest('.app-rail-scroller')
   if (scroller) {
-    const rail = current.closest('.app-rail')
-    const cards = sortByX(getFocusablesIn(scroller))
-    const extras = rail ? getFocusablesIn(rail).filter((element) => !scroller.contains(element)) : []
-    return step([...cards, ...extras], current, direction)
+    return step(sortByX(getFocusablesIn(scroller)), current, direction)
   }
 
   const group = current.closest<HTMLElement>(HORIZONTAL_GROUP_SELECTOR)
@@ -134,9 +180,17 @@ function moveHorizontal(current: HTMLElement, direction: 'left' | 'right') {
 function moveVertical(current: HTMLElement, direction: 'up' | 'down') {
   const row = getRow(current)
 
-  if (row && !row.matches('.app-rail')) {
+  if (row?.matches('.app-catalog-grid')) {
+    const within = moveInGrid(current, row, direction)
+    if (within) return within
+  } else if (row && !row.matches('.app-rail')) {
     const within = pickSpatial(current, getFocusablesIn(row), direction)
     if (within) return within
+  }
+
+  if (row?.matches('.app-rail') && current.closest('.app-rail-scroller') && direction === 'up') {
+    const seeAll = getRailSeeAll(row)
+    if (seeAll) return seeAll
   }
 
   if (row?.matches('.app-rail') && !current.closest('.app-rail-scroller') && direction === 'down') {
