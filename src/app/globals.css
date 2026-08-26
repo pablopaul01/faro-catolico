@@ -95,6 +95,281 @@
 }
 
 /* ─────────────────────────────────────────────
+   App shell — experiencia mobile y Android TV
+────────────────────────────────────────────── */
+.app-shell {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--color-primary);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  height: 4.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem;
+  padding-top: max(0.5rem, var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
+  background: rgba(13, 27, 42, 0.88);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(14px);
+}
+
+.app-main {
+  padding-bottom: 3rem;
+}
+
+.app-hero {
+  position: relative;
+  display: flex;
+  min-height: 22rem;
+  align-items: center;
+  overflow: hidden;
+  padding: 3rem 0;
+  background: linear-gradient(105deg, #0d1b2a 0%, #142940 60%, #1b263b 100%);
+}
+
+.app-hero-glow {
+  position: absolute;
+  inset: 0 0 0 35%;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.18), transparent 62%);
+}
+
+.app-rails {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+  padding-top: 2.5rem;
+}
+
+.app-rail-scroller {
+  display: flex;
+  gap: 0.875rem;
+  overflow-x: auto;
+  padding: 0 1.25rem 0.75rem;
+  scroll-padding-inline: 1.25rem;
+  scroll-snap-type: x mandatory;
+}
+
+.app-card {
+  display: block;
+  width: min(42vw, 13.5rem);
+  flex: 0 0 auto;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: var(--radius-card);
+  background: var(--color-secondary);
+  transition: transform 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.app-card-book {
+  width: min(34vw, 10.5rem);
+}
+
+.app-focus:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-card);
+}
+
+.app-bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 45;
+  display: flex;
+  padding: 0.25rem 0.5rem max(0.25rem, var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+  border-top: 1px solid var(--color-border);
+  background: rgba(13, 27, 42, 0.96);
+  backdrop-filter: blur(14px);
+}
+
+.app-version {
+  padding: 0 1.25rem 5rem;
+  color: rgba(248, 249, 250, 0.28);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.app-catalog {
+  min-height: 100vh;
+  padding: 2rem 1.25rem 6rem;
+}
+
+.app-catalog-heading {
+  max-width: 72rem;
+  margin: 0 auto 2.5rem;
+}
+
+.app-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.app-detail {
+  min-height: 100vh;
+  padding: 2rem 1.25rem 6rem;
+}
+
+.app-detail-layout {
+  display: grid;
+  gap: 2rem;
+  max-width: 72rem;
+  margin: 2.5rem auto 0;
+}
+
+.app-detail-media {
+  position: relative;
+  min-height: 13rem;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-secondary);
+}
+
+.app-detail-book {
+  min-height: 20rem;
+  max-width: 20rem;
+}
+
+.app-playback {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 5rem;
+  background: #000;
+}
+
+.app-playback-frame {
+  width: 100%;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+.app-playback-frame > * {
+  width: 100%;
+}
+
+.app-tv-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app-header {
+    height: 5rem;
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  .app-hero {
+    min-height: 27rem;
+    padding-left: 2rem;
+  }
+
+  .app-rail-scroller {
+    gap: 1.25rem;
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  .app-card {
+    width: 15.5rem;
+  }
+
+  .app-card-book {
+    width: 11.5rem;
+  }
+
+  .app-bottom-nav {
+    display: none;
+  }
+
+  .app-version {
+    padding-bottom: 1.5rem;
+  }
+
+  .app-catalog,
+  .app-detail {
+    padding: 3rem 2rem 5rem;
+  }
+
+  .app-catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .app-detail-layout {
+    grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+  }
+
+  .app-detail-media {
+    min-height: 22rem;
+  }
+}
+
+@media (min-width: 1000px) and (hover: none) {
+  .app-tv-only {
+    display: block;
+  }
+
+  .app-header {
+    height: 5.5rem;
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+
+  .app-hero {
+    min-height: 31rem;
+    padding-left: 4rem;
+  }
+
+  .app-rails {
+    gap: 4rem;
+    padding-top: 4rem;
+  }
+
+  .app-rail-scroller {
+    gap: 1.5rem;
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+
+  .app-card {
+    width: 20rem;
+  }
+
+  .app-card-book {
+    width: 14rem;
+  }
+
+  .app-catalog-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .app-catalog,
+  .app-detail {
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+
+  .app-focus:focus-visible {
+    outline-width: 4px;
+    outline-offset: 5px;
+    box-shadow: 0 0 1.5rem rgba(212, 175, 55, 0.42);
+    transform: scale(1.04);
+  }
+}
+
+/* ─────────────────────────────────────────────
    Utilidades personalizadas
 ───────────────────────────────────────────── */
 @layer utilities {
