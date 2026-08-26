@@ -249,6 +249,13 @@
   overflow: hidden;
 }
 
+@supports (height: 100dvh) {
+  .app-playback {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
 .app-playback-frame {
   width: 100%;
   max-width: 90rem;
