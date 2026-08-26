@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Cinzel, Inter } from 'next/font/google'
 import '../../app/globals.css'
+import { AppNavigation } from '@/components/app/AppHome'
+import { AppDpadNavigation } from '@/components/app/AppDpadNavigation'
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -31,7 +33,11 @@ export const viewport: Viewport = {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${cinzel.variable} ${inter.variable}`}>
-      <body className="min-h-screen bg-primary text-light">{children}</body>
+      <body className="min-h-screen bg-primary text-light">
+        <AppNavigation />
+        <AppDpadNavigation />
+        {children}
+      </body>
     </html>
   )
 }

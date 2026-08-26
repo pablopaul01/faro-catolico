@@ -33,7 +33,7 @@ const getTitle = (item: Movie | Book | Song | YoutubePlaylist | YoutubeChannel |
   return item.title
 }
 
-function AppRail({ title, href, id, children }: RailProps) {
+export function AppRail({ title, href, id, children }: RailProps) {
   return (
     <section id={id} className="app-rail" aria-labelledby={`rail-${id}`}>
       <div className="flex items-end justify-between gap-4 mb-4 px-5 sm:px-8">
@@ -47,7 +47,7 @@ function AppRail({ title, href, id, children }: RailProps) {
   )
 }
 
-function AppCard({
+export function AppCard({
   item,
   href,
   kind,
@@ -86,19 +86,19 @@ function AppCard({
   )
 }
 
-function AppNavigation() {
+export function AppNavigation() {
   const links = [
-    { href: '#inicio', label: 'Inicio', icon: Home },
-    { href: '#peliculas', label: 'Videos', icon: Video },
-    { href: '#libros', label: 'Libros', icon: BookOpen },
-    { href: '#musica', label: 'Música', icon: Music2 },
+    { href: '/app-home', label: 'Inicio', icon: Home },
+    { href: '/app-home/peliculas', label: 'Videos', icon: Video },
+    { href: '/app-home/libros', label: 'Libros', icon: BookOpen },
+    { href: '/app-home/musica', label: 'Música', icon: Music2 },
     { href: ROUTES.SEARCH, label: 'Buscar', icon: Search },
   ]
 
   return (
     <>
       <header className="app-header">
-        <Link href="#inicio" className="app-focus flex items-center gap-2 text-accent" aria-label={SITE_NAME}>
+        <Link href="/app-home" className="app-focus flex items-center gap-2 text-accent" aria-label={SITE_NAME}>
           <Image src="/fc-logo.png" alt="" width={38} height={38} />
           <span className="font-display text-lg sm:text-xl">{SITE_NAME}</span>
         </Link>
@@ -146,11 +146,10 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
     firstCardRef.current?.focus()
   }, [isTv])
 
-  const movieHref = `${ROUTES.MOVIES}`
+  const movieHref = '/app-home/peliculas'
 
   return (
     <div id="inicio" className={`app-shell ${isTv ? 'app-tv-mode' : ''}`}>
-      <AppNavigation />
       <main className="app-main">
         <section className="app-hero">
           <div className="app-hero-glow" aria-hidden />
@@ -164,7 +163,7 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
               <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
                 <Play size={16} fill="currentColor" /> Explorar videos
               </Link>
-              <Link href={ROUTES.MUSIC} className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
+              <Link href="/app-home/musica" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
                 <Music2 size={16} /> Escuchar música
               </Link>
             </div>
@@ -173,33 +172,33 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
 
         <div className="app-rails">
           {movies.length > 0 && (
-          <AppRail id="peliculas" title="Películas y videos" href={ROUTES.MOVIES}>
-              {movies.map((movie) => <AppCard key={movie.id} item={movie} href="#peliculas" kind="movie" />)}
+            <AppRail id="peliculas" title="Películas y videos" href="/app-home/peliculas">
+              {movies.map((movie) => <AppCard key={movie.id} item={movie} href={`/app-home/peliculas/${movie.id}`} kind="movie" />)}
             </AppRail>
           )}
           {youtubePlaylists.length > 0 && (
-            <AppRail id="playlists" title="Playlists para ver" href={`${ROUTES.MOVIES}?tab=playlists`}>
-              {youtubePlaylists.map((playlist) => <AppCard key={playlist.id} item={playlist} href="#playlists" kind="playlist" />)}
+            <AppRail id="playlists" title="Playlists para ver" href="/app-home/playlists">
+              {youtubePlaylists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists/${playlist.id}`} kind="playlist" />)}
             </AppRail>
           )}
           {youtubeChannels.length > 0 && (
-            <AppRail id="canales" title="Canales recomendados" href={`${ROUTES.MOVIES}?tab=canales`}>
-              {youtubeChannels.map((channel) => <AppCard key={channel.id} item={channel} href="#canales" kind="channel" />)}
+            <AppRail id="canales" title="Canales recomendados" href="/app-home/canales">
+              {youtubeChannels.map((channel) => <AppCard key={channel.id} item={channel} href={`/app-home/canales/${channel.id}`} kind="channel" />)}
             </AppRail>
           )}
           {books.length > 0 && (
-            <AppRail id="libros" title="Libros para leer" href={ROUTES.BOOKS}>
-              {books.map((book) => <AppCard key={book.id} item={book} href="#libros" kind="book" />)}
+            <AppRail id="libros" title="Libros para leer" href="/app-home/libros">
+              {books.map((book) => <AppCard key={book.id} item={book} href={`/app-home/libros/${book.id}`} kind="book" />)}
             </AppRail>
           )}
           {songs.length > 0 && (
-            <AppRail id="musica" title="Música para orar" href={ROUTES.MUSIC}>
-              {songs.map((song) => <AppCard key={song.id} item={song} href="#musica" kind="music" />)}
+            <AppRail id="musica" title="Música para orar" href="/app-home/musica">
+              {songs.map((song) => <AppCard key={song.id} item={song} href={`/app-home/musica/${song.id}`} kind="music" />)}
             </AppRail>
           )}
           {playlists.length > 0 && (
-            <AppRail id="playlists-musica" title="Playlists de música" href={`${ROUTES.MUSIC}?tab=playlists`}>
-              {playlists.map((playlist) => <AppCard key={playlist.id} item={playlist} href="#playlists-musica" kind="playlist" />)}
+            <AppRail id="playlists-musica" title="Playlists de música" href="/app-home/musica">
+              {playlists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists-musica/${playlist.id}`} kind="playlist" />)}
             </AppRail>
           )}
         </div>
