@@ -106,7 +106,7 @@ export function AppNavigation() {
     { href: APP_ROUTES.SEARCH, label: 'Buscar', icon: Search },
   ]
 
-  if (pathname.startsWith('/app-home/reproducir/')) return null
+  if (pathname.startsWith('/app-home/reproducir/') || pathname.endsWith('/leer')) return null
 
   return (
     <>
@@ -176,8 +176,8 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
               <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
                 <Play size={16} fill="currentColor" /> Explorar videos
               </Link>
-              <Link href="/app-home/musica" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
-                <Music2 size={16} /> Escuchar música
+              <Link href="/app-home/libros" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
+                <BookOpen size={16} /> Leer libros
               </Link>
             </div>
           </div>
@@ -189,20 +189,25 @@ export function AppHome({ movies, books, songs, youtubePlaylists, youtubeChannel
               {movies.map((movie) => <AppCard key={movie.id} item={movie} href={`/app-home/peliculas/${movie.id}`} kind="movie" />)}
             </AppRail>
           )}
-          {youtubePlaylists.length > 0 && (
-            <AppRail id="playlists" title="Playlists para ver" href="/app-home/playlists">
-              {youtubePlaylists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists/${playlist.id}`} kind="playlist" />)}
-            </AppRail>
-          )}
-          {youtubeChannels.length > 0 && (
-            <AppRail id="canales" title="Canales recomendados" href="/app-home/canales">
-              {youtubeChannels.map((channel) => <AppCard key={channel.id} item={channel} href={`/app-home/canales/${channel.id}`} kind="channel" />)}
-            </AppRail>
-          )}
           {books.length > 0 && (
             <AppRail id="libros" title="Libros para leer" href="/app-home/libros">
               {books.map((book) => <AppCard key={book.id} item={book} href={`/app-home/libros/${book.id}`} kind="book" />)}
             </AppRail>
+          )}
+          {(youtubePlaylists.length > 0 || youtubeChannels.length > 0) && (
+            <div className="app-suggested">
+              <p className="app-suggested-label">Sugeridos</p>
+              {youtubePlaylists.length > 0 && (
+                <AppRail id="playlists" title="Playlists de YouTube" href="/app-home/playlists">
+                  {youtubePlaylists.map((playlist) => <AppCard key={playlist.id} item={playlist} href={`/app-home/playlists/${playlist.id}`} kind="playlist" />)}
+                </AppRail>
+              )}
+              {youtubeChannels.length > 0 && (
+                <AppRail id="canales" title="Canales de YouTube" href="/app-home/canales">
+                  {youtubeChannels.map((channel) => <AppCard key={channel.id} item={channel} href={`/app-home/canales/${channel.id}`} kind="channel" />)}
+                </AppRail>
+              )}
+            </div>
           )}
           {songs.length > 0 && (
             <AppRail id="musica" title="Música para orar" href="/app-home/musica">

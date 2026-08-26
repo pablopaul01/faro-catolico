@@ -41,8 +41,14 @@ export function AppBookDetails({ book }: { book: Book }) {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent/75">Libro</p>
           <h1 className="mt-3 font-display text-3xl text-light sm:text-5xl">{book.title}</h1>
           <p className="mt-3 text-accent/75">{book.author}</p>
+          {book.pdfUrl ? (
+            <AppLoadingLink href={`/app-home/libros/${book.id}/leer`} loadingLabel="Abriendo lectura..." className="app-focus mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
+              <BookOpen size={16} /> Leer libro
+            </AppLoadingLink>
+          ) : (
+            <p className="mt-5 text-sm italic text-light/45">Este libro no tiene un PDF disponible para leer en la app.</p>
+          )}
           {book.description && <p className="mt-5 max-w-2xl text-sm leading-relaxed text-light/65 sm:text-base">{book.description}</p>}
-          {book.pdfUrl && <a href={book.pdfUrl} target="_blank" rel="noopener noreferrer" className="app-focus mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary"><BookOpen size={16} /> Leer libro</a>}
         </div>
       </div>
     </main>

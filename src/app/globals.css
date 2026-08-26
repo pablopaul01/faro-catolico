@@ -146,6 +146,21 @@
   padding-top: 2.5rem;
 }
 
+.app-suggested {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+}
+
+.app-suggested-label {
+  padding: 0 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(212, 175, 55, 0.75);
+}
+
 .app-rail-scroller {
   display: flex;
   gap: 0.875rem;
@@ -353,6 +368,11 @@
 
   .app-rail-scroller {
     gap: 1.25rem;
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  .app-suggested-label {
     padding-right: 2rem;
     padding-left: 2rem;
   }

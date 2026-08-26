@@ -31,11 +31,13 @@ export const ROUTES = {
 } as const
 
 export const APP_ROUTES = {
-  HOME:    '/app-home',
-  SEARCH:  '/app-home/buscar',
-  MOVIES:  '/app-home/peliculas',
-  BOOKS:   '/app-home/libros',
-  MUSIC:   '/app-home/musica',
+  HOME:      '/app-home',
+  SEARCH:    '/app-home/buscar',
+  MOVIES:    '/app-home/peliculas',
+  BOOKS:     '/app-home/libros',
+  MUSIC:     '/app-home/musica',
+  PLAYLISTS: '/app-home/playlists',
+  CHANNELS:  '/app-home/canales',
 } as const
 
 export const appContentHref = (tipo: 'pelicula' | 'libro' | 'cancion', id: string) => {

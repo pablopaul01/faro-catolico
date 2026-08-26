@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import { fetchHomePreviewData } from '@/lib/data-cache'
-import { AppCatalog } from '@/components/app/AppCatalog'
-import type { YoutubePlaylist } from '@/types/app.types'
+import { AppSuggestionDetails } from '@/components/app/AppSuggestionDetails'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,11 +9,17 @@ export default async function AppPlaylistDetailsPage({ params }: { params: Promi
   const { youtubePlaylists: rows } = await fetchHomePreviewData()
   const row = rows.find((playlist) => playlist.id === id)
   if (!row) notFound()
-  const playlist: YoutubePlaylist = {
-    id: row.id, title: row.title, description: row.description,
-    youtubeListId: row.youtube_list_id, thumbnailUrl: row.thumbnail_url,
-    categoryIds: [], isPublished: row.is_published, sortOrder: row.sort_order,
-    createdAt: row.created_at, updatedAt: row.updated_at,
-  }
-  return <AppCatalog title={playlist.title} subtitle={playlist.description ?? 'Playlist de videos seleccionados.'} items={[playlist]} kind="playlist" getHref={() => `https://www.youtube.com/playlist?list=${playlist.youtubeListId}`} />
+
+  return (
+    <AppSuggestionDetails
+      backHref="/app-home/playlists"
+      backLabel="Volver a sugeridos"
+      kindLabel="Sugerido · Playlist"
+      title={row.title}
+      description={row.description}
+      imageUrl={row.thumbnail_url}
+      externalUrl={`https://www.youtube.com/playlist?list=${row.youtube_list_id}`}
+      externalLabel="Abrir en YouTube"
+    />
+  )
 }

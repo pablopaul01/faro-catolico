@@ -27,6 +27,12 @@ export function AppBackHandler() {
         return
       }
 
+      const readerMatch = pathname.match(/^\/app-home\/libros\/([^/]+)\/leer$/)
+      if (readerMatch) {
+        router.replace(`/app-home/libros/${readerMatch[1]}`)
+        return
+      }
+
       const catalog =
         catalogFromDetail(pathname, '/app-home/peliculas') ??
         catalogFromDetail(pathname, '/app-home/libros') ??
