@@ -26,10 +26,6 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
     hideTimer.current = setTimeout(() => setShowControls(false), 4000)
   }
 
-  const revealControlsFromSurface = () => {
-    revealControls()
-  }
-
   useEffect(() => () => {
     if (hideTimer.current) clearTimeout(hideTimer.current)
   }, [])
@@ -60,14 +56,6 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
         onLoad={() => setIsLoading(false)}
         className="app-player-frame"
       />
-      {!showControls && (
-        <button
-          type="button"
-          className="app-player-touch-catcher"
-          onClick={revealControlsFromSurface}
-          aria-label="Mostrar controles del reproductor"
-        />
-      )}
       <div className={`app-player-controls ${showControls ? 'app-player-controls-visible' : ''}`}>
         <Link href={backHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-primary/90 px-4 py-2 text-sm text-light shadow-lg backdrop-blur-sm">
           <ArrowLeft size={17} /> Volver
