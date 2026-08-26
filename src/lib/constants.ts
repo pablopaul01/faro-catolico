@@ -30,6 +30,20 @@ export const ROUTES = {
   AUTH_CALLBACK:           '/auth/callback',
 } as const
 
+export const APP_ROUTES = {
+  HOME:    '/app-home',
+  SEARCH:  '/app-home/buscar',
+  MOVIES:  '/app-home/peliculas',
+  BOOKS:   '/app-home/libros',
+  MUSIC:   '/app-home/musica',
+} as const
+
+export const appContentHref = (tipo: 'pelicula' | 'libro' | 'cancion', id: string) => {
+  if (tipo === 'pelicula') return `${APP_ROUTES.MOVIES}/${id}`
+  if (tipo === 'libro')    return `${APP_ROUTES.BOOKS}/${id}`
+  return `${APP_ROUTES.MUSIC}/${id}`
+}
+
 // ─────────────────────────────────────────────
 // App Android (APK distribuido en el sitio)
 // ─────────────────────────────────────────────

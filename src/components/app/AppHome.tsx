@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { BookOpen, Film, Home, Menu, Music2, Play, Search, Video } from 'lucide-react'
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import { APP_DOWNLOAD, ROUTES, SITE_NAME } from '@/lib/constants'
+import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
 
 interface AppHomeProps {
@@ -103,7 +103,7 @@ export function AppNavigation() {
     { href: '/app-home/peliculas', label: 'Videos', icon: Video },
     { href: '/app-home/libros', label: 'Libros', icon: BookOpen },
     { href: '/app-home/musica', label: 'Música', icon: Music2 },
-    { href: ROUTES.SEARCH, label: 'Buscar', icon: Search },
+    { href: APP_ROUTES.SEARCH, label: 'Buscar', icon: Search },
   ]
 
   if (pathname.startsWith('/app-home/reproducir/')) return null
@@ -123,7 +123,7 @@ export function AppNavigation() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href={ROUTES.SEARCH} className="app-focus rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Buscar">
+          <Link href={APP_ROUTES.SEARCH} className="app-focus rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Buscar">
             <Search size={20} />
           </Link>
           <button className="app-focus app-tv-only rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Abrir menú">

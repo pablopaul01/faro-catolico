@@ -186,3 +186,53 @@ export const fetchMusicPageData = async () => {
     playlists:  playlistsRes.data ?? [],
   }
 }
+
+export type SearchContentType = 'pelicula' | 'libro' | 'cancion'
+
+export interface CatalogSearchItem {
+  id:       string
+  title:    string
+  subtitle: string | null
+  tipo:     SearchContentType
+}
+
+export const fetchCatalogSearch = async (query: string, tipo?: string): Promise<CatalogSearchItem[]> => {
+  const trimmed = query.trim()
+  if (!trimmed) return []
+
+  const client  = sb()
+  const pattern = `%${trimmed}%`
+
+  const [moviesRes, booksRes, songsRes] = await Promise.all([
+    (!tipo || tipo === 'pelicula')
+      ? client.from(TABLE_NAMES.MOVIES).select('id, title, description')
+          .eq('is_published', true)
+          .or(`title.ilike.${pattern},description.ilike.${pattern}`)
+          .limit(20)
+      : Promise.resolve({ data: [] as { id: string; title: string; description: string | null }[] }),
+    (!tipo || tipo === 'libro')
+      ? client.from(TABLE_NAMES.BOOKS).select('id, title, author')
+          .eq('is_published', true)
+          .or(`title.ilike.${pattern},author.ilike.${pattern}`)
+          .limit(20)
+      : Promise.resolve({ data: [] as { id: string; title: string; author: string | null }[] }),
+    (!tipo || tipo === 'cancion')
+      ? client.from(TABLE_NAMES.SONGS).select('id, title, artist')
+          .eq('is_published', true)
+          .or(`title.ilike.${pattern},artist.ilike.${pattern}`)
+          .limit(20)
+      : Promise.resolve({ data: [] as { id: string; title: string; artist: string | null }[] }),
+  ])
+
+  return [
+    ...(moviesRes.data ?? []).map((row) => ({
+      id: row.id, title: row.title, subtitle: row.description, tipo: 'pelicula' as const,
+    })),
+    ...(booksRes.data ?? []).map((row) => ({
+      id: row.id, title: row.title, subtitle: row.author, tipo: 'libro' as const,
+    })),
+    ...(songsRes.data ?? []).map((row) => ({
+      id: row.id, title: row.title, subtitle: row.artist, tipo: 'cancion' as const,
+    })),
+  ]
+}
