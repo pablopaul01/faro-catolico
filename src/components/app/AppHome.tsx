@@ -15,7 +15,7 @@ interface AppHomeProps {
 
 interface RailProps {
   title: string
-  href: string
+  href?: string
   id: string
   children: ReactNode
 }
@@ -35,9 +35,11 @@ export function AppRail({ title, href, id, children }: RailProps) {
     <section id={id} className="app-rail" aria-labelledby={`rail-${id}`}>
       <div className="flex items-end justify-between gap-4 mb-4 px-5 sm:px-8">
         <h2 id={`rail-${id}`} className="font-display text-xl sm:text-2xl text-light">{title}</h2>
-        <Link href={href} className="app-focus shrink-0 text-xs text-accent hover:text-light transition-colors">
-          Ver todo
-        </Link>
+        {href ? (
+          <Link href={href} className="app-focus shrink-0 text-xs text-accent hover:text-light transition-colors">
+            Ver todo
+          </Link>
+        ) : null}
       </div>
       <div className="app-rail-scroller no-scrollbar">{children}</div>
     </section>
@@ -61,32 +63,32 @@ export function AppCard({
   return (
     <Link href={href} onClick={(event: MouseEvent<HTMLAnchorElement>) => {
       if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) setIsOpening(true)
-    }} className={`app-card app-focus ${isBook ? 'app-card-book' : ''}`} aria-label={isOpening ? `Abriendo ${title}` : title}>
+    }} className={`app-card app-focus group ${isBook ? 'app-card-book' : ''}`} aria-label={isOpening ? `Abriendo ${title}` : title}>
       <div className="relative aspect-video overflow-hidden bg-secondary">
         {mediaUrl ? (
-          <Image src={mediaUrl} alt="" fill sizes="(max-width: 640px) 42vw, 220px" className="object-cover transition-transform duration-300" />
+          <Image src={mediaUrl} alt="" fill sizes="(max-width: 640px) 46vw, 280px" className="object-cover transition-transform duration-300 group-hover:scale-105" />
         ) : (
           <div className="flex h-full items-center justify-center text-accent/40">
             {kind === 'book' ? <BookOpen size={34} /> : kind === 'music' ? <Music2 size={34} /> : <Film size={34} />}
           </div>
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-primary/90 via-transparent to-transparent" />
+        <div className="app-card-fade" />
         {kind === 'movie' && (
-          <span className="absolute bottom-3 left-3 flex items-center gap-1 text-xs text-light/80">
-            <Play size={11} fill="currentColor" /> Ver ahora
+          <span className="app-card-play">
+            <Play size={14} fill="currentColor" />
           </span>
         )}
-      </div>
-      <div className="p-3">
-        {isOpening ? (
-          <p className="flex items-center gap-2 text-sm font-medium text-accent" aria-live="polite">
-            <span className="app-loading-dot" aria-hidden /> Abriendo...
-          </p>
-        ) : (
-          <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
-        )}
-        {'artist' in item && <p className="mt-1 truncate text-xs text-light/45">{item.artist}</p>}
-        {'author' in item && <p className="mt-1 truncate text-xs text-accent/70">{item.author}</p>}
+        <div className="app-card-meta">
+          {isOpening ? (
+            <p className="flex items-center gap-2 text-sm font-medium text-accent" aria-live="polite">
+              <span className="app-loading-dot" aria-hidden /> Abriendo...
+            </p>
+          ) : (
+            <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
+          )}
+          {'artist' in item && <p className="mt-1 truncate text-xs text-light/70">{item.artist}</p>}
+          {'author' in item && <p className="mt-1 truncate text-xs text-accent/80">{item.author}</p>}
+        </div>
       </div>
     </Link>
   )
