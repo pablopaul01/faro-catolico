@@ -120,7 +120,7 @@
 }
 
 .app-main {
-  padding-bottom: 3rem;
+  padding-bottom: calc(5.75rem + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
 }
 
 .app-hero {
@@ -271,7 +271,7 @@
 
 .app-catalog {
   min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
+  padding: 2rem 1.25rem calc(5.75rem + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
 }
 
 .app-catalog-heading {
@@ -289,7 +289,7 @@
 
 .app-detail {
   min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
+  padding: 2rem 1.25rem calc(5.75rem + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
 }
 
 .app-detail-layout {
@@ -483,6 +483,10 @@
 
   .app-bottom-nav {
     display: none;
+  }
+
+  .app-main {
+    padding-bottom: 3rem;
   }
 
   .app-version {
