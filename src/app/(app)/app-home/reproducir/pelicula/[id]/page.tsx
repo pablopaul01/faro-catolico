@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { fetchMoviesPageData } from '@/lib/data-cache'
 import { AppPlayback } from '@/components/app/AppPlayback'
+import { AppPlaybackSystem } from '@/components/app/AppPlaybackSystem'
 import type { Movie } from '@/types/app.types'
 
 export const dynamic = 'force-dynamic'
@@ -18,5 +19,5 @@ export default async function AppMoviePlaybackPage({ params }: { params: Promise
     year: row.year, categoryIds: [], platformIds: [], isPublished: row.is_published,
     sortOrder: row.sort_order, createdAt: row.created_at, updatedAt: row.updated_at,
   }
-  return <AppPlayback movie={movie} />
+  return <><AppPlaybackSystem /><AppPlayback movie={movie} /></>
 }

@@ -10,7 +10,6 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
   const [isLoading, setIsLoading] = useState(true)
   const [showControls, setShowControls] = useState(false)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
   const source = movie.youtubeId
     ? { url: `${getYouTubeEmbedUrl(movie.youtubeId)}&autoplay=1`, label: 'YouTube' }
     : movie.dailymotionId
@@ -27,11 +26,8 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
     hideTimer.current = setTimeout(() => setShowControls(false), 4000)
   }
 
-  const enterFullscreenAndRevealControls = () => {
+  const revealControlsFromSurface = () => {
     revealControls()
-    if (!document.fullscreenElement) {
-      void iframeRef.current?.requestFullscreen?.().catch(() => undefined)
-    }
   }
 
   useEffect(() => () => {
@@ -56,7 +52,6 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
       )}
       <iframe
         key={source.url}
-        ref={iframeRef}
         src={source.url}
         title={movie.title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
@@ -69,7 +64,7 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
         <button
           type="button"
           className="app-player-touch-catcher"
-          onClick={enterFullscreenAndRevealControls}
+          onClick={revealControlsFromSurface}
           aria-label="Mostrar controles del reproductor"
         />
       )}
