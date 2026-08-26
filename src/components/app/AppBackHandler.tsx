@@ -12,13 +12,43 @@ export function AppBackHandler() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
 
-    const listener = App.addListener('backButton', () => {
-      if (pathname !== '/app-home') {
-        router.back()
+    const listener = App.addListener('backButton', ({ canGoBack }) => {
+      if (pathname.startsWith('/app-home/reproducir/')) {
+        router.replace(pathname.replace('/reproducir/pelicula/', '/peliculas/'))
         return
       }
 
-      void App.exitApp()
+      if (pathname.startsWith('/app-home/peliculas/')) {
+        router.replace('/app-home/peliculas')
+        return
+      }
+
+      if (pathname.startsWith('/app-home/libros/')) {
+        router.replace('/app-home/libros')
+        return
+      }
+
+      if (pathname.startsWith('/app-home/musica/')) {
+        router.replace('/app-home/musica')
+        return
+      }
+
+      if (pathname.startsWith('/app-home/playlists/')) {
+        router.replace('/app-home/playlists')
+        return
+      }
+
+      if (pathname.startsWith('/app-home/canales/')) {
+        router.replace('/app-home/canales')
+        return
+      }
+
+      if (pathname !== '/app-home') {
+        router.replace('/app-home')
+        return
+      }
+
+      if (!canGoBack) void App.exitApp()
     })
 
     return () => {
