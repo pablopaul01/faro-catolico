@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
   webDir: 'capacitor-shell',
   backgroundColor: '#0D1B2A',
   android: {
-    appendUserAgent: ' FaroCatolicoApp/1.7.7',
+    appendUserAgent: ' FaroCatolicoApp/1.7.8',
   },
   server: {
     url: DEV_URL ?? PRODUCTION_URL,
@@ -32,14 +32,14 @@ const config: CapacitorConfig = {
       hidden: false,
     },
     SplashScreen: {
-      launchShowDuration: 3000,
-      launchAutoHide: true,
+      launchShowDuration: 0,
+      launchAutoHide: false,
       backgroundColor: '#0D1B2A',
       splashFullScreen: true,
       splashImmersive: true,
       showSpinner: true,
       spinnerColor: '#D4AF37',
-      spinnerStyle: 'SMALL',
+      androidSpinnerStyle: 'small',
     },
   },
 }

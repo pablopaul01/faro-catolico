@@ -51,9 +51,9 @@ export const appContentHref = (tipo: 'pelicula' | 'libro' | 'cancion', id: strin
 // App Android (APK distribuido en el sitio)
 // ─────────────────────────────────────────────
 export const APP_DOWNLOAD = {
-  APK_PATH:  '/apps/faro-catolico-v1.7.7.apk',
+  APK_PATH:  '/apps/faro-catolico-v1.7.8.apk',
   DOWNLOADER_URL: 'http://aftv.news/1398102',
-  VERSION:   '1.7.7',
+  VERSION:   '1.7.8',
   MIN_ANDROID: 'Android 7.0 (API 24) o superior',
   SIZE_MB:   '3.7 MB',
 } as const

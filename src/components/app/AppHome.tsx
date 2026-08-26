@@ -64,7 +64,7 @@ export function AppCard({
     <Link href={href} onClick={(event: MouseEvent<HTMLAnchorElement>) => {
       if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) setIsOpening(true)
     }} className={`app-card app-focus group ${isBook ? 'app-card-book' : ''}`} aria-label={isOpening ? `Abriendo ${title}` : title}>
-      <div className="relative aspect-video overflow-hidden bg-secondary">
+      <div className={`relative overflow-hidden bg-secondary ${isBook ? 'app-card-cover' : 'app-card-poster'}`}>
         {mediaUrl ? (
           <Image src={mediaUrl} alt="" fill sizes="(max-width: 640px) 46vw, 280px" className="object-cover transition-transform duration-300 group-hover:scale-105" />
         ) : (
@@ -72,13 +72,27 @@ export function AppCard({
             {kind === 'book' ? <BookOpen size={34} /> : kind === 'music' ? <Music2 size={34} /> : <Film size={34} />}
           </div>
         )}
-        <div className="app-card-fade" />
+        {!isBook && <div className="app-card-fade" />}
         {kind === 'movie' && (
           <span className="app-card-play">
             <Play size={14} fill="currentColor" />
           </span>
         )}
-        <div className="app-card-meta">
+        {!isBook && (
+          <div className="app-card-meta">
+            {isOpening ? (
+              <p className="flex items-center gap-2 text-sm font-medium text-accent" aria-live="polite">
+                <span className="app-loading-dot" aria-hidden /> Abriendo...
+              </p>
+            ) : (
+              <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
+            )}
+            {'artist' in item && <p className="mt-1 truncate text-xs text-light/70">{item.artist}</p>}
+          </div>
+        )}
+      </div>
+      {isBook && (
+        <div className="app-card-book-meta">
           {isOpening ? (
             <p className="flex items-center gap-2 text-sm font-medium text-accent" aria-live="polite">
               <span className="app-loading-dot" aria-hidden /> Abriendo...
@@ -86,10 +100,9 @@ export function AppCard({
           ) : (
             <p className="line-clamp-2 text-sm font-medium leading-snug text-light">{title}</p>
           )}
-          {'artist' in item && <p className="mt-1 truncate text-xs text-light/70">{item.artist}</p>}
-          {'author' in item && <p className="mt-1 truncate text-xs text-accent/80">{item.author}</p>}
+          {'author' in item && <p className="mt-1 line-clamp-2 text-xs text-accent/80">{item.author}</p>}
         </div>
-      </div>
+      )}
     </Link>
   )
 }
