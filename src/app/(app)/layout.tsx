@@ -3,6 +3,7 @@ import { Cinzel, Inter } from 'next/font/google'
 import '../../app/globals.css'
 import { AppNavigation } from '@/components/app/AppHome'
 import { AppDpadNavigation } from '@/components/app/AppDpadNavigation'
+import { AppBackHandler } from '@/components/app/AppBackHandler'
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -36,6 +37,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <body className="min-h-screen bg-primary text-light">
         <AppNavigation />
         <AppDpadNavigation />
+        <AppBackHandler />
         {children}
       </body>
     </html>
