@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
+import { isTvDevice } from '@/lib/tv'
 
 interface AppAutoFocusProps {
   children: ReactNode
@@ -11,7 +12,7 @@ export function AppAutoFocus({ children, className }: AppAutoFocusProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const isTv = matchMedia('(min-width: 1000px) and (hover: none)').matches
+    const isTv = isTvDevice()
     if (!isTv || !ref.current) return
 
     const timer = setTimeout(() => {

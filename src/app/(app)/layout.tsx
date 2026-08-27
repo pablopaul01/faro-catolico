@@ -5,6 +5,7 @@ import { AppNavigation } from '@/components/app/AppHome'
 import { AppDpadNavigation } from '@/components/app/AppDpadNavigation'
 import { AppBackHandler } from '@/components/app/AppBackHandler'
 import { AppIntro } from '@/components/app/AppIntro'
+import { TV_BOOTSTRAP_SCRIPT } from '@/lib/tv'
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -34,7 +35,10 @@ export const viewport: Viewport = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${cinzel.variable} ${inter.variable}`}>
+    <html lang="es" className={`${cinzel.variable} ${inter.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: TV_BOOTSTRAP_SCRIPT }} />
+      </head>
       <body className="min-h-screen bg-primary text-light">
         <AppIntro />
         <AppNavigation />

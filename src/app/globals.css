@@ -720,9 +720,11 @@ html.tv-mode body {
   }
 }
 
-@media (min-width: 1000px) and (hover: none) {
-  :root {
-    --app-header-offset: 6.75rem;
+html.tv-mode {
+  --app-header-offset: 6.75rem;
+
+  .app-home-legacy-hero {
+    display: none;
   }
 
   .app-tv-only {
@@ -1184,7 +1186,7 @@ html.tv-mode body {
     border-radius: var(--radius-sm);
   }
 
-  @media (ui-mode: tv) {
+  html.tv-mode {
     a:focus-visible,
     button:focus-visible,
     [role="button"]:focus-visible,
@@ -1195,6 +1197,5 @@ html.tv-mode body {
       transform: scale(1.04);
       transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
     }
-
   }
 }

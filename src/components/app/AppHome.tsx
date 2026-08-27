@@ -3,9 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BookOpen, Film, Home, Menu, Music2, Play, Search, Sparkles, Video } from 'lucide-react'
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
+import { isTvDevice, TV_MEDIA_QUERY } from '@/lib/tv'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
 import { AppHomeHero } from './AppHomeHero'
 
@@ -159,16 +160,17 @@ export function AppHome({ movies, books }: AppHomeProps) {
   const [isTv, setIsTv] = useState(false)
   const firstCardRef = useRef<HTMLAnchorElement>(null)
 
-  useEffect(() => {
-    const userAgent = navigator.userAgent
-    const tvUserAgent = /Android TV|GoogleTV|SMART-TV|AFT/.test(userAgent)
-    const largePointer = window.matchMedia('(min-width: 1000px) and (hover: none)').matches
-    setIsTv(tvUserAgent || largePointer)
+  useLayoutEffect(() => {
+    const sync = () => setIsTv(isTvDevice())
+    sync()
+    const media = window.matchMedia(TV_MEDIA_QUERY)
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
   }, [])
 
   useEffect(() => {
     if (!isTv) return
-    firstCardRef.current?.focus()
+    document.querySelector<HTMLElement>('.app-home-hero .app-focus')?.focus()
   }, [isTv])
 
   const movieHref = '/app-home/peliculas'
@@ -177,10 +179,8 @@ export function AppHome({ movies, books }: AppHomeProps) {
   return (
     <div id="inicio" className={`app-shell ${isTv ? 'app-tv-mode' : ''}`}>
       <main className="app-main">
-        {isTv && featuredMovies.length > 0 ? (
-          <AppHomeHero movies={featuredMovies} />
-        ) : (
-          <section className="app-hero">
+        {featuredMovies.length > 0 && <AppHomeHero movies={featuredMovies} />}
+        <section className="app-hero app-home-legacy-hero">
             <div className="app-hero-glow" aria-hidden />
             <div className="relative z-10 max-w-2xl px-5 sm:px-8">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-accent/80">Faro Católico</p>
@@ -198,7 +198,6 @@ export function AppHome({ movies, books }: AppHomeProps) {
               </div>
             </div>
           </section>
-        )}
 
         <div className="app-rails">
           {movies.length > 0 && (

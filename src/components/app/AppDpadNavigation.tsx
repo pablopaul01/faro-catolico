@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
+import { applyTvMode, isTvDevice, TV_MEDIA_QUERY } from '@/lib/tv'
 
 const FOCUSABLE_SELECTOR = '.app-focus:not([aria-disabled="true"])'
 const ROW_SELECTOR = '.app-header, .app-hero, .app-rail, .app-catalog-heading, .app-catalog-grid, .app-detail'
@@ -211,13 +212,7 @@ function moveVertical(current: HTMLElement, direction: 'up' | 'down') {
   return pickInRow(nextRow, current)
 }
 
-const TV_USER_AGENT = /Android TV|GoogleTV|SMART-TV|AFT/
-
 let lastCenteredRail: HTMLElement | null = null
-
-function isTvDevice() {
-  return TV_USER_AGENT.test(navigator.userAgent) || window.matchMedia('(min-width: 1000px) and (hover: none)').matches
-}
 
 function centerRail(rail: HTMLElement) {
   const header = document.querySelector<HTMLElement>('.app-header')
@@ -253,9 +248,10 @@ function reveal(element: HTMLElement, isTv: boolean) {
 }
 
 export function AppDpadNavigation() {
-  useEffect(() => {
-    const isTv = isTvDevice()
-    document.documentElement.classList.toggle('tv-mode', isTv)
+  useLayoutEffect(() => {
+    applyTvMode()
+    const media = window.matchMedia(TV_MEDIA_QUERY)
+    media.addEventListener('change', applyTvMode)
 
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.replace('Arrow', '').toLowerCase()
@@ -275,11 +271,12 @@ export function AppDpadNavigation() {
       if (!next) return
 
       event.preventDefault()
-      reveal(next, isTv)
+      reveal(next, isTvDevice())
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => {
+      media.removeEventListener('change', applyTvMode)
       document.removeEventListener('keydown', handleKeyDown)
       document.documentElement.classList.remove('tv-mode')
     }
