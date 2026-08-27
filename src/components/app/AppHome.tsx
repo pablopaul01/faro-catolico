@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 're
 import { usePathname } from 'next/navigation'
 import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
+import { AppHomeHero } from './AppHomeHero'
 
 interface AppHomeProps {
   movies: Movie[]
@@ -171,28 +172,33 @@ export function AppHome({ movies, books }: AppHomeProps) {
   }, [isTv])
 
   const movieHref = '/app-home/peliculas'
+  const featuredMovies = movies.slice(0, 3)
 
   return (
     <div id="inicio" className={`app-shell ${isTv ? 'app-tv-mode' : ''}`}>
       <main className="app-main">
-        <section className="app-hero">
-          <div className="app-hero-glow" aria-hidden />
-          <div className="relative z-10 max-w-2xl px-5 sm:px-8">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-accent/80">Faro Católico</p>
-            <h1 className="font-display text-4xl leading-tight text-light sm:text-6xl">Contenido para crecer en gracia</h1>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-light/60 sm:text-base">
-              Películas, videos y libros seleccionados para acompañar la fe de tu familia.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
-                <Play size={16} fill="currentColor" /> Explorar videos
-              </Link>
-              <Link href="/app-home/libros" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
-                <BookOpen size={16} /> Leer libros
-              </Link>
+        {isTv && featuredMovies.length > 0 ? (
+          <AppHomeHero movies={featuredMovies} />
+        ) : (
+          <section className="app-hero">
+            <div className="app-hero-glow" aria-hidden />
+            <div className="relative z-10 max-w-2xl px-5 sm:px-8">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-accent/80">Faro Católico</p>
+              <h1 className="font-display text-4xl leading-tight text-light sm:text-6xl">Contenido para crecer en gracia</h1>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-light/60 sm:text-base">
+                Películas, videos y libros seleccionados para acompañar la fe de tu familia.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
+                  <Play size={16} fill="currentColor" /> Explorar videos
+                </Link>
+                <Link href="/app-home/libros" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
+                  <BookOpen size={16} /> Leer libros
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <div className="app-rails">
           {movies.length > 0 && (
