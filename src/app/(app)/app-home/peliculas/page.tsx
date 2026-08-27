@@ -1,5 +1,6 @@
 import { fetchMoviesPageData } from '@/lib/data-cache'
 import { AppRail, AppCard } from '@/components/app/AppHome'
+import { AppCatalogHero } from '@/components/app/AppCatalogHero'
 import type { Movie, MovieCategory } from '@/types/app.types'
 
 export const dynamic = 'force-dynamic'
@@ -42,8 +43,11 @@ export default async function AppMoviesPage() {
     }))
     .filter((rail) => rail.items.length > 0)
 
+  const featured = recent[0] ?? null
+
   return (
     <main className="app-catalog">
+      {featured && <AppCatalogHero movie={featured} />}
       <div className="app-catalog-heading">
         <h1 className="font-display text-3xl text-light sm:text-5xl">Películas y videos</h1>
         <p className="mt-3 max-w-2xl text-sm text-light/55 sm:text-base">

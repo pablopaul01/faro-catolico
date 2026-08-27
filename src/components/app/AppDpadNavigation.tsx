@@ -211,18 +211,52 @@ function moveVertical(current: HTMLElement, direction: 'up' | 'down') {
   return pickInRow(nextRow, current)
 }
 
-function reveal(element: HTMLElement) {
+const TV_USER_AGENT = /Android TV|GoogleTV|SMART-TV|AFT/
+
+let lastCenteredRail: HTMLElement | null = null
+
+function isTvDevice() {
+  return TV_USER_AGENT.test(navigator.userAgent) || window.matchMedia('(min-width: 1000px) and (hover: none)').matches
+}
+
+function centerRail(rail: HTMLElement) {
+  const header = document.querySelector<HTMLElement>('.app-header')
+  const headerOffset = header?.offsetHeight ?? 0
+  const visibleHeight = window.innerHeight - headerOffset
+  const railHeight = rail.offsetHeight
+  const railTop = rail.getBoundingClientRect().top + window.scrollY
+  const target = railHeight >= visibleHeight
+    ? railTop - headerOffset - 16
+    : railTop - headerOffset - (visibleHeight - railHeight) / 2
+  window.scrollTo({ top: Math.max(0, target) })
+}
+
+function reveal(element: HTMLElement, isTv: boolean) {
   element.focus({ preventScroll: true })
   const hero = element.closest<HTMLElement>('.app-hero')
   if (hero) {
+    lastCenteredRail = null
     hero.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' })
     return
   }
+  const rail = element.closest<HTMLElement>('.app-rail')
+  if (rail) {
+    element.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' })
+    if (isTv && lastCenteredRail !== rail) {
+      lastCenteredRail = rail
+      centerRail(rail)
+    }
+    return
+  }
+  lastCenteredRail = null
   element.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' })
 }
 
 export function AppDpadNavigation() {
   useEffect(() => {
+    const isTv = isTvDevice()
+    document.documentElement.classList.toggle('tv-mode', isTv)
+
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.replace('Arrow', '').toLowerCase()
       if (!['left', 'right', 'up', 'down'].includes(key)) return
@@ -241,11 +275,14 @@ export function AppDpadNavigation() {
       if (!next) return
 
       event.preventDefault()
-      reveal(next)
+      reveal(next, isTv)
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.documentElement.classList.remove('tv-mode')
+    }
   }, [])
 
   return null

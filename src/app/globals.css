@@ -128,6 +128,12 @@
   padding-bottom: calc(5.75rem + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
 }
 
+/* Espacio extra al final del documento en TV para que la última
+   rail pueda subir hasta quedar centrada verticalmente (estilo Netflix) */
+html.tv-mode body {
+  padding-bottom: 34vh;
+}
+
 .app-hero {
   position: relative;
   display: flex;
@@ -175,7 +181,8 @@
   display: flex;
   gap: 0.875rem;
   overflow-x: auto;
-  padding: 0.85rem 1.25rem 1rem;
+  padding: 1.75rem 1.25rem 2.5rem;
+  margin: -0.9rem 0 -1.5rem;
   scroll-padding-inline: 1.25rem;
   scroll-snap-type: x mandatory;
 }
@@ -330,6 +337,42 @@
 .app-detail-book {
   min-height: 20rem;
   max-width: 20rem;
+}
+
+.app-detail-movie {
+  --detail-backdrop: none;
+}
+
+.app-detail-back {
+  position: relative;
+  z-index: 2;
+}
+
+.app-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.app-detail-desc {
+  margin-top: 1.25rem;
+}
+
+.app-detail-book-hero {
+  --detail-backdrop: none;
+}
+
+.app-catalog-hero {
+  display: none;
+}
+
+.app-player-bottom {
+  display: none;
+}
+
+.app-detail-skeleton .app-detail-media {
+  min-height: 13rem;
 }
 
 .app-playback {
@@ -576,7 +619,8 @@
 
   .app-rail-scroller {
     gap: 1.5rem;
-    padding: 1.25rem 4rem 1.5rem;
+    padding: 2.5rem 4rem;
+    margin: -1.25rem 0 -1rem;
   }
 
   .app-card {
@@ -606,6 +650,235 @@
     box-shadow: 0 0 1.5rem rgba(212, 175, 55, 0.42);
     transform: scale(1.04);
   }
+
+  /* ── Movie detail hero backdrop (Netflix-style TV) ── */
+  .app-detail-movie,
+  .app-detail-book-hero {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+    background-image: var(--detail-backdrop);
+    background-size: cover;
+    background-position: center 20%;
+  }
+
+  .app-detail-movie::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      var(--color-primary) 0%,
+      rgba(13, 27, 42, 0.95) 20%,
+      rgba(13, 27, 42, 0.65) 45%,
+      rgba(13, 27, 42, 0.3) 65%,
+      rgba(13, 27, 42, 0.15) 100%
+    );
+    z-index: 1;
+  }
+
+  .app-detail-back {
+    display: none;
+  }
+
+  .app-detail-layout {
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 3rem 4rem 4rem;
+    max-width: none;
+    margin: 0;
+  }
+
+  .app-detail-media {
+    display: none;
+  }
+
+  .app-detail-layout > div:last-child h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+  }
+
+  .app-detail-layout > div:last-child .text-xs {
+    font-size: 0.8rem;
+    letter-spacing: 0.25em;
+  }
+
+  .app-detail-actions {
+    margin-top: 1.5rem;
+  }
+
+  .app-detail-actions a,
+  .app-detail-actions button {
+    min-height: 3rem;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+  }
+
+  .app-detail-desc {
+    max-width: 40rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  /* ── Book detail hero backdrop (Netflix-style TV) ── */
+  .app-detail-book-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      var(--color-primary) 0%,
+      rgba(13, 27, 42, 0.92) 25%,
+      rgba(13, 27, 42, 0.6) 50%,
+      rgba(13, 27, 42, 0.35) 70%,
+      rgba(13, 27, 42, 0.2) 100%
+    );
+    z-index: 1;
+  }
+
+  /* ── Catalog hero banner (Netflix-style TV) ── */
+  .app-catalog-hero {
+    display: block;
+    position: relative;
+    min-height: 28rem;
+    margin: -3rem -4rem 2rem;
+    overflow: hidden;
+    background-image: var(--hero-backdrop);
+    background-size: cover;
+    background-position: center 30%;
+  }
+
+  .app-catalog-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      var(--color-primary) 0%,
+      rgba(13, 27, 42, 0.85) 30%,
+      rgba(13, 27, 42, 0.4) 60%,
+      rgba(13, 27, 42, 0.2) 100%
+    );
+    z-index: 1;
+  }
+
+  .app-catalog-hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    min-height: 28rem;
+    padding: 3rem 4rem;
+  }
+
+  .app-catalog-hero-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(212, 175, 55, 0.75);
+    margin-bottom: 0.75rem;
+  }
+
+  .app-catalog-hero-title {
+    font-family: var(--font-family-display);
+    font-size: 3rem;
+    line-height: 1.1;
+    color: var(--color-light);
+    max-width: 40rem;
+  }
+
+  .app-catalog-hero-year {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(248, 249, 250, 0.45);
+  }
+
+  .app-catalog-hero-desc {
+    margin-top: 0.75rem;
+    max-width: 32rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: rgba(248, 249, 250, 0.6);
+  }
+
+  /* ── Player bottom bar for TV D-pad ── */
+  .app-player-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease-out;
+  }
+
+  .app-player-bottom.app-player-controls-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .app-player-bottom-back {
+    outline: none;
+  }
+
+  .app-player-bottom-back:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  }
+
+  /* ── Skeleton TV overrides ── */
+  .app-detail-skeleton {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+    background: linear-gradient(135deg, #0d1b2a 0%, #142940 50%, #1b263b 100%);
+  }
+
+  .app-detail-skeleton .app-detail-layout {
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 3rem 4rem 4rem;
+    max-width: none;
+    margin: 0;
+  }
+
+  .app-detail-skeleton .app-detail-media {
+    display: none;
+  }
+
+  .app-detail-skeleton .app-detail-back {
+    display: none;
+  }
+
+
+
 }
 
 /* ─────────────────────────────────────────────

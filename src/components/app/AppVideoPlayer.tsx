@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Film, LoaderCircle } from 'lucide-react'
 import { getDailymotionEmbedUrl, getOkEmbedUrl, getVimeoEmbedUrl, getYouTubeEmbedUrl } from '@/lib/utils'
@@ -8,8 +8,10 @@ import type { Movie } from '@/types/app.types'
 
 export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: string }) {
   const [isLoading, setIsLoading] = useState(true)
-  const [showControls, setShowControls] = useState(false)
+  const [showControls, setShowControls] = useState(true)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const shellRef = useRef<HTMLDivElement>(null)
+
   const source = movie.youtubeId
     ? { url: `${getYouTubeEmbedUrl(movie.youtubeId)}&autoplay=1`, label: 'YouTube' }
     : movie.dailymotionId
@@ -20,15 +22,30 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
           ? { url: getVimeoEmbedUrl(movie.vimeoId), label: 'Vimeo' }
           : null
 
-  const revealControls = () => {
-    setShowControls(true)
+  const scheduleHide = useCallback((delay = 4000) => {
     if (hideTimer.current) clearTimeout(hideTimer.current)
-    hideTimer.current = setTimeout(() => setShowControls(false), 4000)
-  }
-
-  useEffect(() => () => {
-    if (hideTimer.current) clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(() => setShowControls(false), delay)
   }, [])
+
+  const revealControls = useCallback(() => {
+    setShowControls(true)
+    scheduleHide()
+  }, [scheduleHide])
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      const key = event.key
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' ', 'Escape', 'Backspace'].includes(key)) {
+        revealControls()
+      }
+    }
+
+    shellRef.current?.addEventListener('keydown', handleKey)
+    return () => {
+      shellRef.current?.removeEventListener('keydown', handleKey)
+      if (hideTimer.current) clearTimeout(hideTimer.current)
+    }
+  }, [revealControls])
 
   if (!source) {
     return (
@@ -39,7 +56,7 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
   }
 
   return (
-    <div className="app-player-shell" onMouseMove={revealControls}>
+    <div ref={shellRef} className="app-player-shell" tabIndex={-1} onMouseMove={revealControls}>
       {isLoading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-secondary text-light/60">
           <LoaderCircle className="animate-spin text-accent" size={32} />
@@ -56,8 +73,22 @@ export function AppVideoPlayer({ movie, backHref }: { movie: Movie; backHref: st
         onLoad={() => setIsLoading(false)}
         className="app-player-frame"
       />
-      <div className={`app-player-controls ${showControls ? 'app-player-controls-visible' : ''}`}>
-        <Link href={backHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-primary/90 px-4 py-2 text-sm text-light shadow-lg backdrop-blur-sm">
+      {/* Top controls — back button */}
+      <div className={`app-player-controls app-player-top ${showControls ? 'app-player-controls-visible' : ''}`}>
+        <Link
+          href={backHref}
+          className="app-focus app-player-back inline-flex items-center gap-2 rounded-full bg-primary/90 px-4 py-2 text-sm text-light shadow-lg backdrop-blur-sm"
+        >
+          <ArrowLeft size={17} /> Volver
+        </Link>
+      </div>
+      {/* Bottom bar — always focusable on TV */}
+      <div className={`app-player-bottom ${showControls ? 'app-player-controls-visible' : ''}`}>
+        <Link
+          href={backHref}
+          tabIndex={0}
+          className="app-focus app-player-bottom-back inline-flex items-center gap-2 rounded-full bg-primary/80 px-5 py-2.5 text-sm text-light shadow-lg backdrop-blur-sm"
+        >
           <ArrowLeft size={17} /> Volver
         </Link>
       </div>
