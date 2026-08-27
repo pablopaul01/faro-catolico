@@ -6,8 +6,8 @@ import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
 import { SITE_NAME } from '@/lib/constants'
 
-const INTRO_KEY = 'faro-app-intro-v2'
-const INTRO_MS = 2400
+const INTRO_KEY = 'faro-app-intro-v3'
+const INTRO_MS = 2800
 const FADE_MS = 600
 
 export function AppIntro() {
@@ -39,10 +39,10 @@ export function AppIntro() {
       await hideNativeSplash()
       if (cancelled) return
 
-      // Show intro overlay — CSS animation starts cleanly
+      // Show intro overlay — CSS animations start cleanly
       setPhase('showing')
 
-      // After animation completes, start fade-out
+      // After all animations complete, start fade-out
       schedule(INTRO_MS, () => {
         if (cancelled) return
         setPhase('fading')
@@ -72,9 +72,23 @@ export function AppIntro() {
       className={`app-intro ${phase === 'fading' ? 'app-intro--leaving' : ''}`}
       role="presentation"
     >
+      {/* Lighthouse beam sweep */}
+      <div className="app-intro-beam" />
+
+      {/* Concentric light rings */}
+      <div className="app-intro-rings">
+        <div className="app-intro-ring" />
+        <div className="app-intro-ring" />
+        <div className="app-intro-ring" />
+      </div>
+
+      {/* Logo with glow */}
       <div className="app-intro-mark">
-        <Image src="/fc-logo.png" alt="" width={160} height={160} priority />
-        <p className="font-display text-2xl text-accent">{SITE_NAME}</p>
+        <div className="app-intro-logo">
+          <div className="app-intro-glow" />
+          <Image src="/fc-logo.png" alt="" width={160} height={160} priority />
+        </div>
+        <p className="app-intro-name">{SITE_NAME}</p>
       </div>
     </div>
   )
