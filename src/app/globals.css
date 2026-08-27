@@ -1050,7 +1050,7 @@ html.tv-mode body {
     left: 0;
     right: 0;
     z-index: 2;
-    padding: 3rem 4rem;
+    padding: 3rem 4rem 3rem 6rem;
   }
 
   .app-home-hero-label {
