@@ -214,7 +214,7 @@ function moveVertical(current: HTMLElement, direction: 'up' | 'down') {
 
 let lastCenteredRail: HTMLElement | null = null
 
-function centerRail(rail: HTMLElement) {
+export function centerRail(rail: HTMLElement) {
   const header = document.querySelector<HTMLElement>('.app-header')
   const headerOffset = header?.offsetHeight ?? 0
   const visibleHeight = window.innerHeight - headerOffset
@@ -224,6 +224,19 @@ function centerRail(rail: HTMLElement) {
     ? railTop - headerOffset - 16
     : railTop - headerOffset - (visibleHeight - railHeight) / 2
   window.scrollTo({ top: Math.max(0, target) })
+}
+
+function centerLastCard(scroller: HTMLElement, current: HTMLElement) {
+  const scrollerRect = scroller.getBoundingClientRect()
+  const currentWidth = current.getBoundingClientRect().width
+  const maxScroll = scroller.scrollWidth - scroller.clientWidth
+  const desiredCenter = current.offsetLeft + currentWidth / 2
+  const targetCenter = scrollerRect.width / 2
+  const next = scroller.scrollLeft + (desiredCenter - targetCenter)
+  scroller.scrollTo({
+    left: Math.max(0, Math.min(next, maxScroll)),
+    behavior: 'smooth',
+  })
 }
 
 function reveal(element: HTMLElement, isTv: boolean) {
@@ -278,7 +291,21 @@ export function AppDpadNavigation() {
         ? moveHorizontal(current, direction)
         : moveVertical(current, direction)
 
-      if (!next) return
+      if (!next) {
+        if (direction === 'right') {
+          const scroller = current.closest<HTMLElement>('.app-rail-scroller')
+          if (scroller) {
+            const focusables = sortByX(getFocusablesIn(scroller))
+            const last = focusables.at(-1)
+            if (last === current) {
+              event.preventDefault()
+              centerLastCard(scroller, current)
+              return
+            }
+          }
+        }
+        return
+      }
 
       event.preventDefault()
       reveal(next, isTvDevice())

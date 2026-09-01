@@ -9,6 +9,7 @@ import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
 import { isTvDevice, TV_MEDIA_QUERY } from '@/lib/tv'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
 import { AppHomeHero } from './AppHomeHero'
+import { centerRail } from './AppDpadNavigation'
 
 interface AppHomeProps {
   movies: Movie[]
@@ -166,7 +167,9 @@ export function AppHome({ movies, books }: AppHomeProps) {
 
   useEffect(() => {
     if (!isTv) return
-    document.querySelector<HTMLElement>('.app-home-hero .app-focus')?.focus()
+    const hero = document.querySelector<HTMLElement>('.app-home-hero')
+    hero?.querySelector<HTMLElement>('.app-focus')?.focus({ preventScroll: true })
+    if (hero) centerRail(hero)
   }, [isTv])
 
   const movieHref = '/app-home/peliculas'
