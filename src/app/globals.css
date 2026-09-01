@@ -940,37 +940,6 @@ html.tv-mode {
     color: rgba(248, 249, 250, 0.6);
   }
 
-  /* ── Player bottom bar for TV D-pad ── */
-  .app-player-bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 180ms ease-out;
-  }
-
-  .app-player-bottom.app-player-controls-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .app-player-bottom-back {
-    outline: none;
-  }
-
-  .app-player-bottom-back:focus-visible {
-    outline: 3px solid var(--color-accent);
-    outline-offset: 3px;
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
-  }
-
   /* ── Skeleton TV overrides ── */
   .app-detail-skeleton {
     height: 100dvh;

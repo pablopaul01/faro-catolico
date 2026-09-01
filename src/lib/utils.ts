@@ -7,7 +7,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 /** Construye la URL de embed de YouTube (privacy-enhanced) */
 export const getYouTubeEmbedUrl = (youtubeId: string) =>
-  `${YOUTUBE_NOCOOKIE_BASE}/${youtubeId}?rel=0&modestbranding=1`
+  `${YOUTUBE_NOCOOKIE_BASE}/${youtubeId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=1&controls=1&disablekb=0`
 
 /** Obtiene la thumbnail de YouTube en máxima calidad disponible */
 export const getYouTubeThumbnail = (youtubeId: string) =>
@@ -15,7 +15,7 @@ export const getYouTubeThumbnail = (youtubeId: string) =>
 
 /** Construye la URL de embed de Dailymotion */
 export const getDailymotionEmbedUrl = (id: string) =>
-  `${DAILYMOTION_EMBED_BASE}/${id}?autoplay=1&ui-logo=0`
+  `${DAILYMOTION_EMBED_BASE}/${id}?autoplay=1&ui-logo=0&queue-autoplay-next=0&sharing-enable=0&ui-start-screen-info=0`
 
 /** Obtiene la thumbnail de Dailymotion */
 export const getDailymotionThumbnail = (id: string) =>
@@ -59,9 +59,9 @@ export const getVimeoEmbedUrl = (vimeoId: string) => {
   const hasHash = vimeoId.includes('/')
   if (hasHash) {
     const [id, hash] = vimeoId.split('/')
-    return `${VIMEO_EMBED_BASE}/${id}?h=${hash}&autoplay=1&color=D4AF37`
+    return `${VIMEO_EMBED_BASE}/${id}?h=${hash}&autoplay=1&color=D4AF37&title=0&byline=0&portrait=0&dnt=1`
   }
-  return `${VIMEO_EMBED_BASE}/${vimeoId}?autoplay=1&color=D4AF37`
+  return `${VIMEO_EMBED_BASE}/${vimeoId}?autoplay=1&color=D4AF37&title=0&byline=0&portrait=0&dnt=1`
 }
 
 /** Extrae el ID/permalink de Vimeo de una URL o devuelve el string si ya es un ID */
