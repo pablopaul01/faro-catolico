@@ -365,6 +365,7 @@ html.tv-mode body {
 
 .app-catalog-hero {
   display: none;
+  scroll-margin-top: var(--app-header-offset);
 }
 
 .app-player-bottom {
@@ -373,6 +374,7 @@ html.tv-mode body {
 
 .app-home-hero {
   display: none;
+  scroll-margin-top: var(--app-header-offset);
 }
 
 .app-detail-skeleton .app-detail-media {
@@ -637,10 +639,6 @@ html.tv-mode body {
   to { transform: rotate(360deg); }
 }
 
-.app-tv-only {
-  display: none;
-}
-
 @media (min-width: 768px) {
   :root {
     --app-header-offset: 6rem;
@@ -725,10 +723,6 @@ html.tv-mode {
 
   .app-home-legacy-hero {
     display: none;
-  }
-
-  .app-tv-only {
-    display: block;
   }
 
   .app-header {

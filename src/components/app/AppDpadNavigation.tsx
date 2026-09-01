@@ -4,8 +4,8 @@ import { useLayoutEffect } from 'react'
 import { applyTvMode, isTvDevice, TV_MEDIA_QUERY } from '@/lib/tv'
 
 const FOCUSABLE_SELECTOR = '.app-focus:not([aria-disabled="true"])'
-const ROW_SELECTOR = '.app-header, .app-hero, .app-rail, .app-catalog-heading, .app-catalog-grid, .app-detail'
-const HORIZONTAL_GROUP_SELECTOR = '.app-rail-scroller, .app-hero, .app-header, .app-catalog-grid, .app-catalog-heading'
+const ROW_SELECTOR = '.app-header, .app-hero, .app-home-hero, .app-catalog-hero, .app-rail, .app-catalog-heading, .app-catalog-grid, .app-detail'
+const HORIZONTAL_GROUP_SELECTOR = '.app-rail-scroller, .app-hero, .app-home-hero, .app-catalog-hero, .app-header, .app-catalog-grid, .app-catalog-heading'
 const CHROME_SELECTOR = '.app-header, .app-bottom-nav'
 
 type Direction = 'left' | 'right' | 'up' | 'down'
@@ -228,15 +228,25 @@ function centerRail(rail: HTMLElement) {
 
 function reveal(element: HTMLElement, isTv: boolean) {
   element.focus({ preventScroll: true })
+  const tvHero = element.closest<HTMLElement>('.app-home-hero, .app-catalog-hero')
+  if (tvHero) {
+    lastCenteredRail = null
+    if (isTv) {
+      centerRail(tvHero)
+    } else {
+      tvHero.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+    }
+    return
+  }
   const hero = element.closest<HTMLElement>('.app-hero')
   if (hero) {
     lastCenteredRail = null
-    hero.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' })
+    hero.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
     return
   }
   const rail = element.closest<HTMLElement>('.app-rail')
   if (rail) {
-    element.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' })
+    element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
     if (isTv && lastCenteredRail !== rail) {
       lastCenteredRail = rail
       centerRail(rail)
@@ -244,7 +254,7 @@ function reveal(element: HTMLElement, isTv: boolean) {
     return
   }
   lastCenteredRail = null
-  element.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' })
+  element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
 }
 
 export function AppDpadNavigation() {

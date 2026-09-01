@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { BookOpen, Film, Home, Menu, Music2, Play, Search, Sparkles, Video } from 'lucide-react'
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { BookOpen, Film, Home, Music2, Play, Search, Sparkles, Video } from 'lucide-react'
+import { useEffect, useLayoutEffect, useState, type MouseEvent, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { APP_DOWNLOAD, APP_ROUTES, SITE_NAME } from '@/lib/constants'
 import { isTvDevice, TV_MEDIA_QUERY } from '@/lib/tv'
@@ -139,9 +139,6 @@ export function AppNavigation() {
           <Link href={APP_ROUTES.SEARCH} className="app-focus rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Buscar">
             <Search size={20} />
           </Link>
-          <button type="button" tabIndex={-1} className="app-tv-only rounded-full p-2 text-light/70 hover:bg-white/10 hover:text-light" aria-label="Abrir menú">
-            <Menu size={21} />
-          </button>
         </div>
       </header>
       <nav className="app-bottom-nav" aria-label="Navegación inferior">
@@ -158,7 +155,6 @@ export function AppNavigation() {
 
 export function AppHome({ movies, books }: AppHomeProps) {
   const [isTv, setIsTv] = useState(false)
-  const firstCardRef = useRef<HTMLAnchorElement>(null)
 
   useLayoutEffect(() => {
     const sync = () => setIsTv(isTvDevice())
@@ -177,7 +173,7 @@ export function AppHome({ movies, books }: AppHomeProps) {
   const featuredMovies = movies.slice(0, 3)
 
   return (
-    <div id="inicio" className={`app-shell ${isTv ? 'app-tv-mode' : ''}`}>
+    <div id="inicio" className="app-shell">
       <main className="app-main">
         {featuredMovies.length > 0 && <AppHomeHero movies={featuredMovies} />}
         <section className="app-hero app-home-legacy-hero">
@@ -189,7 +185,7 @@ export function AppHome({ movies, books }: AppHomeProps) {
                 Películas, videos y libros seleccionados para acompañar la fe de tu familia.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Link ref={firstCardRef} href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
+                <Link href={movieHref} className="app-focus inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90">
                   <Play size={16} fill="currentColor" /> Explorar videos
                 </Link>
                 <Link href="/app-home/libros" className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-5 py-3 text-sm text-accent hover:bg-accent/10">
