@@ -1,11 +1,14 @@
-import { fetchHomePreviewData } from '@/lib/data-cache'
+import { fetchHomePreviewData, fetchFeaturedMovies } from '@/lib/data-cache'
 import { AppHome } from '@/components/app/AppHome'
 import type { Book, Movie } from '@/types/app.types'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AppHomePage() {
-  const data = await fetchHomePreviewData()
+  const [data, featuredMovies] = await Promise.all([
+    fetchHomePreviewData(),
+    fetchFeaturedMovies(),
+  ])
 
   const movies: Movie[] = data.movies.map((row) => ({
     id: row.id,
@@ -22,6 +25,8 @@ export default async function AppHomePage() {
     platformIds: (row.movie_platform_items as { platform_id: string }[] ?? []).map((item) => item.platform_id),
     isPublished: row.is_published,
     sortOrder: row.sort_order,
+    isFeatured: row.is_featured ?? false,
+    heroOrder: row.hero_order ?? 0,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }))
@@ -42,5 +47,5 @@ export default async function AppHomePage() {
     updatedAt: row.updated_at,
   }))
 
-  return <AppHome movies={movies} books={books} />
+  return <AppHome movies={movies} books={books} featuredMovies={featuredMovies} />
 }

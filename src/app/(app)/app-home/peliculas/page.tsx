@@ -1,4 +1,4 @@
-import { fetchMoviesPageData } from '@/lib/data-cache'
+import { fetchMoviesPageData, fetchFeaturedMovies } from '@/lib/data-cache'
 import { AppRail, AppCard } from '@/components/app/AppHome'
 import { AppCatalogHero } from '@/components/app/AppCatalogHero'
 import type { Movie, MovieCategory } from '@/types/app.types'
@@ -6,7 +6,10 @@ import type { Movie, MovieCategory } from '@/types/app.types'
 export const dynamic = 'force-dynamic'
 
 export default async function AppMoviesPage() {
-  const { movies: rows, categories: catsRaw } = await fetchMoviesPageData()
+  const [{ movies: rows, categories: catsRaw }, featuredMovies] = await Promise.all([
+    fetchMoviesPageData(),
+    fetchFeaturedMovies(),
+  ])
 
   const movies: Movie[] = rows.map((row) => ({
     id: row.id,
@@ -23,6 +26,8 @@ export default async function AppMoviesPage() {
     platformIds: (row.movie_platform_items as { platform_id: string }[] ?? []).map((item) => item.platform_id),
     isPublished: row.is_published,
     sortOrder: row.sort_order,
+    isFeatured: row.is_featured ?? false,
+    heroOrder: row.hero_order ?? 0,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }))
@@ -43,7 +48,7 @@ export default async function AppMoviesPage() {
     }))
     .filter((rail) => rail.items.length > 0)
 
-  const featured = recent[0] ?? null
+  const featured = featuredMovies[0] ?? null
 
   return (
     <main className="app-catalog">

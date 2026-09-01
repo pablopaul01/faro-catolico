@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { ROUTES, SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
-import { fetchHomePreviewData, fetchSettingsPublic, fetchRatingsPublic } from '@/lib/data-cache'
+import { fetchHomePreviewData, fetchSettingsPublic, fetchRatingsPublic, fetchFeaturedMovies } from '@/lib/data-cache'
 import { Hero } from '@/components/public/Hero'
+import { FeaturedHeroCarousel } from '@/components/public/movies/FeaturedHeroCarousel'
 import { SectionHeader } from '@/components/public/SectionHeader'
 import { MovieGrid } from '@/components/public/movies/MovieGrid'
 import { BookGrid } from '@/components/public/books/BookGrid'
@@ -45,12 +46,13 @@ const SectionBg = ({ children, alt }: { children: React.ReactNode; alt?: boolean
 )
 
 export default async function HomePage() {
-  const [homeData, settings, movieRatings, bookRatings, songRatings] = await Promise.all([
+  const [homeData, settings, movieRatings, bookRatings, songRatings, featuredMovies] = await Promise.all([
     fetchHomePreviewData(),
     fetchSettingsPublic(),
     fetchRatingsPublic('pelicula'),
     fetchRatingsPublic('libro'),
     fetchRatingsPublic('cancion'),
+    fetchFeaturedMovies(),
   ])
 
   const { movies: moviesRaw, books: booksRaw, songs: songsRaw, platforms: platsRaw,
@@ -67,6 +69,7 @@ export default async function HomePage() {
     thumbnailUrl: row.thumbnail_url, year: row.year, categoryIds: [],
     platformIds: (row.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
     isPublished: row.is_published, sortOrder: row.sort_order,
+    isFeatured: row.is_featured ?? false, heroOrder: row.hero_order ?? 0,
     createdAt: row.created_at, updatedAt: row.updated_at,
   }))
 
@@ -112,6 +115,9 @@ export default async function HomePage() {
     <>
       <SettingsInitializer copyrightMode={settings.copyrightMode} />
       <Hero />
+
+      {/* Hero de películas destacadas */}
+      {featuredMovies.length > 0 && <FeaturedHeroCarousel movies={featuredMovies} />}
 
       {/* Películas — bg-primary (default) */}
       <section id="peliculas" className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">

@@ -22,6 +22,8 @@ const adaptMovie = (row: Record<string, unknown>): Movie => ({
   platformIds:  ((row.movie_platform_items  as MoviePlatformRow[] | null) ?? []).map((r) => r.platform_id),
   isPublished:  row.is_published  as boolean,
   sortOrder:    row.sort_order    as number,
+  isFeatured:   (row.is_featured  as boolean | null) ?? false,
+  heroOrder:    (row.hero_order   as number  | null) ?? 0,
   createdAt:    row.created_at    as string,
   updatedAt:    row.updated_at    as string,
 })
@@ -53,6 +55,8 @@ export const createMovie = async (payload: MovieFormPayload): Promise<Movie> => 
       year:           payload.year           ?? null,
       is_published:   payload.isPublished,
       sort_order:     payload.sortOrder,
+      is_featured:    payload.isFeatured,
+      hero_order:     payload.heroOrder,
     })
     .select()
     .single()
@@ -100,6 +104,8 @@ export const updateMovie = async (
   if (payload.year          !== undefined) updates.year          = payload.year ?? null
   if (payload.isPublished   !== undefined) updates.is_published  = payload.isPublished
   if (payload.sortOrder     !== undefined) updates.sort_order    = payload.sortOrder
+  if (payload.isFeatured    !== undefined) updates.is_featured   = payload.isFeatured
+  if (payload.heroOrder     !== undefined) updates.hero_order    = payload.heroOrder
 
   const { data, error } = await supabase
     .from(TABLE_NAMES.MOVIES)

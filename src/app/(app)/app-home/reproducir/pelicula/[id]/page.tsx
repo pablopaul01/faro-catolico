@@ -17,7 +17,9 @@ export default async function AppMoviePlaybackPage({ params }: { params: Promise
     youtubeId: row.youtube_id, dailymotionId: row.dailymotion_id, okId: row.ok_id,
     vimeoId: row.vimeo_id, externalUrl: row.external_url, thumbnailUrl: row.thumbnail_url,
     year: row.year, categoryIds: [], platformIds: [], isPublished: row.is_published,
-    sortOrder: row.sort_order, createdAt: row.created_at, updatedAt: row.updated_at,
+    sortOrder: row.sort_order,
+    isFeatured: row.is_featured ?? false, heroOrder: row.hero_order ?? 0,
+    createdAt: row.created_at, updatedAt: row.updated_at,
   }
   return <><AppPlaybackSystem /><AppPlayback movie={movie} /></>
 }

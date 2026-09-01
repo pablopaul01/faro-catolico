@@ -45,8 +45,10 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
           categoryIds:   movie.categoryIds,
           isPublished:   movie.isPublished,
           sortOrder:     movie.sortOrder,
+          isFeatured:    movie.isFeatured,
+          heroOrder:     movie.heroOrder,
         }
-      : { categoryIds: [], isPublished: false, sortOrder: 0 },
+      : { categoryIds: [], isPublished: false, sortOrder: 0, isFeatured: false, heroOrder: 0 },
   })
 
   const selectedCategoryIds = watch('categoryIds') ?? []
@@ -231,6 +233,26 @@ export const MovieForm = ({ movie, categories, platforms }: MovieFormProps) => {
         <input type="checkbox" {...register('isPublished')} className="w-4 h-4 accent-accent" />
         <span className="text-light/80 text-sm">Publicar (visible en el sitio)</span>
       </label>
+
+      {/* Hero destacado */}
+      <div className="space-y-3 rounded-sm border border-border bg-secondary/30 p-4">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" {...register('isFeatured')} className="w-4 h-4 accent-accent" />
+          <span className="text-light/80 text-sm">Mostrar en el hero (destacada)</span>
+        </label>
+        <FormField
+          label="Orden en el hero"
+          hint="Menor número aparece primero. Solo se usa si está marcada como destacada."
+          error={errors.heroOrder?.message}
+        >
+          <input
+            type="number"
+            min={0}
+            {...register('heroOrder', { valueAsNumber: true })}
+            className={inputClass}
+          />
+        </FormField>
+      </div>
 
       {serverError && (
         <p className="text-red-400 text-sm bg-red-900/20 border border-red-800/30 px-3 py-2 rounded-sm">

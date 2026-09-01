@@ -12,8 +12,9 @@ import { AppHomeHero } from './AppHomeHero'
 import { centerRail } from './AppDpadNavigation'
 
 interface AppHomeProps {
-  movies: Movie[]
-  books: Book[]
+  movies:         Movie[]
+  books:          Book[]
+  featuredMovies?: Movie[]
 }
 
 interface RailProps {
@@ -154,7 +155,7 @@ export function AppNavigation() {
   )
 }
 
-export function AppHome({ movies, books }: AppHomeProps) {
+export function AppHome({ movies, books, featuredMovies }: AppHomeProps) {
   const [isTv, setIsTv] = useState(false)
 
   useLayoutEffect(() => {
@@ -170,15 +171,15 @@ export function AppHome({ movies, books }: AppHomeProps) {
     const hero = document.querySelector<HTMLElement>('.app-home-hero')
     hero?.querySelector<HTMLElement>('.app-focus')?.focus({ preventScroll: true })
     if (hero) centerRail(hero)
-  }, [isTv])
+  }, [isTv, featuredMovies])
 
   const movieHref = '/app-home/peliculas'
-  const featuredMovies = movies.slice(0, 3)
+  const heroMovies = featuredMovies && featuredMovies.length > 0 ? featuredMovies : movies.slice(0, 3)
 
   return (
     <div id="inicio" className="app-shell">
       <main className="app-main">
-        {featuredMovies.length > 0 && <AppHomeHero movies={featuredMovies} />}
+        {heroMovies.length > 0 && <AppHomeHero movies={heroMovies} />}
         <section className="app-hero app-home-legacy-hero">
             <div className="app-hero-glow" aria-hidden />
             <div className="relative z-10 max-w-2xl px-5 sm:px-8">

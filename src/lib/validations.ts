@@ -27,6 +27,8 @@ export const movieSchema = z.object({
   // Sin .default() para compatibilidad con react-hook-form: los defaults van en useForm
   isPublished:   z.boolean(),
   sortOrder:     z.number().int().min(0),
+  isFeatured:    z.boolean(),
+  heroOrder:     z.number().int().min(0),
 })
 
 export type MovieSchema = z.infer<typeof movieSchema>

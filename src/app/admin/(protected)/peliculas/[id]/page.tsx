@@ -40,6 +40,8 @@ export default async function EditMoviePage({ params }: Props) {
     platformIds:    (data.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
     isPublished:    data.is_published,
     sortOrder:      data.sort_order,
+    isFeatured:     data.is_featured ?? false,
+    heroOrder:      data.hero_order ?? 0,
     createdAt:      data.created_at,
     updatedAt:      data.updated_at,
   }

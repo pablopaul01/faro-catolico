@@ -36,6 +36,8 @@ export default async function PeliculasPage({ searchParams }: { searchParams: Pr
     platformIds:    (row.movie_platform_items as { platform_id: string }[] ?? []).map((r) => r.platform_id),
     isPublished:    row.is_published,
     sortOrder:      row.sort_order,
+    isFeatured:     row.is_featured ?? false,
+    heroOrder:      row.hero_order ?? 0,
     createdAt:      row.created_at,
     updatedAt:      row.updated_at,
   }))

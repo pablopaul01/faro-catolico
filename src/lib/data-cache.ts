@@ -4,7 +4,7 @@
  */
 import { createClient } from '@supabase/supabase-js'
 import { TABLE_NAMES } from '@/lib/constants'
-import type { RatingsMap } from '@/types/app.types'
+import type { Movie, RatingsMap } from '@/types/app.types'
 
 // Cliente anónimo sin cookies — solo datos públicos
 const sb = () => createClient(
@@ -42,6 +42,63 @@ export const fetchRatingsPublic = async (contentType: 'pelicula' | 'libro' | 'ca
     map[id].avgRating = map[id].avgRating / map[id].ratingCount
   }
   return map
+}
+
+// ─── Películas destacadas (hero de la home y TVBox) ──────────────────────────
+
+type FeaturedMovieRow = {
+  id:                       string
+  title:                    string
+  description:              string | null
+  youtube_id:               string | null
+  dailymotion_id:           string | null
+  ok_id:                    string | null
+  vimeo_id:                 string | null
+  external_url:             string | null
+  thumbnail_url:            string | null
+  year:                     number | null
+  is_published:             boolean
+  sort_order:               number
+  is_featured:              boolean | null
+  hero_order:               number | null
+  created_at:               string
+  updated_at:               string
+  movie_platform_items:     { platform_id: string }[] | null
+  movie_category_items:     { category_id: string }[] | null
+}
+
+const adaptFeaturedMovieRow = (row: FeaturedMovieRow): Movie => ({
+  id:            row.id,
+  title:         row.title,
+  description:   row.description,
+  youtubeId:     row.youtube_id,
+  dailymotionId: row.dailymotion_id,
+  okId:          row.ok_id,
+  vimeoId:       row.vimeo_id,
+  externalUrl:   row.external_url,
+  thumbnailUrl:  row.thumbnail_url,
+  year:          row.year,
+  categoryIds:   (row.movie_category_items ?? []).map((r) => r.category_id),
+  platformIds:   (row.movie_platform_items ?? []).map((r) => r.platform_id),
+  isPublished:   row.is_published,
+  sortOrder:     row.sort_order,
+  isFeatured:    row.is_featured ?? false,
+  heroOrder:     row.hero_order  ?? 0,
+  createdAt:     row.created_at,
+  updatedAt:     row.updated_at,
+})
+
+export const fetchFeaturedMovies = async (): Promise<Movie[]> => {
+  const { data, error } = await sb()
+    .from(TABLE_NAMES.MOVIES)
+    .select(`*, ${TABLE_NAMES.MOVIE_CATEGORY_ITEMS}(category_id), ${TABLE_NAMES.MOVIE_PLATFORM_ITEMS}(platform_id)`)
+    .eq('is_published', true)
+    .eq('is_featured', true)
+    .order('hero_order', { ascending: true })
+    .order('created_at', { ascending: false })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []).map(adaptFeaturedMovieRow)
 }
 
 // ─── Home (preview — últimos 6 de cada tipo) ──────────────────────────────────

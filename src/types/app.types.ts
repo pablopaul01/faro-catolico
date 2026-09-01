@@ -49,6 +49,8 @@ export interface Movie {
   platformIds:   string[]
   isPublished:   boolean
   sortOrder:     number
+  isFeatured:    boolean
+  heroOrder:     number
   createdAt:     string
   updatedAt:     string
 }

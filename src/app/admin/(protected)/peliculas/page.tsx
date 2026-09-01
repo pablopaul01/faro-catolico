@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import { Search } from 'lucide-react'
+import { Search, Star } from 'lucide-react'
 import { DataTable, type TableColumn } from '@/components/admin/DataTable'
 import { fetchAllMovies, deleteMovie, updateMovie } from '@/services/movies.service'
 import { fetchAllMovieCategories } from '@/services/movieCategories.service'
@@ -71,6 +71,18 @@ export default function AdminMoviesPage() {
       label: 'YouTube ID',
       render: (m) => <code className="text-xs text-accent/70 bg-primary px-1.5 py-0.5 rounded">{m.youtubeId}</code>,
     },
+    {
+      key: 'isFeatured',
+      label: 'Destacada',
+      render: (m) =>
+        m.isFeatured ? (
+          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30">
+            <Star size={11} fill="currentColor" /> #{m.heroOrder}
+          </span>
+        ) : (
+          <span className="text-light/30 text-xs">—</span>
+        ),
+    },
   ]
 
   const handleDelete = async (id: string) => {
@@ -80,6 +92,11 @@ export default function AdminMoviesPage() {
 
   const handleTogglePublish = async (id: string, current: boolean) => {
     const updated = await updateMovie(id, { isPublished: !current })
+    updateInStore(id, updated)
+  }
+
+  const handleToggleFeatured = async (id: string, current: boolean) => {
+    const updated = await updateMovie(id, { isFeatured: !current })
     updateInStore(id, updated)
   }
 
@@ -121,6 +138,7 @@ export default function AdminMoviesPage() {
         createHref={`${ROUTES.ADMIN_MOVIES}/new`}
         onDelete={handleDelete}
         onTogglePublish={handleTogglePublish}
+        onToggleFeatured={handleToggleFeatured}
         editHref={(id) => `${ROUTES.ADMIN_MOVIES}/${id}`}
         entityLabel="película"
         defaultPage={listPage}

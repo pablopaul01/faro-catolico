@@ -30,6 +30,8 @@ CREATE TABLE public.movies (
   year          SMALLINT,
   is_published  BOOLEAN     NOT NULL DEFAULT false,
   sort_order    SMALLINT    NOT NULL DEFAULT 0,
+  is_featured   BOOLEAN     NOT NULL DEFAULT false,  -- Mostrar en hero destacado
+  hero_order    SMALLINT    NOT NULL DEFAULT 0,       -- Orden manual dentro del hero (menor = primero)
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -161,3 +163,16 @@ CREATE POLICY "media_admin_delete"
 -- Hacerlo desde: Dashboard > Authentication > Users > Add user
 -- No desde SQL (más seguro)
 -- ─────────────────────────────────────────────────────────────
+
+-- ─────────────────────────────────────────────────────────────
+-- Migración: hero de películas destacadas
+-- Solo para DBs existentes — si corres el script desde cero
+-- con CREATE TABLE, las columnas ya están incluidas.
+-- ─────────────────────────────────────────────────────────────
+ALTER TABLE public.movies
+  ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS hero_order  SMALLINT NOT NULL DEFAULT 0;
+
+CREATE INDEX IF NOT EXISTS movies_featured_hero_idx
+  ON public.movies (is_featured, hero_order, created_at DESC);
+

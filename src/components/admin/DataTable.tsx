@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Pencil, Trash2, Eye, EyeOff, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Pencil, Trash2, Eye, EyeOff, Plus, ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface TableColumn<T> {
@@ -12,18 +12,19 @@ export interface TableColumn<T> {
 }
 
 interface DataTableProps<T extends { id: string; isPublished: boolean }> {
-  columns:          TableColumn<T>[]
-  data:             T[]
-  isLoading:        boolean
-  createHref:       string
-  onDelete:         (id: string) => Promise<void>
-  onTogglePublish:  (id: string, current: boolean) => Promise<void>
-  editHref:         (id: string) => string
-  entityLabel:      string
-  defaultPage?:     number
-  defaultPageSize?: number
-  onPageChange?:    (page: number) => void
-  onPageSizeChange?:(size: number) => void
+  columns:           TableColumn<T>[]
+  data:              T[]
+  isLoading:         boolean
+  createHref:        string
+  onDelete:          (id: string) => Promise<void>
+  onTogglePublish:   (id: string, current: boolean) => Promise<void>
+  editHref:          (id: string) => string
+  entityLabel:       string
+  defaultPage?:      number
+  defaultPageSize?:  number
+  onPageChange?:     (page: number) => void
+  onPageSizeChange?: (size: number) => void
+  onToggleFeatured?: (id: string, current: boolean) => Promise<void>
 }
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
@@ -41,9 +42,11 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
   defaultPageSize = 10,
   onPageChange,
   onPageSizeChange,
+  onToggleFeatured,
 }: DataTableProps<T>) => {
   const [deletingId, setDeletingId]  = useState<string | null>(null)
   const [togglingId, setTogglingId]  = useState<string | null>(null)
+  const [featuringId, setFeaturingId] = useState<string | null>(null)
   const [confirmId,  setConfirmId]   = useState<string | null>(null)
   const [page,       setPage]        = useState(defaultPage)
   const [pageSize,   setPageSize]    = useState(defaultPageSize)
@@ -64,6 +67,16 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
       await onTogglePublish(id, current)
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  const handleToggleFeatured = async (id: string, current: boolean) => {
+    if (!onToggleFeatured) return
+    setFeaturingId(id)
+    try {
+      await onToggleFeatured(id, current)
+    } finally {
+      setFeaturingId(null)
     }
   }
 
@@ -212,6 +225,22 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
         {row.isPublished ? <Eye size={13} /> : <EyeOff size={13} />}
         {row.isPublished ? 'Publicado' : 'Borrador'}
       </button>
+      {onToggleFeatured && 'isFeatured' in row && (
+        <button
+          onClick={() => handleToggleFeatured(row.id, Boolean((row as { isFeatured?: boolean }).isFeatured))}
+          disabled={featuringId === row.id}
+          title={(row as { isFeatured?: boolean }).isFeatured ? 'Quitar del hero' : 'Marcar como destacada'}
+          className={cn(
+            'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium border transition-colors',
+            (row as { isFeatured?: boolean }).isFeatured
+              ? 'border-accent/50 text-accent hover:bg-accent/10'
+              : 'border-border text-light/40 hover:bg-white/5'
+          )}
+        >
+          <Star size={13} fill={(row as { isFeatured?: boolean }).isFeatured ? 'currentColor' : 'none'} />
+          {(row as { isFeatured?: boolean }).isFeatured ? 'Destacada' : 'Destacar'}
+        </button>
+      )}
       <Link
         href={editHref(row.id)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium border border-border text-light/50 hover:text-accent hover:border-accent/40 hover:bg-accent/5 transition-colors"
@@ -315,6 +344,21 @@ export const DataTable = <T extends { id: string; isPublished: boolean }>({
                     >
                       {row.isPublished ? <Eye size={15} /> : <EyeOff size={15} />}
                     </button>
+                    {onToggleFeatured && 'isFeatured' in row && (
+                      <button
+                        onClick={() => handleToggleFeatured(row.id, Boolean((row as { isFeatured?: boolean }).isFeatured))}
+                        disabled={featuringId === row.id}
+                        title={(row as { isFeatured?: boolean }).isFeatured ? 'Quitar del hero' : 'Marcar como destacada'}
+                        className={cn(
+                          'p-1.5 rounded-sm transition-colors',
+                          (row as { isFeatured?: boolean }).isFeatured
+                            ? 'text-accent hover:bg-accent/10'
+                            : 'text-light/30 hover:bg-white/5'
+                        )}
+                      >
+                        <Star size={15} fill={(row as { isFeatured?: boolean }).isFeatured ? 'currentColor' : 'none'} />
+                      </button>
+                    )}
                     <Link
                       href={editHref(row.id)}
                       className="p-1.5 rounded-sm text-light/50 hover:text-accent hover:bg-accent/10 transition-colors"
