@@ -719,14 +719,28 @@ html.tv-mode body {
 }
 
 html.tv-mode {
+  --app-tv-header-height: 5.5rem;
   --app-header-offset: 6.75rem;
+
+  /* Detail screens fit below the header; catalog rails keep their scroll space. */
+  &:has(.app-detail-movie, .app-detail-book-hero) {
+    height: 100dvh;
+    overflow: clip;
+
+    body {
+      height: 100dvh;
+      min-height: 0;
+      padding-bottom: 0;
+      overflow: clip;
+    }
+  }
 
   .app-home-legacy-hero {
     display: none;
   }
 
   .app-header {
-    height: 5.5rem;
+    height: var(--app-tv-header-height);
     padding-right: 4rem;
     padding-left: 4rem;
   }
@@ -778,9 +792,10 @@ html.tv-mode {
   /* ── Movie detail hero backdrop (Netflix-style TV) ── */
   .app-detail-movie,
   .app-detail-book-hero {
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
+    height: calc(100dvh - var(--app-tv-header-height));
+    min-height: 0;
+    max-height: calc(100dvh - var(--app-tv-header-height));
+    overflow: clip;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -814,7 +829,7 @@ html.tv-mode {
     position: relative;
     z-index: 2;
     display: block;
-    padding: 3rem 4rem 4rem;
+    padding: clamp(1rem, 4vh, 3rem) 4rem clamp(1rem, 6vh, 4rem);
     max-width: none;
     margin: 0;
   }
@@ -942,9 +957,10 @@ html.tv-mode {
 
   /* ── Skeleton TV overrides ── */
   .app-detail-skeleton {
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
+    height: calc(100dvh - var(--app-tv-header-height));
+    min-height: 0;
+    max-height: calc(100dvh - var(--app-tv-header-height));
+    overflow: clip;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -957,7 +973,7 @@ html.tv-mode {
     position: relative;
     z-index: 2;
     display: block;
-    padding: 3rem 4rem 4rem;
+    padding: clamp(1rem, 4vh, 3rem) 4rem clamp(1rem, 6vh, 4rem);
     max-width: none;
     margin: 0;
   }
