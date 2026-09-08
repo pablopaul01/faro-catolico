@@ -4,12 +4,8 @@ import { App } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-
-const catalogFromDetail = (pathname: string, base: string) => {
-  if (pathname === base) return '/app-home'
-  if (pathname.startsWith(`${base}/`)) return base
-  return null
-}
+import { APP_ROUTES } from '@/lib/constants'
+import { canGoBack, isAppHomePath } from '@/lib/app-session'
 
 export function AppBackHandler() {
   const pathname = usePathname()
@@ -21,43 +17,17 @@ export function AppBackHandler() {
     void App.toggleBackButtonHandler({ enabled: true }).catch(() => undefined)
 
     const listener = App.addListener('backButton', () => {
-      const playbackMatch = pathname.match(/^\/app-home\/reproducir\/pelicula\/([^/]+)$/)
-      if (playbackMatch) {
-        router.replace(`/app-home/peliculas/${playbackMatch[1]}`)
+      if (isAppHomePath(pathname)) {
+        void App.exitApp()
         return
       }
 
-      const readerMatch = pathname.match(/^\/app-home\/libros\/([^/]+)\/leer$/)
-      if (readerMatch) {
-        router.replace(`/app-home/libros/${readerMatch[1]}`)
+      if (canGoBack()) {
+        router.back()
         return
       }
 
-      if (pathname.startsWith('/app-home/playlists') || pathname.startsWith('/app-home/canales')) {
-        router.replace('/app-home/sugeridos')
-        return
-      }
-
-      if (pathname === '/app-home/sugeridos') {
-        router.replace('/app-home')
-        return
-      }
-
-      const catalog =
-        catalogFromDetail(pathname, '/app-home/peliculas') ??
-        catalogFromDetail(pathname, '/app-home/libros')
-
-      if (catalog) {
-        router.replace(catalog)
-        return
-      }
-
-      if (pathname !== '/app-home') {
-        router.replace('/app-home')
-        return
-      }
-
-      void App.exitApp()
+      router.replace(APP_ROUTES.HOME)
     })
 
     return () => {

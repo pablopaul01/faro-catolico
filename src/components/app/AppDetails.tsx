@@ -1,20 +1,32 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { ArrowLeft, BookOpen, ExternalLink, Play } from 'lucide-react'
+import { APP_ROUTES, appMoviePlayHref } from '@/lib/constants'
+import { isMoviePlayable } from '@/lib/utils'
 import type { Book, Movie } from '@/types/app.types'
+import { AppBackLink } from './AppBackLink'
 import { AppLoadingLink } from './AppLoadingLink'
 import { AppAutoFocus } from './AppAutoFocus'
+import { AppRecentTracker } from './AppRecentTracker'
 
 export function AppMovieDetails({ movie }: { movie: Movie }) {
-  const playable = Boolean(movie.youtubeId || movie.dailymotionId || movie.okId || movie.vimeoId)
+  const playable = isMoviePlayable(movie)
   return (
     <main
       className="app-detail app-detail-movie"
       style={{ '--detail-backdrop': movie.thumbnailUrl ? `url(${movie.thumbnailUrl})` : 'none' } as React.CSSProperties}
     >
-      <Link href="/app-home/peliculas" className="app-focus app-detail-back inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
+      <AppRecentTracker
+        item={{
+          id: movie.id,
+          kind: 'movie',
+          title: movie.title,
+          href: `${APP_ROUTES.MOVIES}/${movie.id}`,
+          imageUrl: movie.thumbnailUrl,
+        }}
+      />
+      <AppBackLink href={APP_ROUTES.MOVIES} className="app-focus app-detail-back inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
         <ArrowLeft size={17} /> Volver a películas
-      </Link>
+      </AppBackLink>
       <div className="app-detail-layout">
         <div className="app-detail-media">
           {movie.thumbnailUrl ? <Image src={movie.thumbnailUrl} alt="" fill sizes="(max-width: 767px) 100vw, 42vw" className="object-cover" priority /> : <div className="h-full bg-secondary" />}
@@ -27,7 +39,7 @@ export function AppMovieDetails({ movie }: { movie: Movie }) {
             {playable ? (
               <AppAutoFocus>
                 <AppLoadingLink
-                  href={`/app-home/reproducir/pelicula/${movie.id}`}
+                  href={appMoviePlayHref(movie.id)}
                   loadingLabel="Abriendo reproducción..."
                   className="app-focus app-detail-play-btn inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-primary hover:bg-accent/90"
                 >
@@ -53,9 +65,19 @@ export function AppBookDetails({ book }: { book: Book }) {
       className="app-detail app-detail-book-hero"
       style={{ '--detail-backdrop': book.coverUrl ? `url(${book.coverUrl})` : 'none' } as React.CSSProperties}
     >
-      <Link href="/app-home/libros" className="app-focus app-detail-back inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
+      <AppRecentTracker
+        item={{
+          id: book.id,
+          kind: 'book',
+          title: book.title,
+          href: `${APP_ROUTES.BOOKS}/${book.id}`,
+          imageUrl: book.coverUrl,
+          subtitle: book.author,
+        }}
+      />
+      <AppBackLink href={APP_ROUTES.BOOKS} className="app-focus app-detail-back inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
         <ArrowLeft size={17} /> Volver a libros
-      </Link>
+      </AppBackLink>
       <div className="app-detail-layout">
         <div className="app-detail-media app-detail-book">
           {book.coverUrl ? <Image src={book.coverUrl} alt="" fill sizes="(max-width: 767px) 70vw, 25vw" className="object-cover" priority /> : <div className="flex h-full items-center justify-center bg-secondary text-accent/50"><BookOpen size={48} /></div>}

@@ -47,6 +47,15 @@ export const appContentHref = (tipo: 'pelicula' | 'libro' | 'cancion', id: strin
   return `${APP_ROUTES.MUSIC}/${id}`
 }
 
+export const appMoviePlayHref = (id: string) => `${APP_ROUTES.HOME}/reproducir/pelicula/${id}`
+
+export const APP_STORAGE = {
+  RECENTS: 'faro-app-recents-v1',
+  FOCUS:   'faro-app-focus-v1',
+} as const
+
+export const APP_RECENTS_LIMIT = 20
+
 // ─────────────────────────────────────────────
 // App Android (APK distribuido en el sitio)
 // ─────────────────────────────────────────────

@@ -1,6 +1,8 @@
 import { fetchMoviesPageData, fetchFeaturedMovies } from '@/lib/data-cache'
 import { AppRail, AppCard } from '@/components/app/AppHome'
 import { AppCatalogHero } from '@/components/app/AppCatalogHero'
+import { AppEmptyState } from '@/components/app/AppEmptyState'
+import { APP_ROUTES } from '@/lib/constants'
 import type { Movie, MovieCategory } from '@/types/app.types'
 
 export const dynamic = 'force-dynamic'
@@ -63,23 +65,29 @@ export default async function AppMoviesPage() {
         {recent.length > 0 && (
           <AppRail id="recientes" title="Recientes">
             {recent.map((movie) => (
-              <AppCard key={movie.id} item={movie} href={`/app-home/peliculas/${movie.id}`} kind="movie" />
+              <AppCard key={movie.id} item={movie} href={`${APP_ROUTES.MOVIES}/${movie.id}`} kind="movie" />
             ))}
           </AppRail>
         )}
         {categoryRails.map(({ category, items }) => (
           <AppRail key={category.id} id={category.id} title={category.name}>
             {items.map((movie) => (
-              <AppCard key={movie.id} item={movie} href={`/app-home/peliculas/${movie.id}`} kind="movie" />
+              <AppCard key={movie.id} item={movie} href={`${APP_ROUTES.MOVIES}/${movie.id}`} kind="movie" />
             ))}
           </AppRail>
         ))}
         {uncategorized.length > 0 && (
           <AppRail id="otros" title="Otros">
             {uncategorized.map((movie) => (
-              <AppCard key={movie.id} item={movie} href={`/app-home/peliculas/${movie.id}`} kind="movie" />
+              <AppCard key={movie.id} item={movie} href={`${APP_ROUTES.MOVIES}/${movie.id}`} kind="movie" />
             ))}
           </AppRail>
+        )}
+        {movies.length === 0 && (
+          <AppEmptyState
+            title="No hay videos por ahora"
+            description="Cuando se publique contenido, va a aparecer acá."
+          />
         )}
       </div>
     </main>

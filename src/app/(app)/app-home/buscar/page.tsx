@@ -1,22 +1,12 @@
 import { fetchCatalogSearch } from '@/lib/data-cache'
 import { appContentHref } from '@/lib/constants'
 import { AppSearchForm } from '@/components/app/AppSearchForm'
-import { AppLoadingLink } from '@/components/app/AppLoadingLink'
+import { AppCard } from '@/components/app/AppHome'
 
 export const dynamic = 'force-dynamic'
 
 interface Props {
   searchParams: Promise<{ q?: string; tipo?: string }>
-}
-
-const TYPE_LABELS: Record<string, string> = {
-  pelicula: 'Película',
-  libro:    'Libro',
-}
-
-const TYPE_COLORS: Record<string, string> = {
-  pelicula: 'bg-blue-900/40 text-blue-300 border-blue-700/40',
-  libro:    'bg-emerald-900/40 text-emerald-300 border-emerald-700/40',
 }
 
 export default async function AppSearchPage({ searchParams }: Props) {
@@ -33,7 +23,7 @@ export default async function AppSearchPage({ searchParams }: Props) {
         </p>
       </div>
 
-      <div className="mx-auto max-w-3xl px-5 sm:px-8">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <AppSearchForm initialQ={query} initialTipo={tipo ?? ''} />
 
         {query && results.length === 0 && (
@@ -50,31 +40,22 @@ export default async function AppSearchPage({ searchParams }: Props) {
         )}
 
         {results.length > 0 && (
-          <div>
+          <div className="app-search-results">
             <p className="mb-4 text-xs text-light/40">
               {results.length} resultado{results.length !== 1 ? 's' : ''} para “{query}”
             </p>
-            <ul className="space-y-2">
+            <div className="app-catalog-grid">
               {results.map((item) => (
-                <li key={`${item.tipo}-${item.id}`}>
-                  <AppLoadingLink
-                    href={appContentHref(item.tipo, item.id)}
-                    loadingLabel="Abriendo..."
-                    className="app-focus group flex items-center gap-3 rounded-card border border-border bg-secondary p-3 transition-colors hover:border-accent/40"
-                  >
-                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${TYPE_COLORS[item.tipo]}`}>
-                      {TYPE_LABELS[item.tipo]}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm text-light transition-colors group-hover:text-accent">{item.title}</p>
-                      {item.subtitle ? (
-                        <p className="truncate text-xs text-light/40">{item.subtitle}</p>
-                      ) : null}
-                    </div>
-                  </AppLoadingLink>
-                </li>
+                <AppCard
+                  key={`${item.tipo}-${item.id}`}
+                  item={item.tipo === 'libro'
+                    ? { id: item.id, title: item.title, coverUrl: item.imageUrl, author: item.subtitle ?? '' }
+                    : { id: item.id, title: item.title, thumbnailUrl: item.imageUrl }}
+                  href={appContentHref(item.tipo, item.id)}
+                  kind={item.tipo === 'libro' ? 'book' : 'movie'}
+                />
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>

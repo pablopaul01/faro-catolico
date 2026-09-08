@@ -1,10 +1,12 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { APP_ROUTES, appMoviePlayHref } from '@/lib/constants'
+import { isMoviePlayable } from '@/lib/utils'
 import type { Movie } from '@/types/app.types'
+import { AppLoadingLink } from './AppLoadingLink'
 
 interface AppHomeHeroProps {
   movies: Movie[]
@@ -31,8 +33,9 @@ export function AppHomeHero({ movies }: AppHomeHeroProps) {
   const current = movies[active]
   if (!current) return null
 
-  const playable = Boolean(current.youtubeId || current.dailymotionId || current.okId || current.vimeoId)
-  const href = `/app-home/peliculas/${current.id}`
+  const playable = isMoviePlayable(current)
+  const detailHref = `${APP_ROUTES.MOVIES}/${current.id}`
+  const href = playable ? appMoviePlayHref(current.id) : detailHref
 
   return (
     <section className="app-home-hero" aria-label="Contenido destacado">
@@ -52,20 +55,19 @@ export function AppHomeHero({ movies }: AppHomeHeroProps) {
         {current.description && <p className="app-home-hero-desc">{current.description}</p>}
         <div className="app-detail-actions">
           {playable ? (
-            <Link
+            <AppLoadingLink
               href={href}
-              tabIndex={0}
+              loadingLabel="Abriendo reproducción..."
               className="app-focus app-home-hero-play inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-primary hover:bg-accent/90"
             >
               <Play size={18} fill="currentColor" /> Reproducir
-            </Link>
+            </AppLoadingLink>
           ) : (
             <Link
               href={href}
-              tabIndex={0}
               className="app-focus inline-flex items-center gap-2 rounded-full border border-accent/40 px-6 py-3 text-base text-accent hover:bg-accent/10"
             >
-              Ver detalles
+              Ver ficha
             </Link>
           )}
         </div>

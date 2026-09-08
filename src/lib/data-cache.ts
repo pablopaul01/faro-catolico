@@ -250,6 +250,7 @@ export interface CatalogSearchItem {
   id:       string
   title:    string
   subtitle: string | null
+  imageUrl: string | null
   tipo:     SearchContentType
 }
 
@@ -262,25 +263,28 @@ export const fetchCatalogSearch = async (query: string, tipo?: string): Promise<
 
   const [moviesRes, booksRes] = await Promise.all([
     (!tipo || tipo === 'pelicula')
-      ? client.from(TABLE_NAMES.MOVIES).select('id, title, description')
+      ? client.from(TABLE_NAMES.MOVIES).select('id, title, description, thumbnail_url')
           .eq('is_published', true)
           .or(`title.ilike.${pattern},description.ilike.${pattern}`)
           .limit(20)
-      : Promise.resolve({ data: [] as { id: string; title: string; description: string | null }[] }),
+      : Promise.resolve({ data: [] as { id: string; title: string; description: string | null; thumbnail_url: string | null }[], error: null }),
     (!tipo || tipo === 'libro')
-      ? client.from(TABLE_NAMES.BOOKS).select('id, title, author')
+      ? client.from(TABLE_NAMES.BOOKS).select('id, title, author, cover_url')
           .eq('is_published', true)
           .or(`title.ilike.${pattern},author.ilike.${pattern}`)
           .limit(20)
-      : Promise.resolve({ data: [] as { id: string; title: string; author: string | null }[] }),
+      : Promise.resolve({ data: [] as { id: string; title: string; author: string | null; cover_url: string | null }[], error: null }),
   ])
+
+  if (moviesRes.error) throw new Error(moviesRes.error.message)
+  if (booksRes.error) throw new Error(booksRes.error.message)
 
   return [
     ...(moviesRes.data ?? []).map((row) => ({
-      id: row.id, title: row.title, subtitle: row.description, tipo: 'pelicula' as const,
+      id: row.id, title: row.title, subtitle: row.description, imageUrl: row.thumbnail_url, tipo: 'pelicula' as const,
     })),
     ...(booksRes.data ?? []).map((row) => ({
-      id: row.id, title: row.title, subtitle: row.author, tipo: 'libro' as const,
+      id: row.id, title: row.title, subtitle: row.author, imageUrl: row.cover_url, tipo: 'libro' as const,
     })),
   ]
 }

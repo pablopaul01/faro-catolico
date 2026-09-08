@@ -4,7 +4,9 @@ import '../../app/globals.css'
 import { AppNavigation } from '@/components/app/AppHome'
 import { AppDpadNavigation } from '@/components/app/AppDpadNavigation'
 import { AppBackHandler } from '@/components/app/AppBackHandler'
+import { AppFocusRestore } from '@/components/app/AppFocusRestore'
 import { AppIntro } from '@/components/app/AppIntro'
+import { AppOfflineBanner } from '@/components/app/AppOfflineBanner'
 import { TV_BOOTSTRAP_SCRIPT } from '@/lib/tv'
 
 const cinzel = Cinzel({
@@ -44,6 +46,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <AppNavigation />
         <AppDpadNavigation />
         <AppBackHandler />
+        <AppFocusRestore />
+        <AppOfflineBanner />
         {children}
       </body>
     </html>

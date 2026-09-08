@@ -2,6 +2,13 @@ import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { YOUTUBE_NOCOOKIE_BASE, YOUTUBE_THUMBNAIL_BASE, DAILYMOTION_EMBED_BASE, DAILYMOTION_THUMBNAIL_BASE, OKRU_EMBED_BASE, VIMEO_EMBED_BASE } from '@/lib/constants'
 
+export const isMoviePlayable = (movie: {
+  youtubeId: string | null
+  dailymotionId: string | null
+  okId: string | null
+  vimeoId: string | null
+}) => Boolean(movie.youtubeId || movie.dailymotionId || movie.okId || movie.vimeoId)
+
 /** Combina clases de Tailwind evitando conflictos */
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 

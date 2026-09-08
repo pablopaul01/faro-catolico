@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { APP_ROUTES } from '@/lib/constants'
+import { AppBackLink } from './AppBackLink'
 import { AppCard } from './AppHome'
 import type { Book, Movie, Playlist, Song, YoutubeChannel, YoutubePlaylist } from '@/types/app.types'
 
@@ -14,13 +15,13 @@ interface AppCatalogProps {
   getHref: (item: AppItem) => string
 }
 
-export function AppCatalog({ title, subtitle, backHref = '/app-home', items, kind, getHref }: AppCatalogProps) {
+export function AppCatalog({ title, subtitle, backHref = APP_ROUTES.HOME, items, kind, getHref }: AppCatalogProps) {
   return (
     <main className="app-catalog">
       <div className="app-catalog-heading">
-        <Link href={backHref} className="app-focus inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
+        <AppBackLink href={backHref} className="app-focus inline-flex items-center gap-2 text-sm text-light/60 hover:text-accent">
           <ArrowLeft size={17} /> Volver
-        </Link>
+        </AppBackLink>
         <h1 className="mt-6 font-display text-3xl text-light sm:text-5xl">{title}</h1>
         <p className="mt-3 max-w-2xl text-sm text-light/55 sm:text-base">{subtitle}</p>
       </div>
