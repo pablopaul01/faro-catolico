@@ -493,6 +493,41 @@ html.tv-mode body {
   background: var(--color-accent);
 }
 
+@media (max-width: 767px) {
+  html:not(.tv-mode) .app-home-hero {
+    display: grid;
+    align-items: end;
+    height: auto;
+    min-height: clamp(19rem, 80vw, 24rem);
+    max-height: none;
+  }
+
+  html:not(.tv-mode) .app-home-hero-content {
+    position: relative;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  html:not(.tv-mode) .app-home-hero-overlay {
+    background: linear-gradient(
+      to top,
+      var(--color-primary) 0%,
+      rgba(13, 27, 42, 0.92) 28%,
+      rgba(13, 27, 42, 0.78) 58%,
+      rgba(13, 27, 42, 0.7) 100%
+    );
+  }
+
+  html:not(.tv-mode) .app-home-hero-label {
+    color: var(--color-accent);
+  }
+
+  html:not(.tv-mode) .app-home-hero-year,
+  html:not(.tv-mode) .app-home-hero-desc {
+    color: var(--color-light);
+  }
+}
+
 .app-catalog-hero {
   display: block;
   position: relative;
