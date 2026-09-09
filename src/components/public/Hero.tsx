@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Download } from 'lucide-react'
 import { ROUTES, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
 import { HeroSearch } from './HeroSearch'
 
@@ -70,6 +70,13 @@ export const Hero = () => {
           className="px-7 py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-all duration-200 hover:scale-[1.02]"
         >
           Explorar música
+        </Link>
+        <Link
+          href={ROUTES.APP_DOWNLOAD}
+          className="inline-flex items-center justify-center gap-2 px-7 py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent/10 transition-all duration-200 hover:scale-[1.02]"
+        >
+          <Download size={18} aria-hidden />
+          Descargar app Android
         </Link>
       </div>
 

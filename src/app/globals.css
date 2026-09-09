@@ -508,7 +508,8 @@ html.tv-mode body {
     overflow-wrap: anywhere;
   }
 
-  html:not(.tv-mode) .app-home-hero-overlay {
+  html:not(.tv-mode) .app-home-hero-overlay,
+  html:not(.tv-mode) .app-catalog-hero-overlay {
     background: linear-gradient(
       to top,
       var(--color-primary) 0%,
@@ -518,12 +519,15 @@ html.tv-mode body {
     );
   }
 
-  html:not(.tv-mode) .app-home-hero-label {
+  html:not(.tv-mode) .app-home-hero-label,
+  html:not(.tv-mode) .app-catalog-hero-label {
     color: var(--color-accent);
   }
 
   html:not(.tv-mode) .app-home-hero-year,
-  html:not(.tv-mode) .app-home-hero-desc {
+  html:not(.tv-mode) .app-home-hero-desc,
+  html:not(.tv-mode) .app-catalog-hero-year,
+  html:not(.tv-mode) .app-catalog-hero-desc {
     color: var(--color-light);
   }
 }

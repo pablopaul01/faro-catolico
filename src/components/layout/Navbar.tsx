@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useRef } from 'react'
-import { Menu, X, Search, ChevronDown } from 'lucide-react'
+import { Download, Menu, X, Search, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ROUTES, SITE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -131,14 +131,23 @@ export const Navbar = () => {
           )}
         </div>
 
-        {/* Buscar (desktop) */}
-        <button
-          onClick={() => router.push(ROUTES.SEARCH)}
-          className="hidden md:flex p-2 text-light/60 hover:text-light transition-colors rounded-sm hover:bg-white/5"
-          aria-label="Buscar"
-        >
-          <Search size={20} />
-        </button>
+        {/* Acciones desktop */}
+        <div className="hidden md:flex items-center gap-1">
+          <Link
+            href={ROUTES.APP_DOWNLOAD}
+            className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent border border-accent/40 rounded-sm hover:bg-accent/10 transition-colors"
+          >
+            <Download size={16} aria-hidden />
+            <span className="hidden xl:inline">App Android</span>
+          </Link>
+          <button
+            onClick={() => router.push(ROUTES.SEARCH)}
+            className="p-2 text-light/60 hover:text-light transition-colors rounded-sm hover:bg-white/5"
+            aria-label="Buscar"
+          >
+            <Search size={20} />
+          </button>
+        </div>
 
         {/* Hamburger + buscar mobile */}
         <div className="flex items-center gap-1 md:hidden">
@@ -211,6 +220,14 @@ export const Navbar = () => {
               </Link>
             )
           )}
+          <Link
+            href={ROUTES.APP_DOWNLOAD}
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-accent hover:bg-accent/10 rounded-sm transition-colors"
+          >
+            <Download size={16} aria-hidden />
+            Descargar app Android
+          </Link>
         </div>
       </div>
     </header>
