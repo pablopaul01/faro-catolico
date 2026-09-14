@@ -109,6 +109,10 @@ export const SITE_URL         = 'https://farocatolico.netlify.app'
 // ─────────────────────────────────────────────
 export const YOUTUBE_NOCOOKIE_BASE  = 'https://www.youtube-nocookie.com/embed'
 export const YOUTUBE_THUMBNAIL_BASE = 'https://img.youtube.com/vi'
+export const YOUTUBE_IFRAME_API_SRC = 'https://www.youtube.com/iframe_api'
+export const YOUTUBE_PLAYER_ID = 'app-youtube-player'
+export const YOUTUBE_TV_SEEK_SECONDS = 10
+export const PLAYER_CONTROLS_HIDE_MS = 3000
 
 // ─────────────────────────────────────────────
 // Dailymotion

@@ -277,6 +277,8 @@ export function AppDpadNavigation() {
     media.addEventListener('change', applyTvMode)
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (document.querySelector('.app-playback')) return
+
       const key = event.key.replace('Arrow', '').toLowerCase()
       if (!['left', 'right', 'up', 'down'].includes(key)) return
 

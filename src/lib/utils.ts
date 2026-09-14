@@ -16,6 +16,9 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 export const getYouTubeEmbedUrl = (youtubeId: string) =>
   `${YOUTUBE_NOCOOKIE_BASE}/${youtubeId}?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=1&controls=1&disablekb=0`
 
+export const getAppYouTubeEmbedUrl = (youtubeId: string, origin: string) =>
+  `${getYouTubeEmbedUrl(youtubeId)}&autoplay=1&enablejsapi=1&origin=${encodeURIComponent(origin)}`
+
 /** Obtiene la thumbnail de YouTube en máxima calidad disponible */
 export const getYouTubeThumbnail = (youtubeId: string) =>
   `${YOUTUBE_THUMBNAIL_BASE}/${youtubeId}/maxresdefault.jpg`

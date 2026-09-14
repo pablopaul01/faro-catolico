@@ -7,7 +7,7 @@ import { AppVideoPlayer } from './AppVideoPlayer'
 
 export function AppPlayback({ movie }: { movie: Movie }) {
   return (
-    <main className="app-playback">
+    <main className="app-playback" tabIndex={-1}>
       <AppRecentTracker
         item={{
           id: movie.id,
