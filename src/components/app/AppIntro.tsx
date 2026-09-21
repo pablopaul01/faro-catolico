@@ -6,14 +6,40 @@ import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
 import { APP_INTRO, SITE_NAME } from '@/lib/constants'
 
-const INTRO_KEY = 'faro-app-intro-v4'
+const INTRO_KEY = 'faro-app-intro-v5'
 const INTRO_MS = 2800
 const FADE_MS = 600
+
+async function prepareIntroSound() {
+  const ctx = new AudioContext()
+  const response = await fetch(APP_INTRO.SOUND_SRC)
+  if (!response.ok) throw new Error('intro sound fetch failed')
+  const buffer = await ctx.decodeAudioData(await response.arrayBuffer())
+  if (ctx.state === 'suspended') await ctx.resume()
+
+  const gain = ctx.createGain()
+  gain.gain.value = APP_INTRO.SOUND_VOLUME
+  gain.connect(ctx.destination)
+
+  const source = ctx.createBufferSource()
+  source.buffer = buffer
+  source.connect(gain)
+
+  return {
+    start: () => source.start(0),
+    stop: () => {
+      try {
+        source.stop()
+      } catch {}
+      void ctx.close().catch(() => undefined)
+    },
+  }
+}
 
 export function AppIntro() {
   const [phase, setPhase] = useState<'hidden' | 'showing' | 'fading'>('hidden')
   const timers = useRef<number[]>([])
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const stopSound = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -36,21 +62,19 @@ export function AppIntro() {
         return
       }
 
-      const audio = new Audio(APP_INTRO.SOUND_SRC)
-      audio.preload = 'auto'
-      audio.volume = APP_INTRO.SOUND_VOLUME
-      audioRef.current = audio
-      audio.load()
+      const [sound] = await Promise.all([
+        prepareIntroSound().catch(() => null),
+        hideNativeSplash(),
+      ])
 
-      await hideNativeSplash()
       if (cancelled) {
-        audio.pause()
-        audioRef.current = null
+        sound?.stop()
         return
       }
 
+      stopSound.current = sound?.stop ?? null
+      sound?.start()
       setPhase('showing')
-      void audio.play().catch(() => undefined)
 
       schedule(INTRO_MS, () => {
         if (cancelled) return
@@ -70,8 +94,8 @@ export function AppIntro() {
       cancelled = true
       timers.current.forEach(clearTimeout)
       timers.current = []
-      audioRef.current?.pause()
-      audioRef.current = null
+      stopSound.current?.()
+      stopSound.current = null
     }
   }, [])
 

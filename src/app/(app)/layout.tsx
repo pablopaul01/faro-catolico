@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { preload } from 'react-dom'
 import { Cinzel, Inter } from 'next/font/google'
 import '../../app/globals.css'
 import { AppNavigation } from '@/components/app/AppHome'
@@ -7,6 +8,7 @@ import { AppBackHandler } from '@/components/app/AppBackHandler'
 import { AppFocusRestore } from '@/components/app/AppFocusRestore'
 import { AppIntro } from '@/components/app/AppIntro'
 import { AppOfflineBanner } from '@/components/app/AppOfflineBanner'
+import { APP_INTRO } from '@/lib/constants'
 import { TV_BOOTSTRAP_SCRIPT } from '@/lib/tv'
 
 const cinzel = Cinzel({
@@ -36,6 +38,8 @@ export const viewport: Viewport = {
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  preload(APP_INTRO.SOUND_SRC, { as: 'fetch', crossOrigin: 'anonymous' })
+
   return (
     <html lang="es" className={`${cinzel.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
