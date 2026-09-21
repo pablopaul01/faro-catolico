@@ -4,15 +4,16 @@ import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
-import { SITE_NAME } from '@/lib/constants'
+import { APP_INTRO, SITE_NAME } from '@/lib/constants'
 
-const INTRO_KEY = 'faro-app-intro-v3'
+const INTRO_KEY = 'faro-app-intro-v4'
 const INTRO_MS = 2800
 const FADE_MS = 600
 
 export function AppIntro() {
   const [phase, setPhase] = useState<'hidden' | 'showing' | 'fading'>('hidden')
   const timers = useRef<number[]>([])
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -35,20 +36,27 @@ export function AppIntro() {
         return
       }
 
-      // Hide native splash first
+      const audio = new Audio(APP_INTRO.SOUND_SRC)
+      audio.preload = 'auto'
+      audio.volume = APP_INTRO.SOUND_VOLUME
+      audioRef.current = audio
+      audio.load()
+
       await hideNativeSplash()
-      if (cancelled) return
+      if (cancelled) {
+        audio.pause()
+        audioRef.current = null
+        return
+      }
 
-      // Show intro overlay — CSS animations start cleanly
       setPhase('showing')
+      void audio.play().catch(() => undefined)
 
-      // After all animations complete, start fade-out
       schedule(INTRO_MS, () => {
         if (cancelled) return
         setPhase('fading')
       })
 
-      // After fade-out transition, fully remove
       schedule(INTRO_MS + FADE_MS, () => {
         if (cancelled) return
         sessionStorage.setItem(INTRO_KEY, '1')
@@ -62,6 +70,8 @@ export function AppIntro() {
       cancelled = true
       timers.current.forEach(clearTimeout)
       timers.current = []
+      audioRef.current?.pause()
+      audioRef.current = null
     }
   }, [])
 

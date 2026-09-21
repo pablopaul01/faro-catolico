@@ -54,6 +54,11 @@ export const APP_STORAGE = {
   FOCUS:   'faro-app-focus-v1',
 } as const
 
+export const APP_INTRO = {
+  SOUND_SRC:    '/sounds/intro.mp3',
+  SOUND_VOLUME: 0.7,
+} as const
+
 export const APP_RECENTS_LIMIT = 20
 
 // ─────────────────────────────────────────────
